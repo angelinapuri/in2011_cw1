@@ -76,30 +76,7 @@ public class FullNode implements FullNodeInterface {
     }
 
 
-    public boolean start(String startingNodeName, String startingNodeAddress) {
-        try {
-            socket = new Socket(startingNodeAddress.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
-            writer = new OutputStreamWriter(socket.getOutputStream());
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            writer.write("START 1 " + startingNodeName + "\n");
-            writer.flush();
-
-            // Return true if the 2D#4 network can be contacted
-            String response = reader.readLine();
-            if (response != null && response.startsWith("START 1 ")) {
-                return true;
-            }
-            // Return false if the 2D#4 network can't be contacted
-            else {
-                //    System.err.println("Connection not established");
-                return false;
-            }
-        } catch (Exception e) {
-            System.err.println("IOException occurred: " + e.getMessage());
-            return false;
-        }
-    }
     public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
         networkMap.put(startingNodeName, startingNodeAddress);
 

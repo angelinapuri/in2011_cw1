@@ -43,13 +43,8 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
             // Return true if the 2D#4 network can be contacted
             String response = reader.readLine();
-            if (response != null && response.startsWith("START 1 ")) {
-                return true;
-            }
             // Return false if the 2D#4 network can't be contacted
-            else {
-                return false;
-            }
+            return response != null && response.startsWith("START 1 ");
         } catch (Exception e) {
             System.err.println("IOException occurred: " + e.getMessage());
             return false;
@@ -101,7 +96,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
             // Return null if it didn't
             else {
-                return "Not implemented";
+                return "NOPE";
             }
         } catch (IOException e) {
             System.err.println("IOException occurred: " + e.getMessage());
@@ -109,6 +104,3 @@ public class TemporaryNode implements TemporaryNodeInterface {
         }
     }
 }
-
-
-//hi

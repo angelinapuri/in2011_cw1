@@ -15,8 +15,6 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.lang.System.out;
-
 // DO NOT EDIT starts
 interface TemporaryNodeInterface {
     public boolean start(String startingNodeName, String startingNodeAddress);
@@ -24,7 +22,6 @@ interface TemporaryNodeInterface {
     public String get(String key);
 }
 // DO NOT EDIT ends
-
 
 public class TemporaryNode implements TemporaryNodeInterface {
     private Socket socket;
@@ -34,7 +31,9 @@ public class TemporaryNode implements TemporaryNodeInterface {
     public boolean start(String startingNodeName, String startingNodeAddress) {
         try {
             //Connect to the starting node
-            socket = new Socket(startingNodeAddress.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
+            String ipAddress = startingNodeAddress.split(":")[0];
+            int port = Integer.parseInt(startingNodeAddress.split(":")[1]);
+            socket = new Socket(ipAddress, port);
             writer = new OutputStreamWriter(socket.getOutputStream());
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
@@ -79,19 +78,23 @@ public class TemporaryNode implements TemporaryNodeInterface {
         }
     }
 
-
     public String get(String key) {
         int keyLines = key.split("\n").length;
         try {
             // Return the string if the get worked
-            writer.write("GET? " + keyLines);
+            writer.write("GET? " + keyLines + "\n");
             writer.write(key + "\n");
             writer.flush();
 
             String response = reader.readLine();
-            // Return the string if the get worked
-            if (response != null && response.startsWith("VALUE ")) {
-                return response;
+            if (response.startsWith("VALUE ")) {
+                String[] responseParts = response.split(" ");
+                int numLines = Integer.parseInt(responseParts[1]);
+                StringBuilder result = new StringBuilder();
+                for (int i = 0; i < numLines; i++) {
+                    result.append(reader.readLine()).append("\n");
+                }
+                return result.toString();
             }
 
             // Return null if it didn't

@@ -59,7 +59,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             writer.write("PUT? " + keyLines + " " + valueLines + "\n");
             writer.write(key + "\n");
-            writer.write(value);
+            writer.write(value+ "\n");
             writer.flush();
 
             //Return true if the store worked

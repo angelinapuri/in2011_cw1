@@ -12,7 +12,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.Socket;
-//import java.lang.StringBuilder;
+import java.lang.StringBuilder;
+import java.util.stream.Stream;
 
 
 import static java.lang.System.out;
@@ -41,8 +42,12 @@ public class TemporaryNode implements TemporaryNodeInterface {
             writer.write("START 1 angelina.puri@city.ac.uk:MyImplementation" + "\n");
             writer.flush();
 
-            // Return true if the 2D#4 network can be contacted
-            String response = reader.readLine();
+            // Read the response from the server
+            Stream<String> lines = reader.lines();
+            StringBuilder responseBuilder = new StringBuilder();
+            lines.forEach(line -> responseBuilder.append(line).append("\n"));
+            String response = responseBuilder.toString();
+            
             // Return false if the 2D#4 network can't be contacted
             System.out.println(response);
             return response != null && response.startsWith("START 1 ");
@@ -90,16 +95,10 @@ public class TemporaryNode implements TemporaryNodeInterface {
             writer.write(key);
             writer.flush();
 
-
-            // Read the response from the server
-            StringBuilder responseBuilder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                responseBuilder.append(line).append("\n");
+            String response;
+            while((response = reader.readLine()) != null){
+                response=response+reader.readLine();
             }
-            String response = responseBuilder.toString();
-
-            // Parse the response to extract the value
             // Return the string if the get worked
             if (response != null && response.startsWith("VALUE ")) {
                 return response;

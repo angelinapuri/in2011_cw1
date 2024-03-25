@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.Socket;
-import java.lang.StringBuilder;
+//import java.lang.StringBuilder;
 
 
 import static java.lang.System.out;
@@ -91,14 +91,17 @@ public class TemporaryNode implements TemporaryNodeInterface {
             writer.flush();
 
 
+            // Read the response from the server
             StringBuilder responseBuilder = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
                 responseBuilder.append(line).append("\n");
             }
             String response = responseBuilder.toString();
+
+            // Parse the response to extract the value
             // Return the string if the get worked
-            if (response.startsWith("VALUE ")) {
+            if (response != null && response.startsWith("VALUE ")) {
                 return response;
             }
 

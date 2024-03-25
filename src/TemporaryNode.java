@@ -58,7 +58,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
         int valueLines = value.split("\n").length;
         try {
             writer.write("PUT? " + keyLines + " " + valueLines + "\n");
-            writer.write(key + "\n");
+            writer.write(key);
             writer.write(value);
             writer.flush();
 
@@ -92,10 +92,9 @@ public class TemporaryNode implements TemporaryNodeInterface {
             writer.flush();
 
             StringBuilder responseBuilder = new StringBuilder();
-            char[] buffer = new char[4096];
-            int bytesRead;
-            while ((bytesRead = reader.read(buffer)) != -1) {
-                responseBuilder.append(buffer, 0, bytesRead);
+            String line;
+            while ((line = reader.readLine()) != null) {
+                responseBuilder.append(line);
             }
             String response = responseBuilder.toString();
 

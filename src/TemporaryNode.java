@@ -64,11 +64,11 @@ public class TemporaryNode implements TemporaryNodeInterface {
             //Return true if the store worked
             String response = reader.readLine();
             System.out.println(response);
-            if (response.equals("SUCCESS")) {
-                return true;
+            if (response != null && response.startsWith("SUCCESS ")) {
+                    return true;
             }
             // Return false if the store failed
-            else if (response.equals("FAILED")) {
+            else if (response != null && response.startsWith("FAILED ")) {
                 return false;
             }
             else {
@@ -90,7 +90,13 @@ public class TemporaryNode implements TemporaryNodeInterface {
             writer.write(key);
             writer.flush();
 
-            String response = reader.readLine();
+
+            StringBuilder responseBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                responseBuilder.append(line).append("\n");
+            }
+            String response = responseBuilder.toString();
             // Return the string if the get worked
             if (response != null && response.startsWith("VALUE ")) {
                 return response;

@@ -96,7 +96,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
             }
 
             // Return the string if the get worked
-            if (response.startsWith("VALUE ")) {
+            if (response != null && response.startsWith("VALUE ")) {
                 return response;
             }
 

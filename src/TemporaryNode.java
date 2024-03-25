@@ -89,10 +89,12 @@ public class TemporaryNode implements TemporaryNodeInterface {
             writer.write(key);
             writer.flush();
 
-            String response;
-            while((response=reader.readLine()) != null){
-                return response;
+            String line;
+            String response = null;
+            while((line=reader.readLine()) != null){
+                response=response+line;
             }
+            return response;
 
             // Return the string if the get worked
          //   if (response.startsWith("VALUE ")) {

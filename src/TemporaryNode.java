@@ -58,7 +58,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
         int valueLines = value.split("\n").length;
         try {
             writer.write("PUT? " + keyLines + " " + valueLines + "\n");
-            writer.write(key);
+            writer.write(key + "\n");
             writer.write(value);
             writer.flush();
 

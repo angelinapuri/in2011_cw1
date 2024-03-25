@@ -100,12 +100,13 @@ public class TemporaryNode implements TemporaryNodeInterface {
            // }
 
             // Return null if it didn't
-            else {
-                return "NOPE";
-            }
+      //      else {
+        //        return "NOPE";
+          //  }
         } catch (IOException e) {
             System.err.println("IOException occurred: " + e.getMessage());
             return null;
         }
+        return key;
     }
 }

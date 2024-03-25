@@ -38,12 +38,13 @@ public class TemporaryNode implements TemporaryNodeInterface {
             writer = new OutputStreamWriter(socket.getOutputStream());
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            writer.write("START 1 " + startingNodeName + "\n");
+            writer.write("START 1 angelina.puri@city.ac.uk:MyImplementation" + "\n");
             writer.flush();
 
             // Return true if the 2D#4 network can be contacted
             String response = reader.readLine();
             // Return false if the 2D#4 network can't be contacted
+            System.out.println(response);
             return response != null && response.startsWith("START 1 ");
         } catch (Exception e) {
             System.err.println("IOException occurred: " + e.getMessage());
@@ -55,15 +56,14 @@ public class TemporaryNode implements TemporaryNodeInterface {
         int keyLines = key.split("\n").length;
         int valueLines = value.split("\n").length;
         try {
-            writer = new OutputStreamWriter(socket.getOutputStream());
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             writer.write("PUT? " + keyLines + " " + valueLines + "\n");
-            writer.write(key + "\n");
-            writer.write(value+ "\n");
+            writer.write(key);
+            writer.write(value);
             writer.flush();
 
             //Return true if the store worked
             String response = reader.readLine();
+            System.out.println(response);
             if (response.equals("SUCCESS")) {
                 return true;
             }
@@ -86,10 +86,8 @@ public class TemporaryNode implements TemporaryNodeInterface {
         int keyLines = key.split("\n").length;
         try {
             // Return the string if the get worked
-            writer = new OutputStreamWriter(socket.getOutputStream());
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             writer.write("GET? " + keyLines + "\n");
-            writer.write(key + "\n");
+            writer.write(key);
             writer.flush();
 
             String response = reader.readLine();

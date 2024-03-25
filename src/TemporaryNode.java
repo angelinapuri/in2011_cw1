@@ -92,9 +92,10 @@ public class TemporaryNode implements TemporaryNodeInterface {
             writer.flush();
 
             StringBuilder responseBuilder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                responseBuilder.append(line).append("\n");
+            char[] buffer = new char[4096];
+            int bytesRead;
+            while ((bytesRead = reader.read(buffer)) != -1) {
+                responseBuilder.append(buffer, 0, bytesRead);
             }
             String response = responseBuilder.toString();
 

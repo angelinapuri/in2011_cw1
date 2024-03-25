@@ -12,8 +12,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.StringBuilder;
+
 
 import static java.lang.System.out;
 
@@ -98,7 +98,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
             }
             String response = responseBuilder.toString();
             // Return the string if the get worked
-            if (response != null && response.startsWith("VALUE ")) {
+            if (response.startsWith("VALUE ")) {
                 return response;
             }
 

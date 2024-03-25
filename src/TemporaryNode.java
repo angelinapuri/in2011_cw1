@@ -13,8 +13,6 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.Socket;
 import java.lang.StringBuilder;
-import java.util.stream.Stream;
-
 
 import static java.lang.System.out;
 
@@ -91,12 +89,11 @@ public class TemporaryNode implements TemporaryNodeInterface {
             writer.write(key);
             writer.flush();
 
-            StringBuilder responseBuilder = new StringBuilder();
+            String response = "";
             String line;
             while ((line = reader.readLine()) != null) {
-                responseBuilder.append(line);
+                response += line + "\n";
             }
-            String response = responseBuilder.toString();
 
             // Return the string if the get worked
             if (response.startsWith("VALUE ")) {

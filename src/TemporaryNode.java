@@ -13,6 +13,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.Socket;
 import java.lang.StringBuilder;
+import java.util.Map;
 
 import static java.lang.System.out;
 
@@ -29,6 +30,8 @@ public class TemporaryNode implements TemporaryNodeInterface {
     private Socket socket;
     private Writer writer;
     private BufferedReader reader;
+    private NetworkMap networkMap;
+
 
     public boolean start(String startingNodeName, String startingNodeAddress) {
         try {
@@ -55,28 +58,34 @@ public class TemporaryNode implements TemporaryNodeInterface {
         int keyLines = key.split("\n").length;
         int valueLines = value.split("\n").length;
         try {
-            writer.write("PUT? " + keyLines + " " + valueLines + "\n");
-            writer.write(key);
-            writer.write(value);
-            writer.flush();
+            writer.write("NEAREST? " + HashID.computeHashID(key) + "\n");
+            String response1 = reader.readLine();
+            System.out.println(response1);
+            if(response1.startsWith("NODES")) {
+                writer.write("PUT? " + keyLines + " " + valueLines + "\n");
+                writer.write(key);
+                writer.write(value);
+                writer.flush();
 
-            //Return true if the store worked
-            String response = reader.readLine();
-            System.out.println(response);
-            if (response != null && response.startsWith("SUCCESS ")) {
+                //Return true if the store worked
+                String response2 = reader.readLine();
+                System.out.println(response2);
+                if (response2 != null && response2.startsWith("SUCCESS ")) {
                     return true;
-            }
-            // Return false if the store failed
-            else if (response != null && response.startsWith("FAILED ")) {
-                return false;
-            }
-            else {
-                System.err.println("Unexpected response: " + response);
-                return false;
+                }
+                // Return false if the store failed
+                else if (response2 != null && response2.startsWith("FAILED ")) {
+                    return false;
+                } else {
+                    System.err.println("Unexpected response: " + response2);
+                    return false;
+                }
             }
         } catch (IOException e) {
             System.err.println("IOException occurred: " + e.getMessage());
             return false;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -84,31 +93,29 @@ public class TemporaryNode implements TemporaryNodeInterface {
     public String get(String key) {
         int keyLines = key.split("\n").length;
         try {
-            // Return the string if the get worked
-            writer.write("GET? " + keyLines + "\n");
-            writer.write(key);
-            writer.flush();
+            writer.write("NEAREST? " + HashID.computeHashID(key) + "\n");
+            String response1 = reader.readLine();
+            System.out.println(response1);
+            if(response1.startsWith("NODES")) {
+                // Return the string if the get worked
+                writer.write("GET? " + keyLines + "\n");
+                writer.write(key);
+                writer.flush();
 
-            String line;
-            String response = null;
-            while((line=reader.readLine()) != null){
-                response=response+line;
+                String response2 = reader.readLine();
+
+                //Return the string if the get worked
+                if (response2 != null && response2.startsWith("VALUE ")) {
+                    return response2;
+                }
+                //Return null if it didn't
+                else {
+                    return "NOPE";
+                }
             }
-            return response;
-
-            // Return the string if the get worked
-         //   if (response.startsWith("VALUE ")) {
-           //     return response;
-           // }
-
-            // Return null if it didn't
-      //      else {
-        //        return "NOPE";
-          //  }
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("IOException occurred: " + e.getMessage());
             return null;
         }
-        return key;
     }
 }

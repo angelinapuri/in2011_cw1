@@ -61,9 +61,8 @@ public class TemporaryNode implements TemporaryNodeInterface {
             writer.write("NEAREST? " + HashID.computeHashID(key) + "\n");
             writer.flush();
 
-            String response1 = reader.readLine();
+            String response1 = readUntilEnd(reader);
             System.out.println(response1);
-
             if(response1.startsWith("NODES")) {
                 writer.write("PUT? " + keyLines + " " + valueLines + "\n");
                 writer.write(key);
@@ -71,7 +70,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
                 writer.flush();
 
                 //Return true if the store worked
-                String response2 = reader.readLine();
+                String response2 = readUntilEnd(reader);
                 System.out.println(response2);
                 if (response2 != null && response2.startsWith("SUCCESS ")) {
                     return true;
@@ -98,45 +97,26 @@ public class TemporaryNode implements TemporaryNodeInterface {
         int keyLines = key.split("\n").length;
         try {
             writer.write("NEAREST? " + HashID.computeHashID(key) + "\n");
-            writer.flush();
-
-
-            StringBuilder responseBuilder1 = new StringBuilder();
-            while (reader.ready()) {
-                String line = reader.readLine();
-                if (line != null) {
-                    responseBuilder1.append(line).append("\n");
-                }
-            }
-            String response1 = responseBuilder1.toString();
+            String response1 = readUntilEnd(reader);
             System.out.println(response1);
-
             if(response1.startsWith("NODES")) {
                 // Return the string if the get worked
                 writer.write("GET? " + keyLines + "\n");
                 writer.write(key);
                 writer.flush();
 
-                StringBuilder responseBuilder2 = new StringBuilder();
-                while (reader.ready()) {
-                    String line = reader.readLine();
-                    if (line != null) {
-                        responseBuilder2.append(line).append("\n");
-                    }
-                }
-                String response2 = responseBuilder2.toString();
-
-                if (response2.startsWith("VALUE ")) {
+                String response2 = readUntilEnd(reader);
+                if(response2.startsWith("VALUE ")){
+                while(response2 != null){
                     System.out.println(response2);
+                    response2 = reader.readLine();
                     return response2;
-
-                }
-            }
+                }}
                 //Return null if it didn't
                 else {
                     return "NOPE";
                 }
-
+            }
         } catch (Exception e) {
             System.err.println("IOException occurred: " + e.getMessage());
             return null;
@@ -145,3 +125,14 @@ public class TemporaryNode implements TemporaryNodeInterface {
     }
 }
 
+    private String readUntilEnd(BufferedReader reader) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        while (reader.ready()) {
+            String line = reader.readLine();
+            if (line == null) {
+                break; // End of stream reached
+            }
+            builder.append(line).append("\n");
+        }
+        return builder.toString();
+    }

@@ -15,6 +15,7 @@ import java.net.Socket;
 import java.lang.StringBuilder;
 import java.util.Map;
 
+import static java.lang.Integer.parseInt;
 import static java.lang.System.out;
 
 // DO NOT EDIT starts
@@ -36,7 +37,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
     public boolean start(String startingNodeName, String startingNodeAddress) {
         try {
             //Connect to the starting node
-            socket = new Socket(startingNodeAddress.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
+            socket = new Socket(startingNodeAddress.split(":")[0], parseInt(startingNodeAddress.split(":")[1]));
             writer = new OutputStreamWriter(socket.getOutputStream());
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
@@ -61,8 +62,9 @@ public class TemporaryNode implements TemporaryNodeInterface {
             writer.write("NEAREST? " + HashID.computeHashID(key) + "\n");
             writer.flush();
 
-            String response1 = readUntilEnd(reader);
+            String response1 = reader.readLine();
             System.out.println(response1);
+
             if (response1.startsWith("NODES")) {
                 writer.write("PUT? " + keyLines + " " + valueLines + "\n");
                 writer.write(key);
@@ -70,7 +72,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
                 writer.flush();
 
                 //Return true if the store worked
-                String response2 = readUntilEnd(reader);
+                String response2 = reader.readLine();
                 System.out.println(response2);
                 if (response2 != null && response2.startsWith("SUCCESS ")) {
                     return true;
@@ -94,50 +96,34 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
 
     public String get(String key) {
-        int keyLines = key.split("\n").length;
         try {
-            writer.write("NEAREST? " + HashID.computeHashID(key) + "\n");
-            String response1 = readUntilEnd(reader);
-            System.out.println(response1);
-            if (response1.startsWith("NODES")) {
-                // Return the string if the get worked
-                writer.write("GET? " + keyLines + "\n");
-                writer.write(key);
-                writer.flush();
+            String[] keyLines = key.split("\n");
+            // Return the string if the get worked
+            writer.write("GET? " + keyLines.length + "\n");
+            writer.flush();
 
-                String response2 = readUntilEnd(reader);
-                if (response2.startsWith("VALUE ")) {
-                    while (response2 != null) {
-                        System.out.println(response2);
-                        response2 = reader.readLine();
-                        return response2;
+            String response = reader.readLine();
+            if (response.startsWith("VALUE")) {
+                // Value found, parse and return
+                int numberOfLines = Integer.parseInt(response.split(" ")[1]);
+                StringBuilder valueBuilder = new StringBuilder();
+                for (int i = 0; i < numberOfLines; i++) {
+                    String line = reader.readLine();
+                    if (line == null) {
+                        // End of stream reached unexpectedly
+                        throw new IOException("Unexpected end of stream while reading value");
                     }
+                    valueBuilder.append(line).append("\n");
                 }
-                //Return null if it didn't
-                else {
-                    return "NOPE";
-                }
+                return valueBuilder.toString().trim(); // Trim any trailing newline
+            } else {
+                // Value not found
+                return "NOPE";
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.err.println("IOException occurred: " + e.getMessage());
             return null;
         }
-        return null;
-    }
-
-    private String readUntilEnd(BufferedReader reader) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        try {
-            while (reader.ready()) {
-                String line = reader.readLine();
-                if (line == null) {
-                    break; // End of stream reached
-                }
-                builder.append(line).append("\n");
-            }
-        } catch (IOException e) {
-            throw new IOException("Error reading from input stream: " + e.getMessage());
-        }
-        return builder.toString();
     }
 }
+

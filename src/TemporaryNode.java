@@ -65,11 +65,11 @@ public class TemporaryNode implements TemporaryNodeInterface {
                 //Return true if the store worked
                 String response2 = reader.readLine();
                 System.out.println(response2);
-                if (response2 != null && response2.startsWith("SUCCESS ")) {
+                if (response2.startsWith("SUCCESS")) {
                     return true;
                 }
                 // Return false if the store failed
-                else if (response2 != null && response2.startsWith("FAILED ")) {
+                else if (response2.startsWith("FAILED")) {
                     return false;
                 } else {
                     System.err.println("Unexpected response: " + response2);

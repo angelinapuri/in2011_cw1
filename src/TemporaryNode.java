@@ -94,6 +94,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
             // Send GET request
             String[] keyLines = key.split("\n");
             writer.write("GET? " + keyLines.length + "\n" + key + "\n");
+            writer.flush();
 
             // Read GET response
             String response2 = readUntilEnd(reader);

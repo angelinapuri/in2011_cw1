@@ -100,7 +100,15 @@ public class TemporaryNode implements TemporaryNodeInterface {
             writer.write("NEAREST? " + HashID.computeHashID(key) + "\n");
             writer.flush();
 
-            String response1 = reader.readLine();
+
+            StringBuilder responseBuilder1 = new StringBuilder();
+            while (reader.ready()) {
+                String line = reader.readLine();
+                if (line != null) {
+                    responseBuilder1.append(line).append("\n");
+                }
+            }
+            String response1 = responseBuilder1.toString();
             System.out.println(response1);
 
             if(response1.startsWith("NODES")) {
@@ -109,14 +117,14 @@ public class TemporaryNode implements TemporaryNodeInterface {
                 writer.write(key);
                 writer.flush();
 
-                StringBuilder responseBuilder = new StringBuilder();
+                StringBuilder responseBuilder2 = new StringBuilder();
                 while (reader.ready()) {
                     String line = reader.readLine();
                     if (line != null) {
-                        responseBuilder.append(line).append("\n");
+                        responseBuilder2.append(line).append("\n");
                     }
                 }
-                String response2 = responseBuilder.toString();
+                String response2 = responseBuilder2.toString();
 
                 if (response2.startsWith("VALUE ")) {
                     System.out.println(response2);

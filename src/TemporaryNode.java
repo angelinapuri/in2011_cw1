@@ -87,6 +87,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return false;
     }
 
 
@@ -117,5 +118,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
             System.err.println("IOException occurred: " + e.getMessage());
             return null;
         }
+        return key;
     }
 }

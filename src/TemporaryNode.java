@@ -63,7 +63,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
             String response1 = readUntilEnd(reader);
             System.out.println(response1);
-            if(response1.startsWith("NODES")) {
+            if (response1.startsWith("NODES")) {
                 writer.write("PUT? " + keyLines + " " + valueLines + "\n");
                 writer.write(key);
                 writer.write(value);
@@ -99,19 +99,20 @@ public class TemporaryNode implements TemporaryNodeInterface {
             writer.write("NEAREST? " + HashID.computeHashID(key) + "\n");
             String response1 = readUntilEnd(reader);
             System.out.println(response1);
-            if(response1.startsWith("NODES")) {
+            if (response1.startsWith("NODES")) {
                 // Return the string if the get worked
                 writer.write("GET? " + keyLines + "\n");
                 writer.write(key);
                 writer.flush();
 
                 String response2 = readUntilEnd(reader);
-                if(response2.startsWith("VALUE ")){
-                while(response2 != null){
-                    System.out.println(response2);
-                    response2 = reader.readLine();
-                    return response2;
-                }}
+                if (response2.startsWith("VALUE ")) {
+                    while (response2 != null) {
+                        System.out.println(response2);
+                        response2 = reader.readLine();
+                        return response2;
+                    }
+                }
                 //Return null if it didn't
                 else {
                     return "NOPE";
@@ -123,16 +124,20 @@ public class TemporaryNode implements TemporaryNodeInterface {
         }
         return null;
     }
-}
 
     private String readUntilEnd(BufferedReader reader) throws IOException {
         StringBuilder builder = new StringBuilder();
-        while (reader.ready()) {
-            String line = reader.readLine();
-            if (line == null) {
-                break; // End of stream reached
+        try {
+            while (reader.ready()) {
+                String line = reader.readLine();
+                if (line == null) {
+                    break; // End of stream reached
+                }
+                builder.append(line).append("\n");
             }
-            builder.append(line).append("\n");
+        } catch (IOException e) {
+            throw new IOException("Error reading from input stream: " + e.getMessage());
         }
         return builder.toString();
     }
+}

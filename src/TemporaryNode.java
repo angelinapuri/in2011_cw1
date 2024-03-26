@@ -99,23 +99,23 @@ public class TemporaryNode implements TemporaryNodeInterface {
         try {
             String[] keyLines = key.split("\n");
             // Return the string if the get worked
-            writer.write("GET? " + keyLines.length + "\n");
+            writer.write("GET? " + keyLines.length + "\n" + key + "\n");
             writer.flush();
 
             String response = reader.readLine();
             if (response.startsWith("VALUE")) {
                 // Value found, parse and return
                 int numberOfLines = Integer.parseInt(response.split(" ")[1]);
-                StringBuilder valueBuilder = new StringBuilder();
+                StringBuilder responseBuilder = new StringBuilder();
                 for (int i = 0; i < numberOfLines; i++) {
                     String line = reader.readLine();
                     if (line == null) {
                         // End of stream reached unexpectedly
                         throw new IOException("Unexpected end of stream while reading value");
                     }
-                    valueBuilder.append(line).append("\n");
+                    responseBuilder.append(line).append("\n");
                 }
-                return valueBuilder.toString().trim(); // Trim any trailing newline
+                return responseBuilder.toString().trim(); // Trim any trailing newline
             } else {
                 // Value not found
                 return "NOPE";

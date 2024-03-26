@@ -66,7 +66,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
             String response1 = reader.readLine();
             System.out.println(response1);
 
-            if (response1.startsWith("NODES")) {
                 writer.write("PUT? " + keyLines.length + " " + valueLines.length + "\n" + key + "\n" + value + "\n");
                 writer.flush();
 
@@ -83,7 +82,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
                     System.err.println("Unexpected response: " + response2);
                     return false;
                 }
-            }
         } catch (IOException e) {
             System.err.println("IOException occurred: " + e.getMessage());
             return false;

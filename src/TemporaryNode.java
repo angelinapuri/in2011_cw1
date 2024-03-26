@@ -97,15 +97,13 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
     public String get(String key) {
         try {
-            String[] keyLines = key.split("\n");
-            // Return the string if the get worked
-            writer.write("GET? " + keyLines.length + "\n" + key + "\n");
+            writer.write("NEAREST? " + HashID.computeHashID(key) + "\n");
             writer.flush();
 
-            String response = reader.readLine();
-            if (response.startsWith("VALUE")) {
+            String response1 = reader.readLine();
+            if (response1.startsWith("NODES")) {
                 // Value found, parse and return
-                int numberOfLines = Integer.parseInt(response.split(" ")[1]);
+                int numberOfLines = Integer.parseInt(response1.split(" ")[1]);
                 StringBuilder responseBuilder = new StringBuilder();
                 for (int i = 0; i < numberOfLines; i++) {
                     String line = reader.readLine();
@@ -115,13 +113,40 @@ public class TemporaryNode implements TemporaryNodeInterface {
                     }
                     responseBuilder.append(line).append("\n");
                 }
-                return responseBuilder.toString().trim(); // Trim any trailing newline
+                System.out.println(responseBuilder.toString().trim());
+
+                String[] keyLines = key.split("\n");
+                // Return the string if the get worked
+                writer.write("GET? " + keyLines.length + "\n" + key + "\n");
+                writer.flush();
+
+                String response2 = reader.readLine();
+                if (response2.startsWith("VALUE")) {
+                    // Value found, parse and return
+                    int numberOfValueLines = Integer.parseInt(response2.split(" ")[1]);
+                    StringBuilder valueBuilder = new StringBuilder();
+                    for (int i = 0; i < numberOfValueLines; i++) {
+                        String line = reader.readLine();
+                        if (line == null) {
+                            // End of stream reached unexpectedly
+                            throw new IOException("Unexpected end of stream while reading value");
+                        }
+                        valueBuilder.append(line).append("\n");
+                    }
+                    return valueBuilder.toString().trim();
+                } else {
+                    // Value not found
+                    return "NOPE";
+                }
             } else {
-                // Value not found
+                // No NODES response, indicating failure
                 return "NOPE";
             }
         } catch (IOException e) {
             System.err.println("IOException occurred: " + e.getMessage());
+            return null;
+        } catch (Exception e) {
+            System.err.println("Exception occurred: " + e.getMessage());
             return null;
         }
     }

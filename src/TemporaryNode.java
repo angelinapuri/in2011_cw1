@@ -88,7 +88,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return false;
     }
 
 

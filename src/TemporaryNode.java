@@ -56,8 +56,9 @@ public class TemporaryNode implements TemporaryNodeInterface {
     }
 
     public boolean store(String key, String value) {
-        int keyLines = key.split("\n").length;
-        int valueLines = value.split("\n").length;
+        String[] keyLines = key.split("\n");
+        String[] valueLines = value.split("\n");
+
         try {
             writer.write("NEAREST? " + HashID.computeHashID(key) + "\n");
             writer.flush();
@@ -66,9 +67,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
             System.out.println(response1);
 
             if (response1.startsWith("NODES")) {
-                writer.write("PUT? " + keyLines + " " + valueLines + "\n");
-                writer.write(key);
-                writer.write(value);
+                writer.write("PUT? " + keyLines.length + " " + valueLines.length + "\n" + key + "\n" + value + "\n");
                 writer.flush();
 
                 //Return true if the store worked
@@ -97,26 +96,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
     public String get(String key) {
         try {
-            writer.write("NEAREST? " + HashID.computeHashID(key) + "\n");
-            writer.flush();
-
-            String response1 = reader.readLine();
-            if (response1.startsWith("NODES")) {
-                // Value found, parse and return
-                int numberOfLines1 = Integer.parseInt(response1.split(" ")[1]);
-                StringBuilder responseBuilder = new StringBuilder();
-                for (int i = 0; i < numberOfLines1; i++) {
-                    String line = reader.readLine();
-                    if (line == null) {
-                        // End of stream reached unexpectedly
-                        throw new IOException("Unexpected end of stream while reading value");
-                    }
-                    responseBuilder.append(line).append("\n");
-                }
-                System.out.println(responseBuilder.toString().trim());
-            }
-
-                String[] keyLines = key.split("\n");
+            String[] keyLines = key.split("\n");
                 // Return the string if the get worked
                 writer.write("GET? " + keyLines.length + "\n" + key + "\n");
                 writer.flush();

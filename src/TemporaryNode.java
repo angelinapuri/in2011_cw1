@@ -59,8 +59,11 @@ public class TemporaryNode implements TemporaryNodeInterface {
         int valueLines = value.split("\n").length;
         try {
             writer.write("NEAREST? " + HashID.computeHashID(key) + "\n");
+            writer.flush();
+
             String response1 = reader.readLine();
             System.out.println(response1);
+
             if(response1.startsWith("NODES")) {
                 writer.write("PUT? " + keyLines + " " + valueLines + "\n");
                 writer.write(key);
@@ -95,29 +98,42 @@ public class TemporaryNode implements TemporaryNodeInterface {
         int keyLines = key.split("\n").length;
         try {
             writer.write("NEAREST? " + HashID.computeHashID(key) + "\n");
+            writer.flush();
+
             String response1 = reader.readLine();
             System.out.println(response1);
+
             if(response1.startsWith("NODES")) {
                 // Return the string if the get worked
                 writer.write("GET? " + keyLines + "\n");
                 writer.write(key);
                 writer.flush();
 
-                String response2 = reader.readLine();
-
-                //Return the string if the get worked
-                if (response2 != null && response2.startsWith("VALUE ")) {
-                    return response2;
+                StringBuilder responseBuilder = new StringBuilder();
+                while (reader.ready()) {
+                    String line = reader.readLine();
+                    if (line != null) {
+                        responseBuilder.append(line).append("\n");
+                    }
                 }
+                String response2 = responseBuilder.toString();
+
+                if (response2.startsWith("VALUE ")) {
+                    System.out.println(response2);
+                    return response2;
+
+                }
+            }
                 //Return null if it didn't
                 else {
                     return "NOPE";
                 }
-            }
+
         } catch (Exception e) {
             System.err.println("IOException occurred: " + e.getMessage());
             return null;
         }
-        return key;
+        return null;
     }
 }
+

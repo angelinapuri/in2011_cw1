@@ -103,9 +103,9 @@ public class TemporaryNode implements TemporaryNodeInterface {
             String response1 = reader.readLine();
             if (response1.startsWith("NODES")) {
                 // Value found, parse and return
-                int numberOfLines = Integer.parseInt(response1.split(" ")[1]);
+                int numberOfLines1 = Integer.parseInt(response1.split(" ")[1]);
                 StringBuilder responseBuilder = new StringBuilder();
-                for (int i = 0; i < numberOfLines; i++) {
+                for (int i = 0; i < numberOfLines1; i++) {
                     String line = reader.readLine();
                     if (line == null) {
                         // End of stream reached unexpectedly
@@ -114,6 +114,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
                     responseBuilder.append(line).append("\n");
                 }
                 System.out.println(responseBuilder.toString().trim());
+            }
 
                 String[] keyLines = key.split("\n");
                 // Return the string if the get worked
@@ -123,9 +124,9 @@ public class TemporaryNode implements TemporaryNodeInterface {
                 String response2 = reader.readLine();
                 if (response2.startsWith("VALUE")) {
                     // Value found, parse and return
-                    int numberOfValueLines = Integer.parseInt(response2.split(" ")[1]);
+                    int numberOfValueLines2 = Integer.parseInt(response2.split(" ")[1]);
                     StringBuilder valueBuilder = new StringBuilder();
-                    for (int i = 0; i < numberOfValueLines; i++) {
+                    for (int i = 0; i < numberOfValueLines2; i++) {
                         String line = reader.readLine();
                         if (line == null) {
                             // End of stream reached unexpectedly
@@ -138,10 +139,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
                     // Value not found
                     return "NOPE";
                 }
-            } else {
-                // No NODES response, indicating failure
-                return "NOPE";
-            }
         } catch (IOException e) {
             System.err.println("IOException occurred: " + e.getMessage());
             return null;

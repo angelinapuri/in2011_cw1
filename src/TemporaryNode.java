@@ -96,29 +96,51 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
     public String get(String key) {
         try {
-            String[] keyLines = key.split("\n");
-                // Return the string if the get worked
-                writer.write("GET? " + keyLines.length + "\n" + key + "\n");
-                writer.flush();
+            // Send NEAREST request
+            writer.write("NEAREST? " + HashID.computeHashID(key) + "\n");
+            writer.flush();
 
-                String response2 = reader.readLine();
-                if (response2.startsWith("VALUE")) {
-                    // Value found, parse and return
-                    int numberOfValueLines2 = Integer.parseInt(response2.split(" ")[1]);
-                    StringBuilder valueBuilder = new StringBuilder();
-                    for (int i = 0; i < numberOfValueLines2; i++) {
-                        String line = reader.readLine();
-                        if (line == null) {
-                            // End of stream reached unexpectedly
-                            throw new IOException("Unexpected end of stream while reading value");
-                        }
-                        valueBuilder.append(line).append("\n");
+            // Read NEAREST response
+            String response1 = reader.readLine();
+            if (response1.startsWith("NODES")) {
+                int numberOfNodes = Integer.parseInt(response1.split(" ")[1]);
+                // Read and process node information
+                StringBuilder nodeInfoBuilder = new StringBuilder();
+                for (int i = 0; i < numberOfNodes; i++) {
+                    String line = reader.readLine();
+                    if (line == null) {
+                        // End of stream reached unexpectedly
+                        throw new IOException("Unexpected end of stream while reading node information");
                     }
-                    return valueBuilder.toString().trim();
-                } else {
-                    // Value not found
-                    return "NOPE";
+                    nodeInfoBuilder.append(line).append("\n");
                 }
+                System.out.println(nodeInfoBuilder.toString().trim());
+            }
+
+            // Send GET request
+            String[] keyLines = key.split("\n");
+            writer.write("GET? " + keyLines.length + "\n" + key + "\n");
+            writer.flush();
+
+            // Read GET response
+            String response2 = reader.readLine();
+            if (response2.startsWith("VALUE")) {
+                // Value found, parse and return
+                int numberOfValueLines = Integer.parseInt(response2.split(" ")[1]);
+                StringBuilder valueBuilder = new StringBuilder();
+                for (int i = 0; i < numberOfValueLines; i++) {
+                    String line = reader.readLine();
+                    if (line == null) {
+                        // End of stream reached unexpectedly
+                        throw new IOException("Unexpected end of stream while reading value");
+                    }
+                    valueBuilder.append(line).append("\n");
+                }
+                return valueBuilder.toString().trim();
+            } else {
+                // Value not found
+                return "NOPE";
+            }
         } catch (IOException e) {
             System.err.println("IOException occurred: " + e.getMessage());
             return null;
@@ -127,5 +149,3 @@ public class TemporaryNode implements TemporaryNodeInterface {
             return null;
         }
     }
-}
-

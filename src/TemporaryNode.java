@@ -86,6 +86,12 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
     public String get(String key) {
         try {
+            writer.write("NEAREST? " + HashID.computeHashID(key) + "\n");
+            writer.flush();
+
+            String response1 = reader.readLine();
+            System.out.println(response1);
+
             // Send GET request
             String[] keyLines = key.split("\n");
             writer.write("GET? " + keyLines.length + "\n" + key + "\n");

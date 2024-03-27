@@ -64,15 +64,11 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
                 //Return true if the store worked
                 String response2 = readUntilEnd(reader);
-                System.out.println(response2);
                 if (response2.startsWith("SUCCESS")) {
                     return true;
                 }
                 // Return false if the store failed
                 else if (response2.startsWith("FAILED")) {
-                    return false;
-                } else {
-                    System.err.println("Unexpected response: " + response2);
                     return false;
                 }
         } catch (IOException e) {
@@ -81,6 +77,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return false;
     }
 
 

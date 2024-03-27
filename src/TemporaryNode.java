@@ -94,9 +94,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
                 // Value not found
                 return "NOPE";
             }
-        } catch (IOException e) {
-            System.err.println("IOException occurred: " + e.getMessage());
-            return null;
         } catch (Exception e) {
             System.err.println("Exception occurred: " + e.getMessage());
             return null;

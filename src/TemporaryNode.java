@@ -63,7 +63,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
                 writer.flush();
 
                 //Return true if the store worked
-                String response2 = reader.readLine();
+                String response2 = readUntilEnd(reader);
                 System.out.println(response2);
                 if (response2.startsWith("SUCCESS")) {
                     return true;

@@ -52,17 +52,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
         System.err.println("IOException occurred: " + e.getMessage());
         return false;
         }
-
-        finally {
-        try {
-            if (socket != null) {
-                socket.close();
-            }
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        }
     }
 
     public boolean store(String key, String value) {
@@ -84,6 +73,16 @@ public class TemporaryNode implements TemporaryNodeInterface {
         } catch (IOException e) {
             System.err.println("IOException occurred: " + e.getMessage());
             return false;
+        }
+        finally {
+            try {
+                if (socket != null) {
+                    socket.close();
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }
@@ -107,6 +106,16 @@ public class TemporaryNode implements TemporaryNodeInterface {
         } catch (Exception e) {
             System.err.println("Exception occurred: " + e.getMessage());
             return null;
+        }
+        finally {
+            try {
+                if (socket != null) {
+                    socket.close();
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
     private String readUntilEnd(BufferedReader reader) throws IOException {

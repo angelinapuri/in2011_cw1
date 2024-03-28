@@ -58,7 +58,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
         try {
             String[] keyLines = key.split("\n");
             String[] valueLines = value.split("\n");
-            writer.write("PUT? " + keyLines.length + " " + valueLines.length + "\n" + key + "\n" + value);
+            writer.write("PUT? " + keyLines.length + " " + valueLines.length + "\n" + key + "\n" + value + "\n");
             writer.flush();
 
             //Return true if the store worked
@@ -73,8 +73,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
         } catch (Exception e) {
             System.err.println("Exception occurred: " + e.getMessage());
             return false;
-        }
-        finally {
+        } finally {
             try {
                 if (socket != null) {
                     socket.close();
@@ -89,33 +88,34 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
     public String get(String key) {
         try {
-            // Send GET request
+
             String[] keyLines = key.split("\n");
-            writer.write("GET? " + keyLines.length + "\n" + key);
+            writer.write("GET? " + keyLines.length + "\n" + key + "\n");
             writer.flush();
 
-            // Read GET response
+            //Return true if the store worked
             String response = readUntilEnd(reader);
             if (response.startsWith("VALUE")) {
                 return response;
-            } else {
-                // Value not found
+            }
+            // Return false if the store failed
+            else {
                 return "NOPE";
             }
         } catch (Exception e) {
             System.err.println("Exception occurred: " + e.getMessage());
             return null;
-        }
-        finally {
+        } finally {
             try {
                 if (socket != null) {
                     socket.close();
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
+
     private String readUntilEnd(BufferedReader reader) throws IOException {
         StringBuilder responseBuilder = new StringBuilder();
         String line;
@@ -124,4 +124,27 @@ public class TemporaryNode implements TemporaryNodeInterface {
         }
         return responseBuilder.toString().trim();
     }
+
+   /** private String nearest(String string) throws Exception {
+        writer.write("NEAREST? " + HashID.computeHashID(string) + "\n");
+        writer.flush();
+
+        // Read NEAREST response
+        String response1 = reader.readLine();
+        if (response1.startsWith("NODES")) {
+            int numberOfNodes = Integer.parseInt(response1.split(" ")[1]);
+            // Read and process node information
+            StringBuilder nodeInfoBuilder = new StringBuilder();
+            for (int i = 0; i < numberOfNodes; i++) {
+                String line = reader.readLine();
+                if (line == null) {
+                    // End of stream reached unexpectedly
+                    throw new IOException("Unexpected end of stream while reading node information");
+                }
+                nodeInfoBuilder.append(line).append("\n");
+            }
+            System.out.println(nodeInfoBuilder.toString().trim());
+        }
+        return response1;
+    } */
 }

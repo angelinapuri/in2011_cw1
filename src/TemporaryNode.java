@@ -58,7 +58,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
         try {
             String[] keyLines = key.split("\n");
             String[] valueLines = value.split("\n");
-            writer.write("PUT? " + keyLines.length + " " + valueLines.length + "\n" + key + "\n" + value + "\n");
+            writer.write("PUT? " + keyLines.length + " " + valueLines.length + "\n" + key + "\n" + value);
             writer.flush();
 
             //Return true if the store worked
@@ -91,7 +91,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
         try {
             // Send GET request
             String[] keyLines = key.split("\n");
-            writer.write("GET? " + keyLines.length + "\n" + key + "\n");
+            writer.write("GET? " + keyLines.length + "\n" + key);
             writer.flush();
 
             // Read GET response

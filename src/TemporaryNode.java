@@ -59,13 +59,10 @@ public class TemporaryNode implements TemporaryNodeInterface {
         try {
             String[] keyLines = key.split("\n");
             String[] valueLines = value.split("\n");
-            writer.write("PUT? " + keyLines.length + " " + valueLines.length);
+            writer.write("PUT? " + keyLines.length + " " + valueLines.length + "\n");
             writer.write(key);
             writer.write(value);
-            System.out.println("GET? " + keyLines.length + " " + valueLines.length);
-            System.out.println(key);
-            System.out.println(value);
-            writer.flush();
+            System.out.println("GET? " + keyLines.length + "\n" + key + "\n" + value);
 
             //Return true if the store worked
             String response = readUntilEnd(reader);
@@ -95,11 +92,8 @@ public class TemporaryNode implements TemporaryNodeInterface {
     public String get(String key) {
         try {
             String[] keyLines = key.split("\n");
-            writer.write("GET? " + keyLines.length);
-            writer.write(key);
-            System.out.println("GET? " + keyLines.length);
-            System.out.println(key);
-            writer.flush();
+            writer.write("GET? " + keyLines.length + "\n" + key);
+            System.out.println("GET? " + keyLines.length + "\n" + key);
 
             //Return true if the store worked
             String response = readUntilEnd(reader);

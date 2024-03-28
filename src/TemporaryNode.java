@@ -103,18 +103,20 @@ public class TemporaryNode implements TemporaryNodeInterface {
                 // Value not found
                 return "NOPE";
             }
-        } catch (Exception e) {
-            System.err.println("Exception occurred: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("IOException occurred: " + e.getMessage());
             return null;
-        }
-        finally {
+        } finally {
             try {
-                socket.close();
+                if (socket != null) {
+                    socket.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
+
 
     private String readUntilEnd(BufferedReader reader) throws IOException {
         StringBuilder responseBuilder = new StringBuilder();

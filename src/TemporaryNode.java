@@ -17,6 +17,7 @@ import java.util.Map;
 
 import static java.lang.Integer.parseInt;
 import static java.lang.System.out;
+import static java.lang.System.setOut;
 
 // DO NOT EDIT starts
 interface TemporaryNodeInterface {
@@ -59,6 +60,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
             String[] keyLines = key.split("\n");
             String[] valueLines = value.split("\n");
             writer.write("PUT? " + keyLines.length + " " + valueLines.length + "\n" + key + "\n" + value + "\n");
+            System.out.println("PUT? " + keyLines.length + " " + valueLines.length + "\n" + key + "\n" + value + "\n");
             writer.flush();
 
             //Return true if the store worked
@@ -88,9 +90,9 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
     public String get(String key) {
         try {
-
             String[] keyLines = key.split("\n");
             writer.write("GET? " + keyLines.length + "\n" + key + "\n");
+            System.out.println("GET? " + keyLines.length + "\n" + key + "\n");
             writer.flush();
 
             //Return true if the store worked
@@ -112,7 +114,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                return null;
             }
         }
     }
@@ -126,8 +127,9 @@ public class TemporaryNode implements TemporaryNodeInterface {
         return responseBuilder.toString().trim();
     }
 
-   /** private String nearest(String string) throws Exception {
+ /**   private String nearest(String string) throws Exception {
         writer.write("NEAREST? " + HashID.computeHashID(string) + "\n");
+        System.out.println("NEAREST? " + HashID.computeHashID(string) + "\n");
         writer.flush();
 
         // Read NEAREST response
@@ -147,5 +149,5 @@ public class TemporaryNode implements TemporaryNodeInterface {
             System.out.println(nodeInfoBuilder.toString().trim());
         }
         return response1;
-    } */
+    }*/
 }

@@ -32,7 +32,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
     private Writer writer;
     private BufferedReader reader;
 
-
     public boolean start(String startingNodeName, String startingNodeAddress) {
         try {
             //Connect to the starting node
@@ -110,15 +109,13 @@ public class TemporaryNode implements TemporaryNodeInterface {
         }
         finally {
             try {
-                if (socket != null) {
-                    socket.close();
-                }
-            }
-            catch (IOException e) {
-                e.printStackTrace();
+                socket.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
     }
+    
     private String readUntilEnd(BufferedReader reader) throws IOException {
         StringBuilder responseBuilder = new StringBuilder();
         String line;

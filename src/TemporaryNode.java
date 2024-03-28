@@ -91,8 +91,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
         try {
             // Send GET request
             String[] keyLines = key.split("\n");
-            writer.write("GET? " + keyLines.length + "\n");
-            writer.write(key + "\n");
+            writer.write("GET? " + keyLines.length + "\n" + key + "\n");
             writer.flush();
 
             // Read GET response
@@ -103,10 +102,10 @@ public class TemporaryNode implements TemporaryNodeInterface {
                 // Value not found
                 return "NOPE";
             }
-        } catch (IOException e) {
-            System.err.println("IOException occurred: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Exception occurred: " + e.getMessage());
             return null;
-        } 
+        }
     }
 
 

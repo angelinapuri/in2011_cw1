@@ -32,75 +32,90 @@ public class TemporaryNode implements TemporaryNodeInterface {
     private Writer writer;
     private BufferedReader reader;
 
+
     public boolean start(String startingNodeName, String startingNodeAddress) {
         try {
-            // Connect to the starting node
-            socket = new Socket(startingNodeAddress.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
+            //Connect to the starting node
+            socket = new Socket(startingNodeAddress.split(":")[0], parseInt(startingNodeAddress.split(":")[1]));
             writer = new OutputStreamWriter(socket.getOutputStream());
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            // Send start message to the starting node
-            writer.write("START 1 " + startingNodeName + "\n");
+            writer.write("START 1 angelina.puri@city.ac.uk:MyImplementation" + "\n");
             writer.flush();
 
-            // Return true if the network can be contacted
+            // Return true if the 2D#4 network can be contacted
             String response = reader.readLine();
+            // Return false if the 2D#4 network can't be contacted
+            System.out.println(response);
             return response != null && response.startsWith("START 1 ");
-        } catch (IOException e) {
-            System.err.println("IOException occurred: " + e.getMessage());
-            return false;
+        } catch (Exception e) {
+        System.err.println("IOException occurred: " + e.getMessage());
+        return false;
+        }
+
+        finally {
+        try {
+            if (socket != null) {
+                socket.close();
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
         }
     }
 
     public boolean store(String key, String value) {
-        int keyLines = key.split("\n").length;
-        int valueLines = value.split("\n").length;
         try {
-            writer.write("PUT? " + keyLines + " " + valueLines + "\n");
-            writer.write(key + "\n");
-            writer.write(value);
+            String[] keyLines = key.split("\n");
+            String[] valueLines = value.split("\n");
+            writer.write("PUT? " + keyLines.length + " " + valueLines.length + "\n" + key + "\n" + value + "\n");
             writer.flush();
 
             //Return true if the store worked
-            String response = reader.readLine();
-            if (response.equals("SUCCESS")) {
+            String response = readUntilEnd(reader);
+            if (response.startsWith("SUCCESS")) {
                 return true;
             }
             // Return false if the store failed
-            else if (response.equals("FAILED")) {
-                return false;
-            } else {
-                System.err.println("Unexpected response: " + response);
+            else if (response.startsWith("FAILED")) {
                 return false;
             }
         } catch (IOException e) {
             System.err.println("IOException occurred: " + e.getMessage());
             return false;
         }
+        return false;
     }
 
 
     public String get(String key) {
-        int keyLines = key.split("\n").length;
         try {
-            // Return the string if the get worked
-            writer.write("GET? " + keyLines);
-            writer.write(key + "\n");
+            // Send GET request
+            String[] keyLines = key.split("\n");
+            writer.write("GET? " + keyLines.length + "\n" + key + "\n");
             writer.flush();
 
-            String response = reader.readLine();
-            // Return the string if the get worked
-            if (response != null && response.startsWith("VALUE ")) {
+            // Read GET response
+            String response = readUntilEnd(reader);
+            if (response.startsWith("VALUE")) {
                 return response;
-            }
-
-            // Return null if it didn't
-            else {
+            } else {
+                // Value not found
                 return "NOPE";
             }
-        } catch (IOException e) {
-            System.err.println("IOException occurred: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Exception occurred: " + e.getMessage());
             return null;
         }
     }
+    private String readUntilEnd(BufferedReader reader) throws IOException {
+        StringBuilder responseBuilder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            responseBuilder.append(line).append("\n");
+        }
+        return responseBuilder.toString().trim();
+    }
 }
+

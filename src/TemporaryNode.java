@@ -111,11 +111,11 @@ public class TemporaryNode implements TemporaryNodeInterface {
             try {
                 socket.close();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
     }
-    
+
     private String readUntilEnd(BufferedReader reader) throws IOException {
         StringBuilder responseBuilder = new StringBuilder();
         String line;

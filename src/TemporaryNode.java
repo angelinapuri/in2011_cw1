@@ -106,15 +106,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
         } catch (IOException e) {
             System.err.println("IOException occurred: " + e.getMessage());
             return null;
-        } finally {
-            try {
-                if (socket != null) {
-                    socket.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        } 
     }
 
 

@@ -97,23 +97,27 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
     public String get(String key) {
         try {
-            String[] keyLines = key.split("\n");
-
-            String nearestNodeInfo = nearest(key);
-            String[] nearestNodeParts = nearestNodeInfo.split(" ");
-            String nearestNodeName = nearestNodeParts[0];
-            String nearestNodeAddress = nearestNodeParts[1];
-            if(nearestNodeName.equals(startingNodeName) && nearestNodeAddress.equals(startingNodeAddress)){
-                writer.write("GET? " + keyLines.length + "\n" + key + "\n");
+            String firstNodeName = null;
+            String firstNodeAddress = null;
+            do {
+                writer.write("NEAREST? " + HashID.computeHashID(key)+ "\n");
+                System.out.println("NEAREST? " + HashID.computeHashID(key)+ "\n");
                 writer.flush();
+
+                // Read NEAREST response
                 String response = readUntilEnd(reader);
-                if (response.startsWith("VALUE")) {
-                    return response;
+                System.out.println(response);
+
+                // Check if the response starts with "NODES"
+                if (response.startsWith("NODES")) {
+                    String[] lines = response.split("\n");
+                    firstNodeName = lines[1].trim().split(",")[0];
+                    firstNodeAddress = lines[2].trim();
+                    System.out.println(response);
+                    break;
                 }
-            }
-            else {
-                return "NOPE";
-            }
+            } while (true);
+            return firstNodeName + " " + firstNodeAddress;
         } catch (Exception e) {
             System.err.println("Exception occurred: " + e.getMessage());
             return null;
@@ -126,7 +130,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
                 e.printStackTrace();
             }
         }
-        return null;
     }
 
     private String readUntilEnd(BufferedReader reader) throws IOException {
@@ -137,33 +140,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
         }
         return responseBuilder.toString().trim();
     }
-
-    private String nearest(String string) throws Exception {
-        String firstNodeName = null;
-        String firstNodeAddress = null;
-
-        do {
-            writer.write("NEAREST? " + HashID.computeHashID(string)+ "\n");
-            System.out.println("NEAREST? " + HashID.computeHashID(string)+ "\n");
-            writer.flush();
-
-            // Read NEAREST response
-            String response = readUntilEnd(reader);
-            System.out.println(response);
-
-            // Check if the response starts with "NODES"
-            if (response.startsWith("NODES")) {
-                String[] lines = response.split("\n");
-                    firstNodeName = lines[1].trim().split(",")[0];
-                    firstNodeAddress = lines[2].trim();
-                    System.out.println(response);
-                    break;
-            }
-        } while (true);
-
-        return firstNodeName + " " + firstNodeAddress;
-    }
-
 }
 
 /** Have nearest in get and store methods. So, if nearest call garda it returns itself, then

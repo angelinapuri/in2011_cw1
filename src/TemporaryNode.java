@@ -29,33 +29,41 @@ interface TemporaryNodeInterface {
 
 
 public class TemporaryNode implements TemporaryNodeInterface {
-    private Socket socket;
-    private Writer writer;
-    private BufferedReader reader;
+        private Socket socket;
+        private Writer writer;
+        private BufferedReader reader;
 
+        // Instance variables for starting node info
+        private String startingNodeName;
+        private String startingNodeAddress;
 
-    public boolean start(String startingNodeName, String startingNodeAddress) {
-        try {
-            //Connect to the starting node
-            socket = new Socket(startingNodeAddress.split(":")[0], parseInt(startingNodeAddress.split(":")[1]));
-            writer = new OutputStreamWriter(socket.getOutputStream());
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        public boolean start(String startingNodeName, String startingNodeAddress) {
+            try {
+                // Set starting node info
+                this.startingNodeName = startingNodeName;
+                this.startingNodeAddress = startingNodeAddress;
 
-            writer.write("START 1 angelina.puri@city.ac.uk:MyImplementation" + "\n");
-            writer.flush();
+                //Connect to the starting node
+                socket = new Socket(startingNodeAddress.split(":")[0], parseInt(startingNodeAddress.split(":")[1]));
+                writer = new OutputStreamWriter(socket.getOutputStream());
+                reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            // Return true if the 2D#4 network can be contacted
-            String response = reader.readLine();
-            // Return false if the 2D#4 network can't be contacted
-            System.out.println(response);
-            return response != null && response.startsWith("START 1 ");
-        } catch (Exception e) {
-            System.err.println("IOException occurred: " + e.getMessage());
-            return false;
+                writer.write("START 1 " + startingNodeName + ":" + startingNodeAddress + "\n");
+                writer.flush();
+
+                // Return true if the 2D#4 network can be contacted
+                String response = reader.readLine();
+                // Return false if the 2D#4 network can't be contacted
+                System.out.println(response);
+                return response != null && response.startsWith("START 1 ");
+            } catch (Exception e) {
+                System.err.println("IOException occurred: " + e.getMessage());
+                return false;
+            }
         }
-    }
 
-    public boolean store(String key, String value) {
+
+        public boolean store(String key, String value) {
         try {
             String[] keyLines = key.split("\n");
             String[] valueLines = value.split("\n");
@@ -90,15 +98,19 @@ public class TemporaryNode implements TemporaryNodeInterface {
     public String get(String key) {
         try {
             String[] keyLines = key.split("\n");
-            writer.write("GET? " + keyLines.length + "\n" + key + "\n");
-            writer.flush();
 
-            //Return true if the store worked
-            String response = readUntilEnd(reader);
-            if (response.startsWith("VALUE")) {
-                return response;
+            String nearestNodeInfo = nearest(key);
+            String[] nearestNodeParts = nearestNodeInfo.split(" ");
+            String nearestNodeName = nearestNodeParts[0];
+            String nearestNodeAddress = nearestNodeParts[1];
+            if(nearestNodeName.equals(startingNodeName) && nearestNodeAddress.equals(startingNodeAddress)){
+                writer.write("GET? " + keyLines.length + "\n" + key + "\n");
+                writer.flush();
+                String response = readUntilEnd(reader);
+                if (response.startsWith("VALUE")) {
+                    return response;
+                }
             }
-            // Return false if the store failed
             else {
                 return "NOPE";
             }

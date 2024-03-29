@@ -59,8 +59,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
             String[] valueLines = value.split("\n");
             writer.write("PUT? " + keyLines.length + " " + valueLines.length + "\n" + key + value);
             writer.flush();
-            System.out.println("PUT? " + keyLines.length + " " + valueLines.length + "\n" + key + value);
-
 
             //Return true if the store worked
             String response = reader.readLine();
@@ -89,28 +87,13 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
     public String get(String key) {
         try {
-            String[] keyLines = key.split("\n");
-            writer.write("GET? " + keyLines.length + "\n" + key);
+            writer.write("NEAREST? " + HashID.computeHashID(key));
             writer.flush();
-            System.out.println("GET? " + keyLines.length + "\n" + key);
 
-            // Read GET response
             String response = reader.readLine();
-            StringBuilder valueBuilder = new StringBuilder();
 
-            if (response.startsWith("VALUE")) {
-                valueBuilder.append(response).append("\n"); // Append the first line
-
-                int valueLines = Integer.parseInt(response.split(" ")[1]);
-                for (int i = 0; i < valueLines; i++) {
-                    String line = reader.readLine();
-                    valueBuilder.append(line).append("\n");
-                }
-                return valueBuilder.toString().trim();
-            } else {
-                // Value not found
-                return "NOPE";
-            }
+            return response;
+            
         } catch (IOException e) {
             System.err.println("IOException occurred: " + e.getMessage());
             return null;

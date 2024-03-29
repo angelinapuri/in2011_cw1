@@ -99,12 +99,12 @@ public class TemporaryNode implements TemporaryNodeInterface {
         try {
             String firstNodeName = null;
             String firstNodeAddress = null;
-                writer.write("NEAREST? " + HashID.computeHashID("Hello World!" +"\n"));
-                System.out.println("NEAREST? " + HashID.computeHashID("Hello World!" +"\n"));
+                writer.write("NEAREST? " + HashID.computeHashID(key+"\n"));
+                System.out.println("NEAREST? " + HashID.computeHashID(key+"\n"));
                 writer.flush();
 
                 // Read NEAREST response
-                String response = readUntilEnd(reader);
+                String response = reader.readLine();
                 if(response.startsWith("NODES")){
                 System.out.println(response);
                 return response;

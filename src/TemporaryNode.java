@@ -93,17 +93,18 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
             // Read NEAREST response
             String response1 = reader.readLine();
+            StringBuilder nodeInfoBuilder = new StringBuilder();
+
             if (response1.startsWith("NODES")) {
+                nodeInfoBuilder.append(nodeInfoBuilder).append("\n");
                 int numberOfNodes = Integer.parseInt(response1.split(" ")[1]);
                 // Read and process node information
-                StringBuilder nodeInfoBuilder = new StringBuilder();
                 for (int i = 0; i < numberOfNodes; i++) {
                     String line = reader.readLine();
                     if (line == null) {
                         // End of stream reached unexpectedly
                         throw new IOException("Unexpected end of stream while reading node information");
                     }
-                    nodeInfoBuilder.append(line).append("\n");
                 }
                 System.out.println(nodeInfoBuilder.toString().trim());
             }

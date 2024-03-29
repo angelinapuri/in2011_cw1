@@ -139,8 +139,9 @@ public class TemporaryNode implements TemporaryNodeInterface {
     }
 
     private String nearest(String string) throws Exception {
-        String firstNodeName;
-        String firstNodeAddress;
+        String firstNodeName = null;
+        String firstNodeAddress = null;
+
         do {
             writer.write("NEAREST? " + HashID.computeHashID(string + "\n"));
             System.out.println("NEAREST? " + HashID.computeHashID(string + "\n"));
@@ -160,8 +161,15 @@ public class TemporaryNode implements TemporaryNodeInterface {
                 }
             }
         } while (true);
+
+        // Check if firstNodeName and firstNodeAddress are still null
+        if (firstNodeName == null || firstNodeAddress == null) {
+            throw new IllegalStateException("Could not find valid node information");
+        }
+
         return firstNodeName + " " + firstNodeAddress;
     }
+
 }
 
 /** Have nearest in get and store methods. So, if nearest call garda it returns itself, then

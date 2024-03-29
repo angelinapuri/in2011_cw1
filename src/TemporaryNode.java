@@ -6,11 +6,7 @@
 // 220053946
 // angelina.puri@city.ac.uk
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.net.Socket;
 import java.lang.StringBuilder;
 import java.util.Map;
@@ -39,7 +35,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
                 //Connect to the starting node
                 socket = new Socket(startingNodeAddress.split(":")[0], parseInt(startingNodeAddress.split(":")[1]));
-                writer = new OutputStreamWriter(socket.getOutputStream());
+                writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                 reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
                 writer.write("START 1 " + startingNodeName + ":" + startingNodeAddress + "\n");
@@ -61,16 +57,18 @@ public class TemporaryNode implements TemporaryNodeInterface {
         try {
             String[] keyLines = key.split("\n");
             String[] valueLines = value.split("\n");
-            writer.write("PUT? " + keyLines.length + " " + valueLines.length + "\n" + key + "\n" + value + "\n");
+            writer.write("PUT? " + keyLines.length + " " + valueLines.length + "\n");
+            writer.write(key + "\n");
+            writer.write(value + "\n");
             writer.flush();
 
             //Return true if the store worked
-            String response = readUntilEnd(reader);
-            if (response.startsWith("SUCCESS")) {
+            String response = reader.readLine();
+            if (response.equals("SUCCESS")) {
                 return true;
             }
             // Return false if the store failed
-            else if (response.startsWith("FAILED")) {
+            else if (response.equals("FAILED")) {
                 return false;
             }
         } catch (Exception e) {
@@ -91,42 +89,31 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
     public String get(String key) {
         try {
-            String firstNodeName = null;
-            String firstNodeAddress = null;
-
-            writer.write("NEAREST? " + HashID.computeHashID(key));
-            System.out.println("NEAREST? " + HashID.computeHashID(key));
-
+            String[] keyLines = key.split("\n");
+            writer.write("GET? " + keyLines.length + "\n" + key + "\n");
             writer.flush();
 
-            // Read NEAREST response
-            String response = readUntilEnd(reader);
-
-            System.out.println(response);
-
-            return response;
-
+            // Read GET response
+            String response = reader.readLine();
+            if (response.startsWith("VALUE")) {
+                int valueLines = Integer.parseInt(response.split(" ")[1]);
+                StringBuilder valueBuilder = new StringBuilder();
+                for (int i = 0; i < valueLines; i++) {
+                    String line = reader.readLine();
+                    valueBuilder.append(line).append("\n");
+                }
+                return valueBuilder.toString().trim();
+            } else {
+                // Value not found
+                return "NOPE";
+            }
+        } catch (IOException e) {
+            System.err.println("IOException occurred: " + e.getMessage());
+            return null;
         } catch (Exception e) {
             System.err.println("Exception occurred: " + e.getMessage());
             return null;
-        } finally {
-            try {
-                if (socket != null) {
-                    socket.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
-    }
-
-    private String readUntilEnd(BufferedReader reader) throws IOException {
-        StringBuilder responseBuilder = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            responseBuilder.append(line).append("\n");
-        }
-        return responseBuilder.toString().trim();
     }
 }
 

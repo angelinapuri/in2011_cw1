@@ -134,6 +134,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
                 nodeInfoBuilder.append(line).append("\n");
             }
         }
+        return nodeInfoBuilder.toString().trim();
     }
 }
 

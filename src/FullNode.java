@@ -52,27 +52,26 @@ public class FullNode implements FullNodeInterface {
    serverSocket = new ServerSocket(portNumber);
 
    // Return true if the node can accept incoming connections
-   Thread incomingConnectionsThread = new Thread(() -> {
     while (true) {
      try {
       Socket clientSocket = serverSocket.accept();
       System.out.println("Node connected!");
       String startingNodeName = clientSocket.getInetAddress().getHostName();
       String startingNodeAddress = clientSocket.getInetAddress().getHostAddress() + ":" + clientSocket.getPort();
+
+      // Assign clientSocket to the socket variable
+      socket = clientSocket;
+
       handleIncomingConnections(startingNodeName, startingNodeAddress);
      } catch (IOException e) {
       System.err.println("Error accepting connection: " + e.getMessage());
      }
     }
-   });
-   incomingConnectionsThread.start();
-   return true;
   } catch (IOException e) {
    e.printStackTrace();
    return false;
   }
  }
-
  public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
   try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
        Writer writer = new OutputStreamWriter(socket.getOutputStream())) {

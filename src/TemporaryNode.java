@@ -90,8 +90,9 @@ public class TemporaryNode implements TemporaryNodeInterface {
     public String get(String key) {
         try {
             String[] keyLines = key.split("\n");
-            writer.write("GET? " + keyLines.length + "\n" + key + "\n");
+            writer.write("GET? " + keyLines.length + "\n" + key);
             writer.flush();
+            System.out.println("GET? " + keyLines.length + "\n" + key);
 
             // Read GET response
             String response = reader.readLine();

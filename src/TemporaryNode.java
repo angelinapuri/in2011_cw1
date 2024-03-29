@@ -124,7 +124,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
         StringBuilder nodeInfoBuilder = new StringBuilder();
         if (response1.startsWith("NODES")) {
             nodeInfoBuilder.append(response1).append("\n");
-            for (int i = 0; i < response1.split("\n").length; i++) {
+            for (int i = 0; i <= 7; i++) {
                 String line = reader.readLine();
                 nodeInfoBuilder.append(line).append("\n");
             }

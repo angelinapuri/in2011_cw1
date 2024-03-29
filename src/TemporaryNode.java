@@ -101,23 +101,16 @@ public class TemporaryNode implements TemporaryNodeInterface {
             String firstNodeAddress = null;
 
             String hashID = HashID.computeHashID(key);
-            writer.write("NEAREST? " + hashID);
-            System.out.println("NEAREST? " + hashID);
+            writer.write("NEAREST? " + hashID + "\n");
             writer.flush();
 
-                // Read NEAREST response
-                String response = readUntilEnd(reader);
-                return response;
+            // Read NEAREST response
+            String response = readUntilEnd(reader);
 
+            System.out.println(response);
 
-            /**   // Check if the response starts with "NODES"
-               if (response.startsWith("NODES")) {
-                   String[] lines = response.split("\n");
-                   firstNodeName = lines[1].trim().split(",")[0];
-                   firstNodeAddress = lines[2].trim();
-                   System.out.println(response);
-                   break;
-               } */
+            return response;
+
         } catch (Exception e) {
             System.err.println("Exception occurred: " + e.getMessage());
             return null;

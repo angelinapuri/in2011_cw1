@@ -86,7 +86,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
     public String get(String key) {
         try {
-           // System.out.println(nearest(key));
+            System.out.println(nearest(key));
 
           //  if((nodeInfoBuilder.toString().trim()).startsWith(startingNodeName)) {
                 String[] keyLines = key.split("\n");

@@ -88,7 +88,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
         try {
             System.out.println(nearest(key));
 
-          //  if((nodeInfoBuilder.toString().trim()).startsWith(startingNodeName)) {
+            if (nearest(key).startsWith(startingNodeName)) {
                 String[] keyLines = key.split("\n");
                 writer.write("GET? " + keyLines.length + "\n" + key);
                 writer.flush();
@@ -109,9 +109,9 @@ public class TemporaryNode implements TemporaryNodeInterface {
                     // Value not found
                     return "NOPE";
                 }
-        } catch (IOException e) {
-            System.err.println("IOException occurred: " + e.getMessage());
-            return null;
+            } else {
+                return "NOPE";
+            }
         } catch (Exception e) {
             System.err.println("Exception occurred: " + e.getMessage());
             return null;
@@ -123,14 +123,14 @@ public class TemporaryNode implements TemporaryNodeInterface {
         writer.write("NEAREST? " + HashID.computeHashID(string) + "\n");
         writer.flush();
 
-        String response = reader.readLine();
+        String response1 = reader.readLine();
         StringBuilder nodeInfoBuilder = new StringBuilder();
-
-        if (response.startsWith("NODES")) {
-            nodeInfoBuilder.append(response).append("\n");
-            // Read and process additional lines until there are no more lines
-            String line;
-            while ((line = reader.readLine()) != null) {
+        String[] nodeLines = response1.split("\n");
+        System.out.println(nodeLines.length);
+        if (response1.startsWith("NODES")) {
+            nodeInfoBuilder.append(response1).append("\n");
+            for (int i = 0; i < nodeLines.length; i++) {
+                String line = reader.readLine();
                 nodeInfoBuilder.append(line).append("\n");
             }
         }

@@ -65,7 +65,6 @@ public class FullNode implements FullNodeInterface {
   }
  }
 
- /**
  public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
   try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
        Writer writer = new OutputStreamWriter(socket.getOutputStream())) {
@@ -82,5 +81,5 @@ public class FullNode implements FullNodeInterface {
   } catch (Exception e) {
    throw new RuntimeException(e);
   }
- } */
+ } 
 }

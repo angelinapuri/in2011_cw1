@@ -126,6 +126,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
                 e.printStackTrace();
             }
         }
+        return null;
     }
 
     private String readUntilEnd(BufferedReader reader) throws IOException {

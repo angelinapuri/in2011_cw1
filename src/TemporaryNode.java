@@ -107,13 +107,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
                 // Read NEAREST response
                 String response = readUntilEnd(reader);
-                if(response.startsWith("NODES")){
-                System.out.println(response);
                 return response;
-                }
-        else{
-            return null;
-        }
 
 
             /**   // Check if the response starts with "NODES"

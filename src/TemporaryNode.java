@@ -51,6 +51,8 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
     public boolean store(String key, String value) {
         try {
+            System.out.println(nearest(key));
+
             String[] keyLines = key.split("\n");
             String[] valueLines = value.split("\n");
             writer.write("PUT? " + keyLines.length + " " + valueLines.length + "\n" + key + value);

@@ -123,13 +123,13 @@ public class TemporaryNode implements TemporaryNodeInterface {
         writer.write("NEAREST? " + HashID.computeHashID(string) + "\n");
         writer.flush();
 
-        String response1 = reader.readLine();
+        String response = reader.readLine();
         StringBuilder nodeInfoBuilder = new StringBuilder();
-        String[] nodeLines = response1.split("\n");
-        System.out.println(nodeLines.length);
-        if (response1.startsWith("NODES")) {
-            nodeInfoBuilder.append(response1).append("\n");
-            for (int i = 0; i < nodeLines.length; i++) {
+        int nodes = Integer.parseInt(response.split(" ")[1]);
+        int nodeLines = (nodes*2)+1;
+        if (response.startsWith("NODES")) {
+            nodeInfoBuilder.append(response).append("\n");
+            for (int i = 0; i < nodeLines; i++) {
                 String line = reader.readLine();
                 nodeInfoBuilder.append(line).append("\n");
             }

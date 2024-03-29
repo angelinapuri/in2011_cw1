@@ -48,15 +48,19 @@ public class FullNode implements FullNodeInterface {
  public boolean listen(String ipAddress, int portNumber) {
   try {
    System.out.println("Listening on port:" + portNumber);
-   ServerSocket serverSocket = null;
-   serverSocket = new ServerSocket(portNumber);
+   serverSocket = new ServerSocket(portNumber); // Initialize the serverSocket variable here
+
    System.out.println("Waiting for node...");
-   Socket clientSocket = serverSocket.accept();
+   Socket socket = serverSocket.accept(); // Initialize the socket variable here
    System.out.println("Node connected!");
+
+   // Call handleIncomingConnections with the client socket
+   handleIncomingConnections(socket.getInetAddress().getHostName(), socket.getInetAddress().getHostAddress() + ":" + socket.getPort());
+
    return true;
-  }
-  catch (IOException e) {
-   throw new RuntimeException(e);
+  } catch (IOException e) {
+   e.printStackTrace();
+   return false;
   }
  }
 

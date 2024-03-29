@@ -9,11 +9,8 @@
 import java.io.*;
 import java.net.Socket;
 import java.lang.StringBuilder;
-import java.util.Map;
 
 import static java.lang.Integer.parseInt;
-import static java.lang.System.out;
-import static java.lang.System.setOut;
 
 // DO NOT EDIT starts
 interface TemporaryNodeInterface {
@@ -89,25 +86,9 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
     public String get(String key) {
         try {
-            // Send NEAREST request
-            writer.write("NEAREST? " + HashID.computeHashID(key) + "\n");
-            writer.flush();
+            System.out.println(nearest(key));
 
-            String response1 = reader.readLine();
-            StringBuilder nodeInfoBuilder = new StringBuilder();
-            String[] nodeLines = response1.split("\n");
-            System.out.println(nodeLines.length);
-            
-            if (response1.startsWith("NODES")) {
-                nodeInfoBuilder.append(response1).append("\n");
-                for (int i = 0; i < nodeLines.length; i++) {
-                    String line = reader.readLine();
-                    nodeInfoBuilder.append(line).append("\n");
-                }
-                System.out.println(nodeInfoBuilder.toString().trim());
-            }
-
-            if((nodeInfoBuilder.toString().trim()).startsWith(startingNodeName)) {
+          //  if((nodeInfoBuilder.toString().trim()).startsWith(startingNodeName)) {
                 String[] keyLines = key.split("\n");
                 writer.write("GET? " + keyLines.length + "\n" + key);
                 writer.flush();
@@ -128,10 +109,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
                     // Value not found
                     return "NOPE";
                 }
-            }
-            else {
-                return "NOPE";
-            }
         } catch (IOException e) {
             System.err.println("IOException occurred: " + e.getMessage());
             return null;
@@ -139,6 +116,25 @@ public class TemporaryNode implements TemporaryNodeInterface {
             System.err.println("Exception occurred: " + e.getMessage());
             return null;
         }
+    }
+
+    private String nearest(String string) throws Exception {
+        // Send NEAREST request
+        writer.write("NEAREST? " + HashID.computeHashID(string) + "\n");
+        writer.flush();
+
+        String response1 = reader.readLine();
+        StringBuilder nodeInfoBuilder = new StringBuilder();
+        String[] nodeLines = response1.split("\n");
+        System.out.println(nodeLines.length);
+        if (response1.startsWith("NODES")) {
+            nodeInfoBuilder.append(response1).append("\n");
+            for (int i = 0; i < nodeLines.length; i++) {
+                String line = reader.readLine();
+                nodeInfoBuilder.append(line).append("\n");
+            }
+        }
+        return nodeInfoBuilder.toString().trim();
     }
 }
 

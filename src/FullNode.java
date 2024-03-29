@@ -77,7 +77,21 @@ public class FullNode implements FullNodeInterface {
   }
  }
 
-
  public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
+  try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+       Writer writer = new OutputStreamWriter(socket.getOutputStream())) {
+
+   // Read a line from the client
+   String message = reader.readLine();
+   System.out.println("The client said : " + message);
+
+   // Send a message to the client
+   System.out.println("Sending a message to the client");
+   writer.write("Nice to meet you\n");
+   writer.flush();
+
+  } catch (Exception e) {
+   throw new RuntimeException(e);
+  }
  }
 }

@@ -97,9 +97,8 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
     public String get(String key) {
         try {
-            String firstNodeName = null;
-            String firstNodeAddress = null;
-                writer.write("NEAREST? " + HashID.computeHashID(key+"\n"));
+            System.out.println(key);
+            writer.write("NEAREST? " + HashID.computeHashID(key+"\n"));
                 System.out.println("NEAREST? " + HashID.computeHashID(key+"\n"));
                 writer.flush();
 

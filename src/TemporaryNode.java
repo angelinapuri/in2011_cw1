@@ -100,8 +100,8 @@ public class TemporaryNode implements TemporaryNodeInterface {
             String firstNodeName = null;
             String firstNodeAddress = null;
             do {
-                writer.write("NEAREST? " + HashID.computeHashID(key)+ "\n");
-                System.out.println("NEAREST? " + HashID.computeHashID(key)+ "\n");
+                writer.write("NEAREST? " + HashID.computeHashID(key+"\n")+ "\n");
+                System.out.println("NEAREST? " + HashID.computeHashID(key+"\n")+ "\n");
                 writer.flush();
 
                 // Read NEAREST response

@@ -149,23 +149,17 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
             // Read NEAREST response
             String response = readUntilEnd(reader);
+            System.out.println(response);
 
             // Check if the response starts with "NODES"
             if (response.startsWith("NODES")) {
                 String[] lines = response.split("\n");
-                if (lines.length >= 3) {
                     firstNodeName = lines[1].trim().split(",")[0];
                     firstNodeAddress = lines[2].trim();
                     System.out.println(response);
                     break;
-                }
             }
         } while (true);
-
-        // Check if firstNodeName and firstNodeAddress are still null
-        if (firstNodeName == null || firstNodeAddress == null) {
-            throw new IllegalStateException("Could not find valid node information");
-        }
 
         return firstNodeName + " " + firstNodeAddress;
     }

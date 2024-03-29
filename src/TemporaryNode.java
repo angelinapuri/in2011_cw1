@@ -100,7 +100,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
             String firstNodeName = null;
             String firstNodeAddress = null;
 
-            String hashID = HashID.computeHashID(key+ "\n");
+            String hashID = HashID.computeHashID(key);
             writer.write("NEAREST? " + hashID);
             writer.flush();
 

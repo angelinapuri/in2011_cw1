@@ -25,9 +25,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
     private Socket socket;
     private Writer writer;
     private BufferedReader reader;
-    private String startingNodeName;
-    private String startingNodeAddress;
-
 
     public boolean start(String startingNodeName, String startingNodeAddress) {
         try {
@@ -88,7 +85,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
         try {
             System.out.println(nearest(key));
 
-            if (nearest(key).startsWith(startingNodeName)) {
+       //     if (nearest(key).startsWith()) {
                 String[] keyLines = key.split("\n");
                 writer.write("GET? " + keyLines.length + "\n" + key);
                 writer.flush();
@@ -109,9 +106,9 @@ public class TemporaryNode implements TemporaryNodeInterface {
                     // Value not found
                     return "NOPE";
                 }
-            } else {
-                return "NOPE";
-            }
+         //   } else {
+           //     return "NOPE";
+           // }
         } catch (Exception e) {
             System.err.println("Exception occurred: " + e.getMessage());
             return null;
@@ -125,12 +122,10 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
         String response1 = reader.readLine();
         StringBuilder nodeInfoBuilder = new StringBuilder();
-        String[] nodeLines = response1.split("\n");
-        System.out.println(nodeLines.length);
         if (response1.startsWith("NODES")) {
             nodeInfoBuilder.append(response1).append("\n");
-            for (int i = 0; i < nodeLines.length; i++) {
-                String line = reader.readLine();
+            String line;
+            while ((line = reader.readLine()) != null) {
                 nodeInfoBuilder.append(line).append("\n");
             }
         }

@@ -99,25 +99,23 @@ public class TemporaryNode implements TemporaryNodeInterface {
         try {
             String firstNodeName = null;
             String firstNodeAddress = null;
-            do {
-                writer.write("NEAREST? " + HashID.computeHashID(key+"\n")+ "\n");
-                System.out.println("NEAREST? " + HashID.computeHashID(key+"\n")+ "\n");
+                writer.write("NEAREST? " + HashID.computeHashID(key+"\n"));
+                System.out.println("NEAREST? " + HashID.computeHashID(key+"\n"));
                 writer.flush();
 
                 // Read NEAREST response
                 String response = readUntilEnd(reader);
                 System.out.println(response);
 
-                // Check if the response starts with "NODES"
+             /**   // Check if the response starts with "NODES"
                 if (response.startsWith("NODES")) {
                     String[] lines = response.split("\n");
                     firstNodeName = lines[1].trim().split(",")[0];
                     firstNodeAddress = lines[2].trim();
                     System.out.println(response);
                     break;
-                }
-            } while (true);
-            return firstNodeName + " " + firstNodeAddress;
+                } */
+            return response;
         } catch (Exception e) {
             System.err.println("Exception occurred: " + e.getMessage());
             return null;

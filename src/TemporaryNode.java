@@ -98,8 +98,8 @@ public class TemporaryNode implements TemporaryNodeInterface {
     public String get(String key) {
         try {
             System.out.println(key);
-            writer.write("NEAREST? " + "11c87226f0053e20df90aef2b6005e92b58580e186e543ccf4d4f34336ac1c53"));
-                System.out.println("NEAREST? " + "11c87226f0053e20df90aef2b6005e92b58580e186e543ccf4d4f34336ac1c53"));
+            writer.write("NEAREST? " + "11c87226f0053e20df90aef2b6005e92b58580e186e543ccf4d4f34336ac1c53");
+                System.out.println("NEAREST? " + "11c87226f0053e20df90aef2b6005e92b58580e186e543ccf4d4f34336ac1c53");
                 writer.flush();
 
                 // Read NEAREST response

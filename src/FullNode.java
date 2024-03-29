@@ -47,10 +47,6 @@ public class FullNode implements FullNodeInterface {
 
  public boolean listen(String ipAddress, int portNumber) {
   try {
-   // Start listening on given port
-   System.out.println("Listening...");
-   serverSocket = new ServerSocket(portNumber);
-
      System.out.println("Listening on port:" + portNumber);
      ServerSocket serverSocket = new ServerSocket(portNumber);
 
@@ -81,5 +77,5 @@ public class FullNode implements FullNodeInterface {
   } catch (Exception e) {
    throw new RuntimeException(e);
   }
- } 
+ }
 }

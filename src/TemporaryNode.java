@@ -33,15 +33,9 @@ public class TemporaryNode implements TemporaryNodeInterface {
         private Writer writer;
         private BufferedReader reader;
 
-        // Instance variables for starting node info
-        private String startingNodeName;
-        private String startingNodeAddress;
 
         public boolean start(String startingNodeName, String startingNodeAddress) {
             try {
-                // Set starting node info
-                this.startingNodeName = startingNodeName;
-                this.startingNodeAddress = startingNodeAddress;
 
                 //Connect to the starting node
                 socket = new Socket(startingNodeAddress.split(":")[0], parseInt(startingNodeAddress.split(":")[1]));
@@ -100,9 +94,8 @@ public class TemporaryNode implements TemporaryNodeInterface {
             String firstNodeName = null;
             String firstNodeAddress = null;
 
-            String hashID = HashID.computeHashID(key);
-            writer.write("NEAREST? " + hashID+"\n");
-            System.out.println("NEAREST? " + hashID+"\n");
+            writer.write("NEAREST? " + HashID.computeHashID(key));
+            System.out.println("NEAREST? " + HashID.computeHashID(key));
 
             writer.flush();
 

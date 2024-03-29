@@ -95,9 +95,12 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
             // Read GET response
             String response = reader.readLine();
+            StringBuilder valueBuilder = new StringBuilder();
+
             if (response.startsWith("VALUE")) {
+                valueBuilder.append(response).append("\n"); // Append the first line
+
                 int valueLines = Integer.parseInt(response.split(" ")[1]);
-                StringBuilder valueBuilder = new StringBuilder();
                 for (int i = 0; i < valueLines; i++) {
                     String line = reader.readLine();
                     valueBuilder.append(line).append("\n");

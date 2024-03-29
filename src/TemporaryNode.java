@@ -122,12 +122,12 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
         String response1 = reader.readLine();
         StringBuilder nodeInfoBuilder = new StringBuilder();
-        String[] nodeLines = response1.split("\n");
-        System.out.println(nodeLines.length);
+        int nodeLines = response1.split("\n").length;
+        System.out.println(nodeLines);
         if (response1.startsWith("NODES")) {
             nodeInfoBuilder.append(response1).append("\n");
-            String line;
-            for (int i = 0; i <= 7 && (line = reader.readLine()) != null; i++) {
+            for (int i = 0; i < nodeLines; i++) {
+                String line = reader.readLine();
                 nodeInfoBuilder.append(line).append("\n");
             }
         }

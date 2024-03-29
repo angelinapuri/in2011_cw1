@@ -57,9 +57,9 @@ public class TemporaryNode implements TemporaryNodeInterface {
         try {
             String[] keyLines = key.split("\n");
             String[] valueLines = value.split("\n");
-            writer.write("PUT? " + keyLines.length + "\n" + key + "\n" + valueLines.length + "\n" + key + "\n");
+            writer.write("PUT? " + keyLines.length + "\n" + key + "\n" + valueLines.length + "\n" + value + "\n");
             writer.flush();
-            System.out.println("PUT? " + keyLines.length + "\n" + key + "\n" + valueLines.length + "\n" + key + "\n");
+            System.out.println("PUT? " + keyLines.length + "\n" + key + "\n" + valueLines.length + "\n" + value + "\n");
 
 
             //Return true if the store worked

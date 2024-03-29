@@ -51,25 +51,13 @@ public class FullNode implements FullNodeInterface {
    System.out.println("Listening...");
    serverSocket = new ServerSocket(portNumber);
 
-   // Return true if the node can accept incoming connections
-   Thread handleIncomingConnectionsThread = new Thread(() -> {
-    try {
-     while (true) {
-      Socket clientSocket = serverSocket.accept();
-      System.out.println("Node connected!");
-      String startingNodeName = clientSocket.getInetAddress().getHostName();
-      String startingNodeAddress = clientSocket.getInetAddress().getHostAddress() + ":" + clientSocket.getPort();
+     System.out.println("Listening on port:" + portNumber);
+     ServerSocket serverSocket = new ServerSocket(portNumber);
 
-      // Assign clientSocket to the socket variable
-      socket = clientSocket;
+     System.out.println("Server waiting for client...");
+     Socket clientSocket = serverSocket.accept();
+     System.out.println("Node connected!");
 
-      handleIncomingConnections(startingNodeName, startingNodeAddress);
-     }
-    } catch (IOException e) {
-     System.err.println("Error accepting connection: " + e.getMessage());
-    }
-   });
-   handleIncomingConnectionsThread.start();
    return true;
   } catch (IOException e) {
    e.printStackTrace();
@@ -77,6 +65,7 @@ public class FullNode implements FullNodeInterface {
   }
  }
 
+ /**
  public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
   try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
        Writer writer = new OutputStreamWriter(socket.getOutputStream())) {
@@ -93,5 +82,5 @@ public class FullNode implements FullNodeInterface {
   } catch (Exception e) {
    throw new RuntimeException(e);
   }
- }
+ } */
 }

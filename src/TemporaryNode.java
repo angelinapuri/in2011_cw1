@@ -28,6 +28,8 @@ public class TemporaryNode implements TemporaryNodeInterface {
     private Socket socket;
     private Writer writer;
     private BufferedReader reader;
+    private String startingNodeName;
+    private String startingNodeAddress;
 
 
     public boolean start(String startingNodeName, String startingNodeAddress) {
@@ -104,24 +106,29 @@ public class TemporaryNode implements TemporaryNodeInterface {
                 System.out.println(nodeInfoBuilder.toString().trim());
             }
 
-            String[] keyLines = key.split("\n");
-            writer.write("GET? " + keyLines.length + "\n" + key);
-            writer.flush();
+            if((nodeInfoBuilder.toString().trim()).startsWith(startingNodeName)) {
+                String[] keyLines = key.split("\n");
+                writer.write("GET? " + keyLines.length + "\n" + key);
+                writer.flush();
 
-            // Read GET response
-            String response2 = reader.readLine();
-            StringBuilder valueBuilder = new StringBuilder();
+                // Read GET response
+                String response2 = reader.readLine();
+                StringBuilder valueBuilder = new StringBuilder();
 
-            if (response2.startsWith("VALUE")) {
-                valueBuilder.append(response2).append("\n");
-                int valueLines = Integer.parseInt(response2.split(" ")[1]);
-                for (int i = 0; i < valueLines; i++) {
-                    String line = reader.readLine();
-                    valueBuilder.append(line).append("\n");
+                if (response2.startsWith("VALUE")) {
+                    valueBuilder.append(response2).append("\n");
+                    int valueLines = Integer.parseInt(response2.split(" ")[1]);
+                    for (int i = 0; i < valueLines; i++) {
+                        String line = reader.readLine();
+                        valueBuilder.append(line).append("\n");
+                    }
+                    return valueBuilder.toString().trim();
+                } else {
+                    // Value not found
+                    return "NOPE";
                 }
-                return valueBuilder.toString().trim();
-            } else {
-                // Value not found
+            }
+            else {
                 return "NOPE";
             }
         } catch (IOException e) {

@@ -57,13 +57,10 @@ public class TemporaryNode implements TemporaryNodeInterface {
         try {
             String[] keyLines = key.split("\n");
             String[] valueLines = value.split("\n");
-            writer.write("PUT? " + key.split("\n").length + " " + value.split("\n").length);
-            writer.write(key);
-            writer.write(value);
+            writer.write("PUT? " + keyLines.length + "\n" + key + "\n" + valueLines.length + "\n" + key + "\n");
             writer.flush();
-            System.out.println("PUT? " + keyLines.length + " " + valueLines.length);
-            System.out.println(key);
-            System.out.println(value);
+            System.out.println("PUT? " + keyLines.length + "\n" + key + "\n" + valueLines.length + "\n" + key + "\n");
+
 
             //Return true if the store worked
             String response = reader.readLine();

@@ -59,8 +59,8 @@ public class TemporaryNode implements TemporaryNodeInterface {
         try {
             String[] keyLines = key.split("\n");
             String[] valueLines = value.split("\n");
-            writer.write("PUT? " + keyLines.length + " " + valueLines.length + "\n" + key + "\n" + value  + "\n");
-            System.out.println("PUT? " + keyLines.length + " " + valueLines.length + "\n" + key + "\n" + value  + "\n");
+            writer.write("PUT? " + keyLines.length + " " + valueLines.length + "\n" + key + "\n" + value + "\n");
+            writer.flush();
 
             //Return true if the store worked
             String response = readUntilEnd(reader);
@@ -91,7 +91,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
         try {
             String[] keyLines = key.split("\n");
             writer.write("GET? " + keyLines.length + "\n" + key + "\n");
-            System.out.println("GET? " + keyLines.length + "\n" + key+ "\n");
+            writer.flush();
 
             //Return true if the store worked
             String response = readUntilEnd(reader);
@@ -125,27 +125,31 @@ public class TemporaryNode implements TemporaryNodeInterface {
         return responseBuilder.toString().trim();
     }
 
- /**   private String nearest(String string) throws Exception {
-        writer.write("NEAREST? " + HashID.computeHashID(string) + "\n");
-        System.out.println("NEAREST? " + HashID.computeHashID(string) + "\n");
-        writer.flush();
+    private String nearest(String string) throws Exception {
+        String firstNodeName;
+        String firstNodeAddress;
+        do {
+            writer.write("NEAREST? " + HashID.computeHashID(string + "\n"));
+            System.out.println("NEAREST? " + HashID.computeHashID(string + "\n"));
+            writer.flush();
 
-        // Read NEAREST response
-        String response1 = reader.readLine();
-        if (response1.startsWith("NODES")) {
-            int numberOfNodes = Integer.parseInt(response1.split(" ")[1]);
-            // Read and process node information
-            StringBuilder nodeInfoBuilder = new StringBuilder();
-            for (int i = 0; i < numberOfNodes; i++) {
-                String line = reader.readLine();
-                if (line == null) {
-                    // End of stream reached unexpectedly
-                    throw new IOException("Unexpected end of stream while reading node information");
+            // Read NEAREST response
+            String response = readUntilEnd(reader);
+
+            // Check if the response starts with "NODES"
+            if (response.startsWith("NODES")) {
+                String[] lines = response.split("\n");
+                if (lines.length >= 3) {
+                    firstNodeName = lines[1].trim().split(",")[0];
+                    firstNodeAddress = lines[2].trim();
+                    System.out.println(response);
+                    break;
                 }
-                nodeInfoBuilder.append(line).append("\n");
             }
-            System.out.println(nodeInfoBuilder.toString().trim());
-        }
-        return response1;
-    }*/
+        } while (true);
+        return firstNodeName + " " + firstNodeAddress;
+    }
 }
+
+/** Have nearest in get and store methods. So, if nearest call garda it returns itself, then
+ * successful otherwise failed bhanera but still prints all the nodes bhanum.*/

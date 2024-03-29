@@ -93,10 +93,10 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
             String response1 = reader.readLine();
             StringBuilder nodeInfoBuilder = new StringBuilder();
+            String[] nodeLines = response1.split("\n");
 
             if (response1.startsWith("NODES")) {
                 nodeInfoBuilder.append(response1).append("\n");
-                String[] nodeLines = response1.split("\n");
                 for (int i = 0; i < nodeLines.length; i++) {
                     String line = reader.readLine();
                     nodeInfoBuilder.append(line).append("\n");

@@ -91,20 +91,15 @@ public class TemporaryNode implements TemporaryNodeInterface {
             writer.write("NEAREST? " + HashID.computeHashID(key) + "\n");
             writer.flush();
 
-            // Read NEAREST response
             String response1 = reader.readLine();
             StringBuilder nodeInfoBuilder = new StringBuilder();
 
             if (response1.startsWith("NODES")) {
-                nodeInfoBuilder.append(nodeInfoBuilder).append("\n");
-                int numberOfNodes = Integer.parseInt(response1.split(" ")[1]);
-                // Read and process node information
-                for (int i = 0; i < numberOfNodes; i++) {
+                nodeInfoBuilder.append(response1).append("\n");
+                int nodeLines = Integer.parseInt(response1.split(" ")[1]);
+                for (int i = 0; i < nodeLines; i++) {
                     String line = reader.readLine();
-                    if (line == null) {
-                        // End of stream reached unexpectedly
-                        throw new IOException("Unexpected end of stream while reading node information");
-                    }
+                    nodeInfoBuilder.append(line).append("\n");
                 }
                 System.out.println(nodeInfoBuilder.toString().trim());
             }
@@ -118,7 +113,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
             StringBuilder valueBuilder = new StringBuilder();
 
             if (response2.startsWith("VALUE")) {
-                valueBuilder.append(response2).append("\n"); // Append the first line
+                valueBuilder.append(response2).append("\n");
                 int valueLines = Integer.parseInt(response2.split(" ")[1]);
                 for (int i = 0; i < valueLines; i++) {
                     String line = reader.readLine();

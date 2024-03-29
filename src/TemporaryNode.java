@@ -120,11 +120,12 @@ public class TemporaryNode implements TemporaryNodeInterface {
         writer.write("NEAREST? " + HashID.computeHashID(string) + "\n");
         writer.flush();
 
-        String response1 = reader.readLine();
+        String response = reader.readLine();
         StringBuilder nodeInfoBuilder = new StringBuilder();
-        int nodeLines = 6;
-        if (response1.startsWith("NODES")) {
-            nodeInfoBuilder.append(response1).append("\n");
+        int valueLines = Integer.parseInt(response.split(" ")[1]);
+        int nodeLines = (valueLines*2);
+        if (response.startsWith("NODES")) {
+            nodeInfoBuilder.append(response).append("\n");
             for (int i = 0; i < nodeLines; i++) {
                 String line = reader.readLine();
                 nodeInfoBuilder.append(line).append("\n");

@@ -52,8 +52,9 @@ public class FullNode implements FullNodeInterface {
    serverSocket = new ServerSocket(portNumber);
 
    // Return true if the node can accept incoming connections
-    while (true) {
-     try {
+   Thread incomingConnectionsThread = new Thread(() -> {
+    try {
+     while (true) {
       Socket clientSocket = serverSocket.accept();
       System.out.println("Node connected!");
       String startingNodeName = clientSocket.getInetAddress().getHostName();
@@ -63,121 +64,20 @@ public class FullNode implements FullNodeInterface {
       socket = clientSocket;
 
       handleIncomingConnections(startingNodeName, startingNodeAddress);
-     } catch (IOException e) {
-      System.err.println("Error accepting connection: " + e.getMessage());
      }
+    } catch (IOException e) {
+     System.err.println("Error accepting connection: " + e.getMessage());
     }
+   });
+   incomingConnectionsThread.start();
+   return true;
   } catch (IOException e) {
    e.printStackTrace();
    return false;
   }
  }
+
+
  public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
-  try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-       Writer writer = new OutputStreamWriter(socket.getOutputStream())) {
-
-   String request = reader.readLine();
-   String[] parts = request.split(" ");
-
-
-   if (request.equals("START 1 " + startingNodeName)) {
-    writer.write("START 1 ");
-    writer.flush();
-   }
-
-   else if (request.equals("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress)) {
-    writer.write("NOTIFIED");
-    writer.flush();
-   }
-
-   else if (request.equals("ECHO?")) {
-    writer.write("OHCE");
-    writer.flush();
-   }
-
-   else if (parts.length == 3 && parts[0].equals("PUT?")) {
-    int keyLineCount = Integer.parseInt(parts[1]);
-    int valueLineCount = Integer.parseInt(parts[2]);
-
-    StringBuilder keyBuilder = new StringBuilder();
-    StringBuilder valueBuilder = new StringBuilder();
-
-    // Read the key lines
-    for (int i = 0; i < keyLineCount; i++) {
-     String line = reader.readLine();
-     if (line == null) {
-      writer.write("FAILED");
-      writer.flush();
-      return;
-     }
-     keyBuilder.append(line).append("\n");
-    }
-
-    // Read the value lines
-    for (int i = 0; i < valueLineCount; i++) {
-     String line = reader.readLine();
-     if (line == null) {
-      writer.write("FAILED");
-      writer.flush();
-      return;
-     }
-     valueBuilder.append(line).append("\n");
-    }
-
-    String key = HashID.computeHashID(keyBuilder.toString().trim());
-    String value = HashID.computeHashID(valueBuilder.toString().trim());
-    dataStore.store(key, value);
-    writer.write("SUCCESS");
-    writer.flush();
-   }
-
-   else if (parts.length == 2 && parts[0].equals("GET?")) {
-    int keyLineCount = Integer.parseInt(parts[1]);
-
-    StringBuilder keyBuilder = new StringBuilder();
-
-    for (int i = 0; i < keyLineCount; i++) {
-     String line = reader.readLine();
-     if (line == null) {
-      writer.write("FAILED");
-      writer.flush();
-      return;
-     }
-     keyBuilder.append(line).append("\n");
-    }
-    String key = HashID.computeHashID(keyBuilder.toString().trim());
-    writer.write(dataStore.get(key));
-    writer.flush();
-   }
-
-   else if (parts.length == 2 && parts[0].equals("GET?")) {
-    int keyLineCount = Integer.parseInt(parts[1]);
-
-    StringBuilder keyBuilder = new StringBuilder();
-
-    for (int i = 0; i < keyLineCount; i++) {
-     String line = reader.readLine();
-     if (line == null) {
-      writer.write("FAILED");
-      writer.flush();
-      return;
-     }
-     keyBuilder.append(line).append("\n");
-    }
-    String key = HashID.computeHashID(keyBuilder.toString().trim());
-    writer.write(dataStore.get(key));
-    writer.flush();
-   }
-
-   else if (request.equals(("NEAREST?" ) +
-           HashID.computeHashID(startingNodeName+startingNodeAddress))) {
-
-    writer.flush();
-   }
-
-
-  } catch (Exception e) {
-   throw new RuntimeException(e);
-  }
  }
 }

@@ -50,9 +50,10 @@ public class FullNode implements FullNodeInterface {
 
     public boolean listen(String ipAddress, int portNumber) {
         try {
-            // Start listening on the given port
+            // Start listening on given port
             serverSocket = new ServerSocket(portNumber);
             System.out.println("Listening on " + ipAddress + ":" + portNumber);
+            notifyOtherFullNodes(ipAddress, portNumber);
 
             // Accept incoming connections in a separate thread
             Thread incomingConnectionsThread = new Thread(() -> {
@@ -60,7 +61,6 @@ public class FullNode implements FullNodeInterface {
                     try {
                         Socket clientSocket = serverSocket.accept();
                         System.out.println("Node connected!");
-                        // Extract node name and address from the clientSocket
                         String nodeName = clientSocket.getInetAddress().getHostName();
                         String nodeAddress = clientSocket.getInetAddress().getHostAddress() + ":" + clientSocket.getPort();
                         handleIncomingConnections(nodeName, nodeAddress);
@@ -94,8 +94,30 @@ public class FullNode implements FullNodeInterface {
 
             // Read incoming message from starting node
             String message = reader.readLine();
+            String[] messageParts = message.split(" ");
 
-            // Process incoming message
+         /**   if (parts.length > 0) {
+                String requestType = parts[0];
+                switch (requestType) {
+                    case "NOTIFY?":
+                        handleNotifyRequest(startingNodeName, startingNodeAddress);
+                        break;
+                    case "ECHO":
+                        handleEchoRequest(writer);
+                        break;
+                    case "PUT?":
+                        handlePutRequest(reader, writer, parts);
+                        break;
+                    case "GET?":
+                        handleGetRequest(writer, parts);
+                        break;
+                    default:
+                        writer.write("Invalid request");
+                        writer.flush();
+                        break;
+                }
+            }
+          */
 
             // Close resources
             reader.close();
@@ -104,5 +126,10 @@ public class FullNode implements FullNodeInterface {
         } catch (IOException e) {
             System.err.println("Error handling connection: " + e.getMessage());
         }
+    }
+
+    private void notifyOtherFullNodes(String ipAddress, int portNumber) throws IOException {
+        String nodeName = "angelina.puri@city.ac.uk:test-01";
+        writer.write("NOTIFY?\n" + nodeName + "\n" + (ipAddress + ":" + portNumber) + "\n");
     }
 }

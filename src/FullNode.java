@@ -64,13 +64,12 @@
              writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
              reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-             String command;
-             while ((command = reader.readLine()) != null) {
-                 String[] messageParts = command.split(" ");
+             String message = reader.readLine();
+                 String[] messageParts = message.split(" ");
                  String operation = messageParts[0];
                  switch (operation) {
-                     case "START":
-                         if (messageParts.length > 1) {
+                     case "start":
+                         if (messageParts[1] == "1") {
                              handleStartRequest();}
                          break;
                      case "notify":
@@ -88,7 +87,6 @@
                      default:
                          System.out.println("Unknown command");
                  }
-             }
          } catch (IOException e) {
              System.err.println("Exception handling incoming connections");
              e.printStackTrace();

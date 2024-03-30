@@ -98,7 +98,6 @@
          try {
              writer.write("START 1 angelina.puri@city.ac.uk:test-01");
              writer.flush();
-             socket.close();
          } catch (IOException e) {
              System.err.println("Error handling START request: " + e.getMessage());
          }
@@ -107,10 +106,8 @@
      private void handleNotifyRequest(String startingNodeName, String startingNodeAddress) {
          try {
              networkMap.addNode(startingNodeName, startingNodeAddress);
-             Socket socket = new Socket(startingNodeAddress.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
              writer.write("NOTIFIED");
              writer.flush();
-             socket.close();
          } catch (IOException e) {
              System.err.println("Error handling NOTIFY request: " + e.getMessage());
          }
@@ -242,7 +239,7 @@
                      }
                  } catch (IOException e) {
                      System.out.println("Error: " + e.getMessage());
-                 } 
+                 }
              }
          }
      }

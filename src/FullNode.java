@@ -44,9 +44,10 @@
              ServerSocket serverSocket = new ServerSocket(portNumber);
              System.out.println("Listening for incoming connections on " + ipAddress + ":" + portNumber);
              while (true) {
-                 Socket socket = serverSocket.accept();
+                 Socket acceptedSocket = serverSocket.accept();
                  System.out.println("New connection accepted");
-                 new Thread(new ClientHandler(socket)).start();
+                 this.socket = acceptedSocket; // Assign the accepted socket to the class-level socket field
+                 new Thread(new ClientHandler(acceptedSocket)).start();
              }
          } catch (IOException e) {
              System.err.println("Exception listening for incoming connections");
@@ -54,6 +55,7 @@
              return false;
          }
      }
+
 
      public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
          networkMap.addNode(startingNodeName, startingNodeAddress);
@@ -68,8 +70,8 @@
                  String operation = messageParts[0];
                  switch (operation) {
                      case "START":
-                         if (messageParts.length > 1) { 
-                             handleStartRequest(messageParts[1]);}
+                         if (messageParts.length > 1) {
+                             handleStartRequest();}
                          break;
                      case "notify":
                          handleNotifyRequest(startingNodeName, startingNodeAddress);
@@ -93,7 +95,7 @@
          }
      }
 
-     private void handleStartRequest(String startingNodeAddress) {
+     private void handleStartRequest() {
          try {
              writer.write("START 1 angelina.puri@city.ac.uk:test-01");
              writer.flush();
@@ -219,7 +221,7 @@
 
                          switch (messageParts[0]) {
                              case "START":
-                                 handleStartRequest(messageParts[1]);
+                                 handleStartRequest();
                                  break;
                              case "NOTIFY?":
                                  handleNotifyRequest(messageParts[1], messageParts[2]);

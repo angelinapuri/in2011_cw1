@@ -100,8 +100,7 @@
         }
     }
 
-    private void notifyOtherFullNodes(String ipAddress, int portNumber) throws IOException {
-        try {
+    private String notifyOtherFullNodes(String ipAddress, int portNumber) throws IOException {
             // Open a socket to communicate with other nodes
             Socket notifySocket = new Socket(ipAddress, portNumber);
             writer = new OutputStreamWriter(notifySocket.getOutputStream());
@@ -109,15 +108,14 @@
 
             // Prepare and send the NOTIFY? request
             String nodeName = "angelina.puri@city.ac.uk:test-01";
-            writer.write("NOTIFY?\n" + nodeName + (ipAddress + ":" + portNumber));
-            System.out.println("NOTIFY?\n" + nodeName + (ipAddress + ":" + portNumber));
+            writer.write("NOTIFY?\n" + nodeName + "\n" + (ipAddress + ":" + portNumber) + "\n");
+            System.out.println("NOTIFY?\n" + nodeName + "\n" + (ipAddress + ":" + portNumber) + "\n");
             writer.flush();
 
             // Read and process the response from other nodes
             String response = reader.readLine();
             System.out.println(response);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+            return response;
+
     }
 }

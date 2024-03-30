@@ -109,8 +109,8 @@
 
             // Prepare and send the NOTIFY? request
             String nodeName = "angelina.puri@city.ac.uk:test-01";
-            writer.write("NOTIFY?\n" + nodeName + "\n" + (ipAddress + ":" + portNumber));
-            System.out.println("NOTIFY?\n" + nodeName + "\n" + (ipAddress + ":" + portNumber));
+            writer.write("NOTIFY?\n" + nodeName + (ipAddress + ":" + portNumber));
+            System.out.println("NOTIFY?\n" + nodeName + (ipAddress + ":" + portNumber));
             writer.flush();
 
             // Read and process the response from other nodes

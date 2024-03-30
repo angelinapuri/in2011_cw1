@@ -50,7 +50,7 @@ public class FullNode implements FullNodeInterface {
 
     public boolean listen(String ipAddress, int portNumber) {
         try {
-            // Start listening on given port
+            // Start listening on the given port
             serverSocket = new ServerSocket(portNumber);
             System.out.println("Listening on " + ipAddress + ":" + portNumber);
 
@@ -60,7 +60,10 @@ public class FullNode implements FullNodeInterface {
                     try {
                         Socket clientSocket = serverSocket.accept();
                         System.out.println("Node connected!");
-                        handleIncomingConnections(clientSocket);
+                        // Extract node name and address from the clientSocket
+                        String nodeName = clientSocket.getInetAddress().getHostName();
+                        String nodeAddress = clientSocket.getInetAddress().getHostAddress() + ":" + clientSocket.getPort();
+                        handleIncomingConnections(nodeName, nodeAddress);
                     } catch (IOException e) {
                         System.err.println("Error accepting connection: " + e.getMessage());
                     }
@@ -71,26 +74,6 @@ public class FullNode implements FullNodeInterface {
         } catch (IOException e) {
             e.printStackTrace();
             return false;
-        }
-    }
-
-    public void handleIncomingConnections(Socket clientSocket) {
-        try {
-            // Initialize reader and writer for socket communication
-            reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            writer = new OutputStreamWriter(clientSocket.getOutputStream());
-
-            // Read incoming message from client
-            String message = reader.readLine();
-
-            // Process incoming message
-
-            // Close resources
-            reader.close();
-            writer.close();
-            clientSocket.close();
-        } catch (IOException e) {
-            System.err.println("Error handling connection: " + e.getMessage());
         }
     }
 

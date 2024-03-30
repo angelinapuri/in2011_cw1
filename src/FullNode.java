@@ -82,7 +82,6 @@ public class FullNode implements FullNodeInterface {
             String message = reader.readLine();
 
             // Process incoming message
-            processMessage(message);
 
             // Close resources
             reader.close();

@@ -20,7 +20,6 @@ public class FullNode {
             // Start listening on given port
             serverSocket = new ServerSocket(portNumber);
             System.out.println("Listening on " + ipAddress + ":" + portNumber);
-            notifyOtherFullNodes(ipAddress, portNumber);
 
             // Accept incoming connections in a separate thread
             Thread incomingConnectionsThread = new Thread(() -> {
@@ -54,6 +53,7 @@ public class FullNode {
             // Connect to the starting node
             socket = new Socket(ipAddress, portNumber);
             System.out.println("Connected to " + ipAddress + ":" + portNumber);
+            notifyOtherFullNodes(ipAddress, portNumber);
 
             // Initialize reader and writer for socket communication
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));

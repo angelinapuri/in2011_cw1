@@ -128,10 +128,29 @@ public class FullNode implements FullNodeInterface {
         }
     }
 
-    private void notifyOtherFullNodes(String ipAddress, int portNumber) throws IOException {
-        String nodeName = "angelina.puri@city.ac.uk:test-01";
-        writer.write("NOTIFY?\n" + nodeName + "\n" + (ipAddress + ":" + portNumber) + "\n");
-        String response = reader.readLine();
-        System.out.println(response);
+    private void notifyOtherFullNodes(String ipAddress, int portNumber) {
+        try {
+            // Open a socket to communicate with other nodes
+            Socket notifySocket = new Socket(ipAddress, portNumber);
+            writer = new OutputStreamWriter(notifySocket.getOutputStream());
+            reader = new BufferedReader(new InputStreamReader(notifySocket.getInputStream()));
+
+            // Prepare and send the NOTIFY? request
+            String nodeName = "angelina.puri@city.ac.uk:test-01";
+            writer.write("NOTIFY?\n" + nodeName + "\n" + (ipAddress + ":" + portNumber) + "\n");
+            writer.flush();
+
+            // Read and process the response from other nodes
+            String response = reader.readLine();
+            System.out.println("Response from other nodes: " + response);
+
+            // Close resources
+            writer.close();
+            reader.close();
+            notifySocket.close();
+        } catch (IOException e) {
+            System.err.println("Error notifying other nodes: " + e.getMessage());
+        }
     }
+
 }

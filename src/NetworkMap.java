@@ -3,20 +3,18 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class NetworkMap {
-    private Map<String, String> map;
+    private static Map<String, String> map;
 
     public NetworkMap() {
+
         this.map = new HashMap<>();
     }
 
-    public void add(String node, String address) {
-        if (this.map.size() < 3) {
-            this.map.put(node, address);
-        }
+    public static void add(String node, String address) {
+       map.put(node, address);
     }
 
     public void remove(String node, String address) {
-
         map.remove(node, address);
     }
 

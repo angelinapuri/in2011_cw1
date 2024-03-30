@@ -81,7 +81,7 @@
             // Connect to the starting node
             socket = new Socket(ipAddress, portNumber);
             System.out.println("Connected to " + ipAddress + ":" + portNumber);
-            notifyOtherFullNodes(ipAddress, portNumber);
+            System.out.println(notifyOtherFullNodes(ipAddress, portNumber));
 
             // Initialize reader and writer for socket communication
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -90,6 +90,21 @@
             // Read incoming message from starting node
             String message = reader.readLine();
             String[] messageParts = message.split(" ");
+
+       /**     if (messageParts.length > 0) {
+                String requestType = messageParts[0];
+                switch (requestType) {
+                    case "START 1 " -> handleStartRequest();
+                    case "NOTIFY?" -> handleNotifyRequest(ipAddress, startingNodeAddress);
+                    case "ECHO" -> handleEchoRequest();
+                    case "PUT?" -> handlePutRequest(messageParts);
+                    case "GET?" -> handleGetRequest(messageParts);
+                    default -> {
+                        writer.write("Invalid request");
+                        writer.flush();
+                    }
+                }
+            } */
 
             // Close resources
             reader.close();
@@ -100,7 +115,99 @@
         }
     }
 
-    private String notifyOtherFullNodes(String ipAddress, int portNumber) throws IOException {
+ /**    private void handleStartRequest() throws IOException {
+         writer.write("START 1 angelina.puri@city.ac.uk:test-01");
+         writer.flush();
+     }
+
+     private void handleNotifyRequest(String startingNodeName, String startingNodeAddress) throws IOException {
+         writer.write("NOTIFIED");
+         writer.flush();
+         NetworkMap.add(startingNodeName,startingNodeAddress);
+     }
+     private void handleEchoRequest() throws IOException {
+         writer.write("OHCE");
+         writer.flush();
+     }
+
+     private void handlePutRequest(String[] messageParts) throws IOException {
+         if (messageParts.length == 3) {
+             String keyLines = messageParts[1];
+             String valueLines = messageParts[2];
+
+             int keyLineCount = Integer.parseInt(keyLines);
+             int valueLineCount = Integer.parseInt(valueLines);
+
+             StringBuilder keyBuilder = new StringBuilder();
+             StringBuilder valueBuilder = new StringBuilder();
+
+             // Read the key lines
+             for (int i = 0; i < keyLineCount; i++) {
+                 String line = reader.readLine();
+                 if (line == null) {
+                     writer.write("FAILED: Incomplete key");
+                     writer.flush();
+                     return;
+                 }
+                 keyBuilder.append(line).append("\n");
+             }
+
+             // Read the value lines
+             for (int i = 0; i < valueLineCount; i++) {
+                 String line = reader.readLine();
+                 if (line == null) {
+                     writer.write("FAILED: Incomplete value");
+                     writer.flush();
+                     return;
+                 }
+                 valueBuilder.append(line).append("\n");
+             }
+
+             // Store the key-value pair
+             String key = keyBuilder.toString().trim();
+             String value = valueBuilder.toString().trim();
+             dataStore.store(key, value);
+             writer.write("SUCCESS");
+             writer.flush();
+         } else {
+             writer.write("Invalid request");
+             writer.flush();
+         }
+     }
+
+     private void handleGetRequest(String[] messageParts) throws IOException {
+         if (messageParts.length == 2) {
+             String keyLines = messageParts[1];
+             int keyLineCount = Integer.parseInt(keyLines);
+
+             StringBuilder keyBuilder = new StringBuilder();
+
+             // Read the key lines
+             for (int i = 0; i < keyLineCount; i++) {
+                 String line = reader.readLine();
+                 if (line == null) {
+                     writer.write("FAILED: Incomplete key");
+                     writer.flush();
+                     return;
+                 }
+                 keyBuilder.append(line).append("\n");
+             }
+             String key = keyBuilder.toString().trim();
+             String value = dataStore.get(key);
+
+             if (value != null) {
+                 writer.write("VALUE " + value.length() + "\n");
+                 writer.write(value);
+             } else {
+                 writer.write("FAILED: Key not found");
+             }
+         } else {
+             writer.write("Invalid message format");
+         }
+         writer.flush();
+     }
+*/
+     private String notifyOtherFullNodes(String ipAddress, int portNumber) throws IOException {
             // Open a socket to communicate with other nodes
             Socket notifySocket = new Socket(ipAddress, portNumber);
             writer = new OutputStreamWriter(notifySocket.getOutputStream());
@@ -108,13 +215,12 @@
 
             // Prepare and send the NOTIFY? request
             String nodeName = "angelina.puri@city.ac.uk:test-01";
-            writer.write("NOTIFY?\n" + nodeName + "\n" + (ipAddress + ":" + portNumber) + "\n");
-            System.out.println("NOTIFY?\n" + nodeName + "\n" + (ipAddress + ":" + portNumber) + "\n");
+            writer.write("NOTIFY?" + "\n" + nodeName + "\n" + (ipAddress + ":" + portNumber) + "\n");
+            System.out.println("NOTIFY?" + "\n" + nodeName + "\n" + (ipAddress + ":" + portNumber) + "\n");
             writer.flush();
 
             // Read and process the response from other nodes
             String response = reader.readLine();
-            System.out.println(response);
             return response;
 
     }

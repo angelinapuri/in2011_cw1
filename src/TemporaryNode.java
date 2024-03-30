@@ -34,7 +34,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            writer.write("START 1 " + startingNodeName + ":" + startingNodeAddress + "\n");
+            writer.write("START 1 " + startingNodeName + "\n");
             writer.flush();
 
             // Return true if the 2D#4 network can be contacted
@@ -73,6 +73,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
         } finally {
             try {
                 if (socket != null) {
+                    writer.write("END: End of request");
                     socket.close();
                 }
             } catch (IOException e) {
@@ -87,7 +88,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
         try {
             System.out.println(nearest(key));
 
-       //     if (nearest(key).startsWith()) {
                 String[] keyLines = key.split("\n");
                 writer.write("GET? " + keyLines.length + "\n" + key);
                 writer.flush();
@@ -108,12 +108,19 @@ public class TemporaryNode implements TemporaryNodeInterface {
                     // Value not found
                     return "NOPE";
                 }
-         //   } else {
-           //     return "NOPE";
-           // }
         } catch (Exception e) {
             System.err.println("Exception occurred: " + e.getMessage());
             return null;
+        }
+        finally {
+            try {
+                if (socket != null) {
+                    writer.write("END: End of request");
+                    socket.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -48,16 +48,23 @@ public class FullNode implements FullNodeInterface {
 
     public boolean listen(String ipAddress, int portNumber) {
         try {
-            System.out.println("Listening on port:" + portNumber);
-            ServerSocket serverSocket = new ServerSocket(portNumber); // Initialize the serverSocket variable here
+            // Start listening on given port
+            System.out.println("Listening...");
+            serverSocket = new ServerSocket(portNumber);
 
-            System.out.println("Waiting for node...");
-            Socket socket = serverSocket.accept(); // Initialize the socket variable here
-            System.out.println("Node connected!");
-
-            // Call handleIncomingConnections with the client socket
-            handleIncomingConnections(socket.getInetAddress().getHostName(), socket.getInetAddress().getHostAddress() + ":" + socket.getPort());
-
+            // Return true if the node can accept incoming connections
+            Thread incomingConnectionsThread = new Thread(() -> {
+                while (true) {
+                    try {
+                        Socket clientSocket = serverSocket.accept();
+                        System.out.println("Node connected!");
+                        handleIncomingConnections(clientSocket);
+                    } catch (IOException e) {
+                        System.err.println("Error accepting connection: " + e.getMessage());
+                    }
+                }
+            });
+            incomingConnectionsThread.start();
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,99 +72,24 @@ public class FullNode implements FullNodeInterface {
         }
     }
 
-    public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             Writer writer = new OutputStreamWriter(socket.getOutputStream())) {
+    private void handleIncomingConnections(Socket clientSocket) {
+        try {
+            // Initialize reader and writer for socket communication
+            reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            writer = new OutputStreamWriter(clientSocket.getOutputStream());
 
-            String request = reader.readLine();
-            String[] parts = request.split(" ");
+            // Read incoming message from client
+            String message = reader.readLine();
 
+            // Process incoming message
+            processMessage(message);
 
-            if (request.equals("START 1 " + startingNodeName)) {
-                writer.write("START 1 ");
-                writer.flush();
-            } else if (request.equals("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress)) {
-                writer.write("NOTIFIED");
-                writer.flush();
-            } else if (request.equals("ECHO?")) {
-                writer.write("OHCE");
-                writer.flush();
-            } else if (parts.length == 3 && parts[0].equals("PUT?")) {
-                int keyLineCount = Integer.parseInt(parts[1]);
-                int valueLineCount = Integer.parseInt(parts[2]);
-
-                StringBuilder keyBuilder = new StringBuilder();
-                StringBuilder valueBuilder = new StringBuilder();
-
-                // Read the key lines
-                for (int i = 0; i < keyLineCount; i++) {
-                    String line = reader.readLine();
-                    if (line == null) {
-                        writer.write("FAILED");
-                        writer.flush();
-                        return;
-                    }
-                    keyBuilder.append(line).append("\n");
-                }
-
-                // Read the value lines
-                for (int i = 0; i < valueLineCount; i++) {
-                    String line = reader.readLine();
-                    if (line == null) {
-                        writer.write("FAILED");
-                        writer.flush();
-                        return;
-                    }
-                    valueBuilder.append(line).append("\n");
-                }
-
-                String key = HashID.computeHashID(keyBuilder.toString().trim());
-                String value = HashID.computeHashID(valueBuilder.toString().trim());
-                dataStore.store(key, value);
-                writer.write("SUCCESS");
-                writer.flush();
-            } else if (parts.length == 2 && parts[0].equals("GET?")) {
-                int keyLineCount = Integer.parseInt(parts[1]);
-
-                StringBuilder keyBuilder = new StringBuilder();
-
-                for (int i = 0; i < keyLineCount; i++) {
-                    String line = reader.readLine();
-                    if (line == null) {
-                        writer.write("FAILED");
-                        writer.flush();
-                        return;
-                    }
-                    keyBuilder.append(line).append("\n");
-                }
-                String key = HashID.computeHashID(keyBuilder.toString().trim());
-                writer.write(dataStore.get(key));
-                writer.flush();
-            } else if (parts.length == 2 && parts[0].equals("GET?")) {
-                int keyLineCount = Integer.parseInt(parts[1]);
-
-                StringBuilder keyBuilder = new StringBuilder();
-
-                for (int i = 0; i < keyLineCount; i++) {
-                    String line = reader.readLine();
-                    if (line == null) {
-                        writer.write("FAILED");
-                        writer.flush();
-                        return;
-                    }
-                    keyBuilder.append(line).append("\n");
-                }
-                String key = HashID.computeHashID(keyBuilder.toString().trim());
-                writer.write(dataStore.get(key));
-                writer.flush();
-            } else if (request.equals(("NEAREST?") +
-                    HashID.computeHashID(startingNodeName + startingNodeAddress))) {
-
-                writer.flush();
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            // Close resources
+            reader.close();
+            writer.close();
+            clientSocket.close();
+        } catch (IOException e) {
+            System.err.println("Error handling connection: " + e.getMessage());
         }
     }
 }

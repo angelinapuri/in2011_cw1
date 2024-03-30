@@ -67,8 +67,9 @@
                  String[] messageParts = command.split(" ");
                  String operation = messageParts[0];
                  switch (operation) {
-                     case "start":
-                         handleStartRequest(startingNodeAddress);
+                     case "START":
+                         if (messageParts.length > 1) { 
+                             handleStartRequest(messageParts[1]);}
                          break;
                      case "notify":
                          handleNotifyRequest(startingNodeName, startingNodeAddress);
@@ -94,7 +95,6 @@
 
      private void handleStartRequest(String startingNodeAddress) {
          try {
-             Socket socket = new Socket(startingNodeAddress.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
              writer.write("START 1 angelina.puri@city.ac.uk:test-01");
              writer.flush();
              socket.close();
@@ -189,7 +189,7 @@
                          writer.write("VALUE " + value.length() + "\n");
                          writer.write(value);
                      } else {
-                         writer.write("FAILED: Key not found");
+                         writer.write("NOPE");
                      }
                  } else {
                      writer.write("Invalid message format");

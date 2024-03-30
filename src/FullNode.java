@@ -131,5 +131,7 @@ public class FullNode implements FullNodeInterface {
     private void notifyOtherFullNodes(String ipAddress, int portNumber) throws IOException {
         String nodeName = "angelina.puri@city.ac.uk:test-01";
         writer.write("NOTIFY?\n" + nodeName + "\n" + (ipAddress + ":" + portNumber) + "\n");
+        String response = reader.readLine();
+        System.out.println(response);
     }
 }

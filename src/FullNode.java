@@ -46,7 +46,7 @@
              while (true) {
                  Socket acceptedSocket = serverSocket.accept();
                  System.out.println("New connection accepted");
-                 this.socket = acceptedSocket; // Assign the accepted socket to the class-level socket field
+                 this.socket = acceptedSocket;
                  new Thread(new ClientHandler(acceptedSocket)).start();
              }
          } catch (IOException e) {
@@ -100,8 +100,18 @@
              writer.flush();
          } catch (IOException e) {
              System.err.println("Error handling START request: " + e.getMessage());
+         } finally {
+             try {
+                 // Close the socket after writing the response
+                 if (socket != null && !socket.isClosed()) {
+                     socket.close();
+                 }
+             } catch (IOException e) {
+                 System.err.println("Error closing socket: " + e.getMessage());
+             }
          }
      }
+
 
      private void handleNotifyRequest(String startingNodeName, String startingNodeAddress) {
          try {
@@ -109,6 +119,7 @@
              Socket socket = new Socket(startingNodeAddress.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
              writer.write("NOTIFIED");
              writer.flush();
+             socket.close();
          } catch (IOException e) {
              System.err.println("Error handling NOTIFY request: " + e.getMessage());
          }

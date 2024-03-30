@@ -96,9 +96,14 @@ public class FullNode implements FullNodeInterface {
 
     public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
         try {
+            // Split the startingNodeAddress into IP address and port number
+            String[] parts = startingNodeAddress.split(":");
+            String ipAddress = parts[0];
+            int portNumber = Integer.parseInt(parts[1]);
+
             // Connect to the starting node
-            socket = new Socket(startingNodeName, Integer.parseInt(startingNodeAddress));
-            System.out.println("Connected to " + startingNodeName + ":" + startingNodeAddress);
+            socket = new Socket(ipAddress, portNumber);
+            System.out.println("Connected to " + ipAddress + ":" + portNumber);
 
             // Initialize reader and writer for socket communication
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));

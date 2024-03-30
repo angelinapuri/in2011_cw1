@@ -106,6 +106,7 @@
      private void handleNotifyRequest(String startingNodeName, String startingNodeAddress) {
          try {
              networkMap.addNode(startingNodeName, startingNodeAddress);
+             Socket socket = new Socket(startingNodeAddress.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
              writer.write("NOTIFIED");
              writer.flush();
          } catch (IOException e) {
@@ -239,6 +240,12 @@
                      }
                  } catch (IOException e) {
                      System.out.println("Error: " + e.getMessage());
+                 } finally {
+                     try {
+                         clientSocket.close();
+                     } catch (IOException e) {
+                         System.out.println("Error: " + e.getMessage());
+                     }
                  }
              }
          }

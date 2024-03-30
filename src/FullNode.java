@@ -72,11 +72,11 @@ public class FullNode implements FullNodeInterface {
         }
     }
 
-    private void handleIncomingConnections(Socket clientSocket) {
+    public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
         try {
             // Initialize reader and writer for socket communication
-            reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            writer = new OutputStreamWriter(clientSocket.getOutputStream());
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            writer = new OutputStreamWriter(socket.getOutputStream());
 
             // Read incoming message from client
             String message = reader.readLine();
@@ -86,7 +86,7 @@ public class FullNode implements FullNodeInterface {
             // Close resources
             reader.close();
             writer.close();
-            clientSocket.close();
+            socket.close();
         } catch (IOException e) {
             System.err.println("Error handling connection: " + e.getMessage());
         }

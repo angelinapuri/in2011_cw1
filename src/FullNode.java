@@ -64,13 +64,14 @@
              writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
              reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
+
              String message = reader.readLine();
                  String[] messageParts = message.split(" ");
                  String operation = messageParts[0];
                  switch (operation) {
                      case "start":
                          if (messageParts[1] == "1") {
-                             handleStartRequest();}
+                             handleStartRequest(writer);}
                          break;
                      case "notify":
                          handleNotifyRequest(startingNodeName, startingNodeAddress);
@@ -93,7 +94,7 @@
          }
      }
 
-     private void handleStartRequest() {
+     private void handleStartRequest(Writer writer) {
          try {
              writer.write("START 1 angelina.puri@city.ac.uk:test-01");
              writer.flush();
@@ -219,7 +220,7 @@
 
                          switch (messageParts[0]) {
                              case "START":
-                                 handleStartRequest();
+                                 handleStartRequest(writer);
                                  break;
                              case "NOTIFY?":
                                  handleNotifyRequest(messageParts[1], messageParts[2]);

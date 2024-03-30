@@ -1,51 +1,50 @@
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class NetworkMap {
     private static Map<String, String> map;
 
     public NetworkMap() {
-
-        this.map = new HashMap<>();
+        map = new HashMap<>();
     }
 
-    public static void add(String node, String address) {
-       map.put(node, address);
+    public static void addNode(String nodeName, String hashID) {
+        map.put(nodeName, hashID);
     }
 
-    public void remove(String node, String address) {
-        map.remove(node, address);
-    }
-
-    public void closestNodes(String node, String address) throws Exception {
-        TreeMap<Integer, String> distances = new TreeMap<>();
+    public List<String> getClosestNodes(String node) throws Exception {
+        Map<Integer, List<String>> distances = new TreeMap<>();
         String hashID = HashID.computeHashID(node + "\n");
 
+
+        // Compute distances to all nodes in the map
         for (Map.Entry<String, String> entry : map.entrySet()) {
-            String newNodeName = entry.getKey();
-            String newNodeHashID = HashID.computeHashID(newNodeName + "\n");
-            int distance = HashID.computeDistance(hashID, newNodeHashID);
-            distances.put(distance, newNodeName); // Store distance along with the node name
+            String otherNodeName = entry.getKey();
+            String otherNodeHashID = entry.getValue();
+            int distance = HashID.computeDistance(hashID, otherNodeHashID);
+
+            distances.putIfAbsent(distance, new ArrayList<>());
+            distances.get(distance).add(otherNodeName);
         }
 
-        // Print the three closest nodes
+        // Create a list to store closest nodes
+        List<String> closestNodes = new ArrayList<>();
         int count = 0;
-        for (Map.Entry<Integer, String> entry : distances.entrySet()) {
-            if (count >= 3) break; // Exit loop after finding the three closest nodes
-            int distance = entry.getKey();
-            String closestNode = entry.getValue();
-            System.out.println("Closest node: " + closestNode + ", Distance: " + distance);
-            count++;
+
+        // Iterate through distances and add closest nodes to the list
+        for (Map.Entry<Integer, List<String>> entry : distances.entrySet()) {
+            List<String> closestNodesAtDistance = entry.getValue();
+            Collections.shuffle(closestNodesAtDistance); // Shuffle to randomize selection
+
+            for (String closestNode : closestNodesAtDistance) {
+                closestNodes.add(closestNode);
+                count++;
+
+                if (count >= 3) {
+                    return closestNodes; // Return when 3 closest nodes are found
+                }
+            }
         }
-    }
 
-
-    public String getAddress(String node) {
-        return map.get(node);
-    }
-
-    public Map<String, String> getMap() {
-        return map;
+        return closestNodes;
     }
 }

@@ -34,7 +34,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            writer.write("START 1 " + startingNodeName + "\n");
+            writer.write("START 1 angelina.puri@city.ac.uk:MyImplementation" + "\n");
             writer.flush();
 
             // Return true if the 2D#4 network can be contacted

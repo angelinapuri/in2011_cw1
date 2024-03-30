@@ -1,51 +1,18 @@
-// IN2011 Computer Networks
-// Coursework 2023/2024
-//
-// Submission by
-// YOUR_NAME_GOES_HERE
-// YOUR_STUDENT_ID_NUMBER_GOES_HERE
-// YOUR_EMAIL_GOES_HERE
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
-
-import static java.lang.Integer.parseInt;
-
-// DO NOT EDIT starts
-interface FullNodeInterface {
-    public boolean listen(String ipAddress, int portNumber);
-
-    public void handleIncomingConnections(String startingNodeName, String startingNodeAddress);
-}
-// DO NOT EDIT ends
-
-
-public class FullNode implements FullNodeInterface {
+public class FullNode {
     private ServerSocket serverSocket;
     private Socket socket;
-    private Writer writer;
     private BufferedReader reader;
+    private OutputStreamWriter writer;
     private NetworkMap networkMap;
     private DataStore dataStore;
-
-    public FullNode(NetworkMap networkMap, DataStore dataStore) throws IOException {
-        this.networkMap = networkMap;
-        this.dataStore = dataStore;
-    }
-
 
     public FullNode() {
         networkMap = new NetworkMap();
         dataStore = new DataStore();
-
     }
 
     public boolean listen(String ipAddress, int portNumber) {
@@ -96,29 +63,6 @@ public class FullNode implements FullNodeInterface {
             String message = reader.readLine();
             String[] messageParts = message.split(" ");
 
-         /**   if (parts.length > 0) {
-                String requestType = parts[0];
-                switch (requestType) {
-                    case "NOTIFY?":
-                        handleNotifyRequest(startingNodeName, startingNodeAddress);
-                        break;
-                    case "ECHO":
-                        handleEchoRequest(writer);
-                        break;
-                    case "PUT?":
-                        handlePutRequest(reader, writer, parts);
-                        break;
-                    case "GET?":
-                        handleGetRequest(writer, parts);
-                        break;
-                    default:
-                        writer.write("Invalid request");
-                        writer.flush();
-                        break;
-                }
-            }
-          */
-
             // Close resources
             reader.close();
             writer.close();
@@ -128,7 +72,7 @@ public class FullNode implements FullNodeInterface {
         }
     }
 
-    private void notifyOtherFullNodes(String ipAddress, int portNumber) {
+    private void notifyOtherFullNodes(String ipAddress, int portNumber) throws IOException {
         try {
             // Open a socket to communicate with other nodes
             Socket notifySocket = new Socket(ipAddress, portNumber);
@@ -138,19 +82,14 @@ public class FullNode implements FullNodeInterface {
             // Prepare and send the NOTIFY? request
             String nodeName = "angelina.puri@city.ac.uk:test-01";
             writer.write("NOTIFY?\n" + nodeName + "\n" + (ipAddress + ":" + portNumber) + "\n");
+            System.out.println("NOTIFY?\n" + nodeName + "\n" + (ipAddress + ":" + portNumber) + "\n");
             writer.flush();
 
             // Read and process the response from other nodes
             String response = reader.readLine();
-            System.out.println("Response from other nodes: " + response);
-
-            // Close resources
-            writer.close();
-            reader.close();
-            notifySocket.close();
+            System.out.println(response);
         } catch (IOException e) {
-            System.err.println("Error notifying other nodes: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
-
 }

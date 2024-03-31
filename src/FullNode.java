@@ -65,6 +65,7 @@
          private Socket clientSocket;
          private BufferedWriter writer;
          private BufferedReader reader;
+         private boolean startMessageSent = false; // Flag to track if the START message has been sent
 
          public ClientHandler(Socket clientSocket) {
              this.clientSocket = clientSocket;
@@ -86,25 +87,28 @@
                      String[] messageParts = message.split(" ");
                      String operation = messageParts[0];
                      switch (operation) {
-                             case "start":
+                         case "start":
+                             if (!startMessageSent) {
                                  handleStartRequest();
-                                 break;
-                             case "notify":
-                                 handleNotifyRequest(messageParts[1], messageParts[2]);
-                                 break;
-                             case "echo":
-                                 handleEchoRequest();
-                                 break;
-                             case "put":
-                                 handlePutRequest(messageParts);
-                                 break;
-                             case "get":
-                                 handleGetRequest(messageParts);
-                                 break;
-                             default:
-                                 writer.write("Unknown command");
-                                 writer.flush();
-                                 break;
+                                 startMessageSent = true; // Set the flag to true after sending the START message
+                             }
+                             break;
+                         case "notify":
+                             handleNotifyRequest(messageParts[1], messageParts[2]);
+                             break;
+                         case "echo":
+                             handleEchoRequest();
+                             break;
+                         case "put":
+                             handlePutRequest(messageParts);
+                             break;
+                         case "get":
+                             handleGetRequest(messageParts);
+                             break;
+                         default:
+                             writer.write("Unknown command");
+                             writer.flush();
+                             break;
                      }
                  }
              } catch (IOException e) {

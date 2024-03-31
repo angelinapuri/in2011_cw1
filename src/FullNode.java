@@ -133,8 +133,6 @@ public class FullNode implements FullNodeInterface {
         }
 
 
-
-
         private void handleStartRequest() throws IOException {
             writer.write("START 1 angelina.puri@city.ac.uk:test-01" + "\n");
             writer.flush();
@@ -191,8 +189,6 @@ public class FullNode implements FullNodeInterface {
                 writer.flush();
             }
         }
-
-
 
 
         private void handleNotifyRequest(BufferedReader reader) throws IOException {
@@ -266,30 +262,39 @@ public class FullNode implements FullNodeInterface {
     }
 
     private void handleGetRequest(BufferedReader reader, String keyLine) throws IOException {
-        String key = reader.readLine();
         StringBuilder keyBuilder = new StringBuilder();
         int keyLines = Integer.parseInt(keyLine);
-        String firstLine = key.split(" ")[0];
-        if (key.startsWith(firstLine)) {
-            keyBuilder.append(key).append("\n");
-            for (int i = 0; i < keyLines; i++) {
-                String line = reader.readLine();
-                keyBuilder.append(line).append("\n");
+
+        // Append the provided key line to the keyBuilder
+        keyBuilder.append(keyLine).append("\n");
+
+        // Read the remaining key lines
+        for (int i = 1; i < keyLines; i++) {
+            String line = reader.readLine();
+            if (line == null) {
+                // Handle incomplete data
+                writer.write("Incomplete data");
+                writer.flush();
+                return;
             }
+            keyBuilder.append(line).append("\n");
         }
+
         String finalKey = keyBuilder.toString().trim();
-        System.out.println(finalKey);
+        System.out.println("Final Key: " + finalKey);
+
+        // Retrieve the value from the data store
         String value = dataStore.get(finalKey);
 
-        if(value != null && value != "{}") {
-            int valueLines = value.split("\n ").length;
+        // Send the response
+        if (value != null && !value.isEmpty()) {
+            int valueLines = value.split("\n").length;
             writer.write("VALUE " + valueLines + "\n" + value);
-            writer.flush();
-        }
-        else {
+        } else {
             writer.write("NOPE");
-            writer.flush();
         }
+        writer.flush();
     }
 }
+
 /** For get method, make sure start lincha paila ani back and forth yeaa*/

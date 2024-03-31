@@ -45,7 +45,7 @@
          try {
              serverSocket = new ServerSocket(portNumber);
              System.out.println("Listening for incoming connections on " + ipAddress + ":" + portNumber);
-             sendNotifyRequest(ipAddress, portNumber);
+             System.out.println(sendNotifyRequest(ipAddress, portNumber));
 
              while (true) {
                  Socket acceptedSocket = serverSocket.accept();
@@ -58,19 +58,17 @@
              return false;
          }
      }
-     
+
      private String sendNotifyRequest(String ipAddress, int portNumber) {
          try {
              Socket notifySocket = new Socket(ipAddress, portNumber);
              BufferedWriter notifyWriter = new BufferedWriter(new OutputStreamWriter(notifySocket.getOutputStream()));
              BufferedReader notifyreader = new BufferedReader(new InputStreamReader(notifySocket.getInputStream())); // Initialize reader
 
-             notifyWriter.write("NOTIFY?" + "\n" + "angelina.puri@city.ac.uk:test-01" + "\n" + ipAddress + ":" + portNumber + "\n");
-             System.out.println("NOTIFY?" + "\n" + "angelina.puri@city.ac.uk:test-01" + "\n" + ipAddress + ":" + portNumber + "\n");
+             notifyWriter.write("NOTIFY?" + "\n" + "angelina.puri@city.ac.uk:test-01" + "\n" + ipAddress + ":" + portNumber);
              notifyWriter.flush();
 
              String response = notifyreader.readLine();
-             System.out.println(response);
              if(response.equals("NOTIFIED")) {
                  return response;
              }

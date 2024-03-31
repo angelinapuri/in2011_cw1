@@ -106,6 +106,12 @@
                  while ((message = reader.readLine()) != null) {
                      System.out.println(message);
                      String[] messageParts = message.split(" ");
+                     if (messageParts.length == 0) {
+                         // Handle empty message or unexpected format
+                         writer.write("Invalid message format");
+                         writer.flush();
+                         continue; // Skip further processing
+                     }
                      String operation = messageParts[0];
                      if (operation.equals("START")) {
                          if (!startMessageSent) {
@@ -128,7 +134,7 @@
                          writer.flush();
                      }
                  }
-             } catch (Exception e) {
+             } catch (IOException e) {
                  System.out.println("Error: " + e.getMessage());
              } finally {
                  try {

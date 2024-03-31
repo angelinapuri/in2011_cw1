@@ -45,6 +45,8 @@
          try {
              serverSocket = new ServerSocket(portNumber);
              System.out.println("Listening for incoming connections on " + ipAddress + ":" + portNumber);
+             String nodeAddress = ipAddress + portNumber;
+             NetworkMap.addNode("angelina.puri@city.ac.uk", nodeAddress);
 
              while (true) {
                  Socket acceptedSocket = serverSocket.accept();
@@ -140,7 +142,7 @@
                  System.out.println(closestNodes);
                  writer.write(closestNodes.toString());
                  writer.flush();
-                 
+
              } catch (Exception e) {
                  System.err.println("Error handling NEAREST request: " + e.getMessage());
                  writer.write("ERROR\n");

@@ -59,27 +59,6 @@
          }
      }
 
-   /*  private String sendNotifyRequest(String ipAddress, int portNumber, Socket acceptedSocket) {
-         try (BufferedReader reader = new BufferedReader(new InputStreamReader(acceptedSocket.getInputStream()));
-              Writer writer = new OutputStreamWriter(acceptedSocket.getOutputStream())) {
-
-             writer.write("NOTIFY?" + "\n" + "angelina.puri@city.ac.uk:test-01" + "\n" + ipAddress + ":" + portNumber + "\n");
-             writer.flush();
-
-             String response = reader.readLine();
-             if (response != null && response.equals("NOTIFIED")) {
-                 return response;
-             } else {
-                 return "No response or unexpected response: " + response;
-             }
-         } catch (IOException e) {
-             System.err.println("Error sending NOTIFY? message: " + e.getMessage());
-             e.printStackTrace();
-         }
-         return null;
-     } */
-
-
      public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
          NetworkMap.addNode(startingNodeName, startingNodeAddress);
          System.out.println("Connected to " + startingNodeName + " at " + startingNodeAddress);
@@ -158,6 +137,12 @@
          private void handleNearestRequest(String hashID) throws IOException {
              try {
                  List<Node> closestNodes = NetworkMap.findClosestNodes(hashID);
+                 System.out.println(closestNodes);
+                 if (closestNodes.isEmpty()) {
+                     writer.write("ERROR\n");
+                     writer.flush();
+                     return;
+                 }
                  writer.write("NODES " + closestNodes.size() + "\n");
                  for (Node node : closestNodes) {
                      writer.write(node.getName() + "\n" + node.getAddress() + "\n");

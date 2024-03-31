@@ -21,100 +21,110 @@
 
 
  public class FullNode implements FullNodeInterface {
- private ServerSocket serverSocket;
- private Socket socket;
- private Writer writer;
- private BufferedReader reader;
- private NetworkMap networkMap;
- private DataStore dataStore;
+     private ServerSocket serverSocket;
+     private Socket socket;
+     private Writer writer;
+     private BufferedReader reader;
+     private NetworkMap networkMap;
+     private DataStore dataStore;
 
- public FullNode(NetworkMap networkMap, DataStore dataStore) {
- this.networkMap = networkMap;
- this.dataStore = dataStore;
- }
+     public FullNode(NetworkMap networkMap, DataStore dataStore) {
+         this.networkMap = networkMap;
+         this.dataStore = dataStore;
+     }
 
 
- public FullNode() {
- networkMap = new NetworkMap();
- dataStore = new DataStore();
+     public FullNode() {
+         networkMap = new NetworkMap();
+         dataStore = new DataStore();
 
- }
+     }
+
      public boolean listen(String ipAddress, int portNumber) {
          try {
-             ServerSocket serverSocket = new ServerSocket(portNumber);
+             serverSocket = new ServerSocket(portNumber);
              System.out.println("Listening for incoming connections on " + ipAddress + ":" + portNumber);
              while (true) {
                  Socket acceptedSocket = serverSocket.accept();
                  System.out.println("New connection accepted");
-                 this.socket = acceptedSocket;
                  new Thread(new ClientHandler(acceptedSocket)).start();
              }
          } catch (IOException e) {
              System.err.println("Exception listening for incoming connections");
-             System.err.println(e);
+             e.printStackTrace();
              return false;
          }
      }
 
-
      public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
-         networkMap.addNode(startingNodeName, startingNodeAddress);
-        // System.out.println("Connected to " + startingNodeName + " at " + startingNodeAddress);
-         try {
-             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+         NetworkMap.addNode(startingNodeName, startingNodeAddress);
+         System.out.println("Connected to " + startingNodeName + " at " + startingNodeAddress);
+     }
 
+     private class ClientHandler implements Runnable {
+         private Socket clientSocket;
+         private BufferedWriter writer;
+         private BufferedReader reader;
 
-             String message = reader.readLine();
-                 String[] messageParts = message.split(" ");
-                 String operation = messageParts[0];
-                 switch (operation) {
-                     case "notify":
-                         handleNotifyRequest(startingNodeName, startingNodeAddress);
-                         break;
-                     case "echo":
-                         handleEchoRequest();
-                         break;
-                     case "put":
-                         handlePutRequest(messageParts);
-                         break;
-                     case "get":
-                         handleGetRequest(messageParts);
-                         break;
-                     default:
-                         System.out.println("Unknown command");
+         public ClientHandler(Socket clientSocket) {
+             this.clientSocket = clientSocket;
+             try {
+                 this.writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+                 this.reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+             } catch (IOException e) {
+                 System.err.println("Error initializing client socket streams: " + e.getMessage());
+                 e.printStackTrace();
+             }
+         }
+
+         @Override
+         public void run() {
+             try {
+                 String message;
+                 while ((message = reader.readLine()) != null) {
+                     System.out.println("Received: " + message);
+                     String[] messageParts = message.split(" ");
+                     String operation = messageParts[0];
+                     switch (operation) {
+                         case "start" -> handleStartRequest();
+                         case "notify" -> handleNotifyRequest(messageParts[1], messageParts[2]);
+                         case "echo" -> handleEchoRequest();
+                         case "put" -> handlePutRequest(messageParts);
+                         case "get" -> handleGetRequest(messageParts);
+                         default -> {
+                             writer.write("Unknown command");
+                             writer.flush();
+                         }
+                     }
                  }
-         } catch (IOException e) {
-             System.err.println("Exception handling incoming connections");
-             e.printStackTrace();
+             } catch (IOException e) {
+                 System.out.println("Error: " + e.getMessage());
+             } finally {
+                 try {
+                     clientSocket.close();
+                 } catch (IOException e) {
+                     System.out.println("Error closing client socket: " + e.getMessage());
+                 }
+             }
          }
-     }
 
-     private void handleStartRequest() throws IOException {
-         writer.write("START 1 angelina.puri@city.ac.uk:test-01" + "\n");
-         writer.flush();
-     }
-
-     private void handleNotifyRequest(String startingNodeName, String startingNodeAddress) {
-         try {
-             networkMap.addNode(startingNodeName, startingNodeAddress);
-             Socket socket = new Socket(startingNodeAddress.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
-             writer.write("NOTIFIED");
+         private void handleStartRequest() throws IOException {
+             writer.write("START 1 angelina.puri@city.ac.uk:test-01" + "\n");
              writer.flush();
-             socket.close();
-         } catch (IOException e) {
-             System.err.println("Error handling NOTIFY request: " + e.getMessage());
          }
-     }
 
-     private void handleEchoRequest() throws IOException {
-         writer.write("OHCE");
-         writer.flush();
-     }
+         private void handleNotifyRequest(String startingNodeName, String startingNodeAddress) throws IOException {
+             NetworkMap.addNode(startingNodeName, startingNodeAddress);
+             writer.write("NOTIFIED" + "\n");
+             writer.flush();
+         }
 
-     private void handlePutRequest(String[] messageParts) throws IOException {
-         writer.write("START 1 angelina.puri@city.ac.uk:test-01");
-         writer.flush();
+         private void handleEchoRequest() throws IOException {
+             writer.write("OHCE" + "\n");
+             writer.flush();
+         }
+
+         private void handlePutRequest(String[] messageParts) throws IOException {
              if (messageParts.length == 3) {
                  String keyLines = messageParts[1];
                  String valueLines = messageParts[2];
@@ -160,92 +170,37 @@
          }
 
          private void handleGetRequest(String[] messageParts) throws IOException {
-             writer.write("START 1 angelina.puri@city.ac.uk:test-01");
-             writer.flush();
-                 if (messageParts.length == 2) {
-                     String keyLines = messageParts[1];
-                     int keyLineCount = Integer.parseInt(keyLines);
+             if (messageParts.length == 2) {
+                 String keyLines = messageParts[1];
+                 int keyLineCount = Integer.parseInt(keyLines);
 
-                     StringBuilder keyBuilder = new StringBuilder();
+                 StringBuilder keyBuilder = new StringBuilder();
 
-                     // Read the key lines
-                     for (int i = 0; i < keyLineCount; i++) {
-                         String line = reader.readLine();
-                         if (line == null) {
-                             writer.write("FAILED: Incomplete key");
-                             writer.flush();
-                             return;
-                         }
-                         keyBuilder.append(line).append("\n");
+                 // Read the key lines
+                 for (int i = 0; i < keyLineCount; i++) {
+                     String line = reader.readLine();
+                     if (line == null) {
+                         writer.write("FAILED: Incomplete key");
+                         writer.flush();
+                         return;
                      }
-                     String key = keyBuilder.toString().trim();
-                     String value = dataStore.get(key);
+                     keyBuilder.append(line).append("\n");
+                 }
+                 String key = keyBuilder.toString().trim();
+                 String value = dataStore.get(key);
 
-                     if (value != null) {
-                         writer.write("VALUE " + value.length() + "\n");
-                         writer.write(value);
-                     } else {
-                         writer.write("NOPE");
-                     }
+                 if (value != null) {
+                     writer.write("VALUE " + value.length() + "\n");
+                     writer.write(value);
                  } else {
-                     writer.write("Invalid message format");
+                     writer.write("NOPE");
                  }
-                 writer.flush();
+             } else {
+                 writer.write("Invalid message format");
              }
-
-
-         private class ClientHandler implements Runnable {
-             private Socket clientSocket;
-             private BufferedReader reader;
-             private BufferedWriter writer;
-
-             public ClientHandler(Socket clientSocket) {
-                 this.clientSocket = clientSocket;
-             }
-
-             @Override
-             public void run() {
-                 try {
-                     reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                     writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-
-                     String message;
-                     while ((message = reader.readLine()) != null) {
-                         System.out.println("Received: " + message);
-                         String[] messageParts = message.split(" ");
-
-                         switch (messageParts[0]) {
-                             case "START":
-                                 handleStartRequest();
-                             case "NOTIFY?":
-                                 handleNotifyRequest(messageParts[1], messageParts[2]);
-                                 break;
-                             case "ECHO":
-                                 handleEchoRequest();
-                                 break;
-                             case "PUT":
-                                 handlePutRequest(messageParts);
-                                 break;
-                             case "GET":
-                                 handleGetRequest(messageParts);
-                                 break;
-                             default:
-                                 writer.write("Invalid request");
-                                 writer.flush();
-                                 break;
-                         }
-                     }
-                 } catch (IOException e) {
-                     System.out.println("Error: " + e.getMessage());
-                 } finally {
-                     try {
-                         clientSocket.close();
-                     } catch (IOException e) {
-                         System.out.println("Error: " + e.getMessage());
-                     }
-                 }
-             }
+             writer.flush();
          }
-     }
 
+     }
+ }
      /** For get method, make sure start lincha paila ani back and forth yeaa*/

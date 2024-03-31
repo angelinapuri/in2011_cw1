@@ -175,14 +175,12 @@
                          break; // Exit the loop if at least one node added
                      }
                  }
-
-                 // Write the closest nodes to the console
-                 writer.write("NODES " + count + "\n");
-                 System.out.println("NODES " + count + "\n");
+                 StringBuilder nodeList = new StringBuilder();
                  for (Node node : closestNodes) {
-                     writer.write(node.getName() + "\n" + node.getAddress());
-                     System.out.println(node.getName() + "\n" + node.getAddress());
+                     nodeList.append(node.getName()).append("\n").append(node.getAddress()).append("\n");
                  }
+                 writer.write("NODES " + count + "\n" + nodeList.toString());
+                 System.out.println("NODES " + count + "\n" + nodeList.toString());
                  writer.flush();
 
              } catch (Exception e) {

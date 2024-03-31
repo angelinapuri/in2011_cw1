@@ -122,7 +122,7 @@
                              handleNearestRequest(messageParts[1]);
                          }
                      } else if (operation.equals("NOTIFY?")) {
-                         handleNotifyRequest(messageParts[1], messageParts[2]);
+                         handleNotifyRequest(message);
                      } else if (operation.equals("ECHO")) {
                          handleEchoRequest();
                      } else if (operation.equals("PUT?")) {
@@ -169,10 +169,28 @@
 
 
 
-         private void handleNotifyRequest(String startingNodeName, String startingNodeAddress) throws IOException {
-             NetworkMap.addNode(startingNodeName, startingNodeAddress);
-             writer.write("NOTIFIED" + "\n");
-             writer.flush();
+         private void handleNotifyRequest(String message) throws IOException {
+
+             String[] messageLines = message.split("\n");
+             StringBuilder messageBuilder = new StringBuilder();
+             if (message.startsWith("NOTTIFY?")) {
+                 messageBuilder.append(message).append("\n");
+                 String startingNodeName = null;
+                 for (int i = 1; i < messageLines.length; i++) {
+                     String line = reader.readLine();
+                     messageBuilder.append(line).append("\n");
+                     startingNodeName = messageBuilder.toString().trim();
+                 }
+                 String startingNodeAddress = null;
+                 for (int i = 2; i < messageLines.length; i++) {
+                     String line = reader.readLine();
+                     messageBuilder.append(line).append("\n");
+                     startingNodeAddress = messageBuilder.toString().trim();
+                 }
+                 NetworkMap.addNode(startingNodeName, startingNodeAddress);
+                 writer.write("NOTIFIED" + "\n");
+                 writer.flush();
+             }
          }
 
          private void handleEchoRequest() throws IOException {

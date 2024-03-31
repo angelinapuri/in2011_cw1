@@ -267,6 +267,7 @@ public class FullNode implements FullNodeInterface {
 
     private void handleGetRequest(BufferedReader reader) throws IOException {
         String key = reader.readLine();
+        System.out.println(key);
         StringBuilder keyBuilder = new StringBuilder();
         int keyLines = Integer.parseInt(key.split(" ")[1]);
         if (key.startsWith("GET?")) {

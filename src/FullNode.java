@@ -60,7 +60,7 @@
      }
 
 
-     private void sendNotifyRequest(String ipAddress, int portNumber) {
+     private String sendNotifyRequest(String ipAddress, int portNumber) {
          try {
              Socket notifySocket = new Socket(ipAddress, portNumber);
              PrintWriter notifyWriter = new PrintWriter(notifySocket.getOutputStream(), true);
@@ -68,6 +68,10 @@
              notifyWriter.write("NOTIFY?" + "\n" + "angelina.puri@city.ac.uk:test-01" + "\n" + ipAddress + ":" + portNumber + "\n");
              notifyWriter.flush();
 
+             String response = reader.readLine();
+             if(response.equals("NOTIFIED")) {
+                 return response;
+             }
              // Close resources
              notifyWriter.close();
              notifySocket.close();
@@ -75,6 +79,7 @@
              System.err.println("Error sending NOTIFY? message: " + e.getMessage());
              e.printStackTrace();
          }
+         return null;
      }
 
      public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {

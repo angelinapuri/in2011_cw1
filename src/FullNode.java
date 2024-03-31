@@ -96,22 +96,22 @@
                          writer.flush();
                          continue; // Skip further processing
                      }
-                     String operation = messageParts[0];
-                     if (operation.equals("START")) {
+                     String request = messageParts[0];
+                     if (request.equals("START")) {
                          if (!startMessageSent) {
                              handleStartRequest();
                              startMessageSent = true; // Set the flag to true after sending the START message
                          }
-                         else if (operation.equals("NEAREST?")) {
+                         else if (request.equals("NEAREST?")) {
                              handleNearestRequest(messageParts[1]);
                          }
-                     } else if (operation.equals("NOTIFY?")) {
+                     } else if (request.equals("NOTIFY?")) {
                          handleNotifyRequest(message);
-                     } else if (operation.equals("ECHO")) {
+                     } else if (request.equals("ECHO")) {
                          handleEchoRequest();
-                     } else if (operation.equals("PUT?")) {
+                     } else if (request.equals("PUT?")) {
                          handlePutRequest(messageParts);
-                     } else if (operation.equals("GET?")) {
+                     } else if (request.equals("GET?")) {
                          handleGetRequest(messageParts);
                      } else {
                          writer.write("Unknown command");
@@ -176,8 +176,10 @@
 
                  // Write the closest nodes to the console
                  writer.write("NODES " + count);
+                 System.out.println("NODES " + count);
                  for (Node node : closestNodes) {
                      writer.write(node.getName() + "\n" + node.getAddress());
+                     System.out.println(node.getName() + "\n" + node.getAddress());
                  }
                  writer.flush();
 

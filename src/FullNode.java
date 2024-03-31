@@ -61,9 +61,11 @@
 
 
      private String sendNotifyRequest(String ipAddress, int portNumber) {
+         BufferedReader reader = null; // Initialize reader here
          try {
              Socket notifySocket = new Socket(ipAddress, portNumber);
              PrintWriter notifyWriter = new PrintWriter(notifySocket.getOutputStream(), true);
+             reader = new BufferedReader(new InputStreamReader(notifySocket.getInputStream())); // Initialize reader
 
              notifyWriter.write("NOTIFY?" + "\n" + "angelina.puri@city.ac.uk:test-01" + "\n" + ipAddress + ":" + portNumber + "\n");
              notifyWriter.flush();
@@ -78,9 +80,19 @@
          } catch (IOException e) {
              System.err.println("Error sending NOTIFY? message: " + e.getMessage());
              e.printStackTrace();
+         } finally {
+             try {
+                 if (reader != null) {
+                     reader.close(); // Close the reader if it's not null
+                 }
+             } catch (IOException e) {
+                 System.err.println("Error closing reader: " + e.getMessage());
+                 e.printStackTrace();
+             }
          }
          return null;
      }
+
 
      public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
          NetworkMap.addNode(startingNodeName, startingNodeAddress);

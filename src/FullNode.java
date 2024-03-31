@@ -88,18 +88,16 @@
          @Override
          public void run() {
              try {
-                     String message=reader.readLine();
+                 String message;
+                 while ((message = reader.readLine()) != null) {
+                     System.out.println(message);
+                     String[] messageParts = message.split(" ");
 
-                     while (message != null) {
-                         System.out.println(message);
-                         String[] messageParts = message.split(" ");
-
-                         if (messageParts.length == 0) {
-                             // Handle empty message or unexpected format
-                             writer.write("Invalid message format");
-                             writer.flush();
-                             continue; // Skip further processing
-                         }
+                     if (messageParts.length == 0) {
+                         writer.write("Invalid message format");
+                         writer.flush();
+                         continue;
+                     }
 
                      String request = messageParts[0];
                      if (request.equals("START")) {
@@ -108,7 +106,7 @@
                              startMessageSent = true; // Set the flag to true after sending the START message
                          }
                      } else if (request.startsWith("NEAREST?")) {
-                         handleNearestRequest(messageParts[0], networkMap);
+                         handleNearestRequest(message, networkMap);
                      } else if (request.equals("NOTIFY?")) {
                          handleNotifyRequest(message);
                      } else if (request.equals("ECHO")) {
@@ -122,7 +120,7 @@
                          writer.flush();
                      }
                  }
-         } catch (IOException e) {
+             } catch (IOException e) {
                  System.out.println("Error: " + e.getMessage());
              } finally {
                  try {
@@ -132,6 +130,7 @@
                  }
              }
          }
+
 
 
 

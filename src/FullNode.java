@@ -88,8 +88,9 @@
          @Override
          public void run() {
              try {
-                 String message;
-                 while((message=reader.readLine()) != null){
+                 String message=reader.readLine();
+                 System.out.println(message);
+                 while(message != null) {
                      if (message.startsWith("START")) {
                          handleStartRequest();
                      } else if (message.startsWith("NEAREST?")) {

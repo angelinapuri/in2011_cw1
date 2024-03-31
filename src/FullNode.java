@@ -138,16 +138,9 @@
              try {
                  List<Node> closestNodes = NetworkMap.findClosestNodes(hashID);
                  System.out.println(closestNodes);
-                 if (closestNodes.isEmpty()) {
-                     writer.write("ERROR\n");
-                     writer.flush();
-                     return;
-                 }
-                 writer.write("NODES " + closestNodes.size() + "\n");
-                 for (Node node : closestNodes) {
-                     writer.write(node.getName() + "\n" + node.getAddress() + "\n");
-                 }
+                 writer.write(closestNodes.toString());
                  writer.flush();
+                 
              } catch (Exception e) {
                  System.err.println("Error handling NEAREST request: " + e.getMessage());
                  writer.write("ERROR\n");

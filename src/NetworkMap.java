@@ -18,7 +18,8 @@ public class NetworkMap {
         for (Map.Entry<String, String> entry : map.entrySet()) {
             String nodeName = entry.getKey();
             String nodeAddress = entry.getValue();
-            int distance = HashID.computeDistance(hashID, nodeAddress);
+            String nodeHashID = HashID.computeHashID(nodeName + "\n");
+            int distance = HashID.computeDistance(hashID, nodeHashID);
 
             distances.putIfAbsent(distance, new ArrayList<>());
             distances.get(distance).add(new Node(nodeName, nodeAddress));
@@ -38,11 +39,36 @@ public class NetworkMap {
                 count++;
 
                 if (count >= 3) {
-                    return closestNodes; // Return when 3 closest nodes are found
+                    break; // Exit the loop if maximum count reached
                 }
             }
+
+            if (count >= 1) {
+                break; // Exit the loop if at least one node added
+            }
+        }
+
+        // Write the closest nodes to the console
+        System.out.println("NODES " + count);
+        for (Node node : closestNodes) {
+            System.out.println(node.getName() + "\n" + node.getAddress());
         }
 
         return closestNodes;
     }
+
+ /**   public static void main(String[] args) throws Exception {
+        NetworkMap networkMap = new NetworkMap();
+
+        // Add nodes to the map
+        networkMap.addNode("Node1", "Address1");
+        networkMap.addNode("Node2", "Address2");
+        networkMap.addNode("Node3", "Address3");
+        networkMap.addNode("Node4", "Address4");
+
+        // Find closest nodes to a given hash ID
+        String hashID = "0f033be6cea034bd45a0352775a219ef5dc7825ce55d1f7dae9762d80ce64411";
+        List<Node> closestNodes = networkMap.findClosestNodes(hashID);
+
+    } */
 }

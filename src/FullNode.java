@@ -59,7 +59,7 @@
 
      public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
          networkMap.addNode(startingNodeName, startingNodeAddress);
-         System.out.println("Connected to " + startingNodeName + " at " + startingNodeAddress);
+        // System.out.println("Connected to " + startingNodeName + " at " + startingNodeAddress);
          try {
              writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
              reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -69,10 +69,6 @@
                  String[] messageParts = message.split(" ");
                  String operation = messageParts[0];
                  switch (operation) {
-                     case "start":
-                         if (messageParts[1] == "1") {
-                             handleStartRequest(writer);}
-                         break;
                      case "notify":
                          handleNotifyRequest(startingNodeName, startingNodeAddress);
                          break;
@@ -91,24 +87,6 @@
          } catch (IOException e) {
              System.err.println("Exception handling incoming connections");
              e.printStackTrace();
-         }
-     }
-
-     private void handleStartRequest(Writer writer) {
-         try {
-             writer.write("START 1 angelina.puri@city.ac.uk:test-01");
-             writer.flush();
-         } catch (IOException e) {
-             System.err.println("Error handling START request: " + e.getMessage());
-         } finally {
-             try {
-                 // Close the socket after writing the response
-                 if (socket != null && !socket.isClosed()) {
-                     socket.close();
-                 }
-             } catch (IOException e) {
-                 System.err.println("Error closing socket: " + e.getMessage());
-             }
          }
      }
 
@@ -131,6 +109,8 @@
      }
 
      private void handlePutRequest(String[] messageParts) throws IOException {
+         writer.write("START 1 angelina.puri@city.ac.uk:test-01");
+         writer.flush();
              if (messageParts.length == 3) {
                  String keyLines = messageParts[1];
                  String valueLines = messageParts[2];
@@ -176,6 +156,8 @@
          }
 
          private void handleGetRequest(String[] messageParts) throws IOException {
+             writer.write("START 1 angelina.puri@city.ac.uk:test-01");
+             writer.flush();
                  if (messageParts.length == 2) {
                      String keyLines = messageParts[1];
                      int keyLineCount = Integer.parseInt(keyLines);
@@ -207,6 +189,7 @@
                  writer.flush();
              }
 
+
          private class ClientHandler implements Runnable {
              private Socket clientSocket;
              private BufferedReader reader;
@@ -228,9 +211,6 @@
                          String[] messageParts = message.split(" ");
 
                          switch (messageParts[0]) {
-                             case "START":
-                                 handleStartRequest(writer);
-                                 break;
                              case "NOTIFY?":
                                  handleNotifyRequest(messageParts[1], messageParts[2]);
                                  break;
@@ -261,3 +241,5 @@
              }
          }
      }
+
+     /** For get method, make sure start lincha paila ani back and forth yeaa*/

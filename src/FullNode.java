@@ -9,11 +9,9 @@
  import java.io.*;
  import java.net.ServerSocket;
  import java.net.Socket;
- import java.util.HashMap;
- import java.util.List;
- import java.util.Map;
+ import java.util.*;
 
- // DO NOT EDIT starts
+// DO NOT EDIT starts
  interface FullNodeInterface {
  public boolean listen(String ipAddress, int portNumber);
  public void handleIncomingConnections(String startingNodeName, String startingNodeAddress);
@@ -48,7 +46,6 @@
              String nodeName = "angelina.puri@city.ac.uk";
              String nodeAddress = ipAddress + ":" + portNumber;
              NetworkMap.addNode(nodeName, nodeAddress);
-             printNetworkMap();
              //System.out.println("Added self as a node: " + "angelina.puri@city.ac.uk" + " at " + nodeAddress);
 
              while (true) {
@@ -68,13 +65,7 @@
          NetworkMap.addNode(startingNodeName, startingNodeAddress);
          System.out.println("Connected to " + startingNodeName + " at " + startingNodeAddress);
      }
-     public void printNetworkMap() {
-         Map<String, String> map = NetworkMap.getMap();
-         System.out.println("Contents of the NetworkMap:");
-         for (Map.Entry<String, String> entry : map.entrySet()) {
-             System.out.println("Node Name: " + entry.getKey() + ", Node Address: " + entry.getValue());
-         }
-     }
+
      private class ClientHandler implements Runnable {
          private Socket clientSocket;
          private BufferedWriter writer;
@@ -145,10 +136,51 @@
              writer.flush();
          }
 
+
          private void handleNearestRequest(String hashID) throws IOException {
              try {
-                 List<Node> closestNodes = NetworkMap.findClosestNodes(hashID);
-                 System.out.println(closestNodes);
+                 Map<Integer, List<Node>> distances = new TreeMap<>();
+
+                 // Compute distances to all nodes in the map
+                 for (Map.Entry<String, String> entry : NetworkMap.getMap().entrySet()) {
+                     String nodeName = entry.getKey();
+                     String nodeAddress = entry.getValue();
+                     String nodeHashID = HashID.computeHashID(nodeName + "\n");
+                     int distance = HashID.computeDistance(hashID, nodeHashID);
+
+                     distances.putIfAbsent(distance, new ArrayList<>());
+                     distances.get(distance).add(new Node(nodeName, nodeAddress));
+                 }
+
+                 List<Node> closestNodes = new ArrayList<>();
+                 int count = 0;
+
+                 // Iterate through distances and add closest nodes to the list
+                 for (Map.Entry<Integer, List<Node>> entry : distances.entrySet()) {
+                     List<Node> closestNodesAtDistance = entry.getValue();
+                     Collections.shuffle(closestNodesAtDistance); // Shuffle to randomize selection
+
+                     for (Node closestNode : closestNodesAtDistance) {
+                         closestNodes.add(closestNode);
+                         count++;
+
+                         if (count >= 3) {
+                             break; // Exit the loop if maximum count reached
+                         }
+                     }
+
+                     if (count >= 1) {
+                         break; // Exit the loop if at least one node added
+                     }
+                 }
+
+                 // Write the closest nodes to the console
+                 System.out.println("NODES " + count);
+                 for (Node node : closestNodes) {
+                     System.out.println(node.getName() + "\n" + node.getAddress());
+                 }
+
+                 // Write the closest nodes to the client
                  writer.write(closestNodes.toString());
                  writer.flush();
 
@@ -158,6 +190,7 @@
                  writer.flush();
              }
          }
+
 
 
 

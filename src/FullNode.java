@@ -46,9 +46,9 @@
              serverSocket = new ServerSocket(portNumber);
              System.out.println("Listening for incoming connections on " + ipAddress + ":" + portNumber);
              while (true) {
-                 writer.write("NOTIFY?" + "\n" + "angelina.puri@city.ac.uk:test-01" + "\n" + ipAddress + ":" + portNumber + "\n");
                  Socket acceptedSocket = serverSocket.accept();
                  System.out.println("New connection accepted");
+                 writer.write("NOTIFY?" + "\n" + "angelina.puri@city.ac.uk:test-01" + "\n" + ipAddress + ":" + portNumber + "\n");
                  new Thread(new ClientHandler(acceptedSocket)).start();
              }
          } catch (IOException e) {

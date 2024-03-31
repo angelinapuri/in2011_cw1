@@ -86,29 +86,22 @@
                      System.out.println("Received: " + message);
                      String[] messageParts = message.split(" ");
                      String operation = messageParts[0];
-                     switch (operation) {
-                         case "start":
-                             if (!startMessageSent) {
-                                 handleStartRequest();
-                                 startMessageSent = true; // Set the flag to true after sending the START message
-                             }
-                             break;
-                         case "notify":
-                             handleNotifyRequest(messageParts[1], messageParts[2]);
-                             break;
-                         case "echo":
-                             handleEchoRequest();
-                             break;
-                         case "put":
-                             handlePutRequest(messageParts);
-                             break;
-                         case "get":
-                             handleGetRequest(messageParts);
-                             break;
-                         default:
-                             writer.write("Unknown command");
-                             writer.flush();
-                             break;
+                     if (operation.equals("START")) {
+                         if (!startMessageSent) {
+                             handleStartRequest();
+                             startMessageSent = true; // Set the flag to true after sending the START message
+                         }
+                     } else if (operation.equals("NOTIFY?")) {
+                         handleNotifyRequest(messageParts[1], messageParts[2]);
+                     } else if (operation.equals("ECHO")) {
+                         handleEchoRequest();
+                     } else if (operation.equals("PUT?")) {
+                         handlePutRequest(messageParts);
+                     } else if (operation.equals("GET?")) {
+                         handleGetRequest(messageParts);
+                     } else {
+                         writer.write("Unknown command");
+                         writer.flush();
                      }
                  }
              } catch (IOException e) {
@@ -122,8 +115,10 @@
              }
          }
 
+
          private void handleStartRequest() throws IOException {
              writer.write("START 1 angelina.puri@city.ac.uk:test-01" + "\n");
+             System.out.println("START 1 angelina.puri@city.ac.uk:test-01" + "\n");
              writer.flush();
          }
 

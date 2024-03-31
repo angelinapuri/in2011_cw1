@@ -88,23 +88,34 @@
          @Override
          public void run() {
              try {
-                 String message=reader.readLine();
-                 System.out.println(message);
-                 while(message != null) {
-                     if (message.startsWith("START")) {
+                     String message=reader.readLine();
+
+                     while (message != null) {
+                         System.out.println(message);
+                         String[] messageParts = message.split(" ");
+
+                         if (messageParts.length == 0) {
+                             // Handle empty message or unexpected format
+                             writer.write("Invalid message format");
+                             writer.flush();
+                             continue; // Skip further processing
+                         }
+
+                     String request = messageParts[0];
+                     if (request.equals("START")) {
                          if (!startMessageSent) { // Corrected syntax for conditional check
                              handleStartRequest();
                              startMessageSent = true; // Set the flag to true after sending the START message
                          }
-                     } else if (message.startsWith("NEAREST?")) {
-                         handleNearestRequest(message, networkMap);
-                     } else if (message.startsWith("NOTIFY?")) {
+                     } else if (request.startsWith("NEAREST?")) {
+                         handleNearestRequest(messageParts[0], networkMap);
+                     } else if (request.equals("NOTIFY?")) {
                          handleNotifyRequest(message);
-                     } else if (message.equals("ECHO")) {
+                     } else if (request.equals("ECHO")) {
                          handleEchoRequest();
-                     } else if (message.startsWith("PUT?")) {
+                     } else if (request.equals("PUT?")) {
                          handlePutRequest(message);
-                     } else if (message.startsWith("GET?")) {
+                     } else if (request.equals("GET?")) {
                          handleGetRequest(message);
                      } else {
                          writer.write("Unknown command");

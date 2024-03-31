@@ -127,8 +127,10 @@
          }
 
 
-         private void handleNearestRequest(String hashID, NetworkMap networkMap) throws IOException {
+         private void handleNearestRequest(String message, NetworkMap networkMap) throws IOException {
              try {
+                 String[] messageParts = message.split(" ");
+                 String hashID = messageParts[1];
                  Map<Integer, List<Node>> distances = new TreeMap<>();
 
                  // Compute distances to all nodes in the map

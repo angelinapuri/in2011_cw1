@@ -10,6 +10,7 @@
  import java.net.ServerSocket;
  import java.net.Socket;
  import java.util.HashMap;
+ import java.util.List;
  import java.util.Map;
 
  // DO NOT EDIT starts
@@ -45,6 +46,7 @@
              serverSocket = new ServerSocket(portNumber);
              System.out.println("Listening for incoming connections on " + ipAddress + ":" + portNumber);
              while (true) {
+                 writer.write("NOTIFY?" + "\n" + "angelina.puri@city.ac.uk:test-01" + "\n" + ipAddress + ":" + portNumber + "\n");
                  Socket acceptedSocket = serverSocket.accept();
                  System.out.println("New connection accepted");
                  new Thread(new ClientHandler(acceptedSocket)).start();
@@ -118,17 +120,27 @@
              }
          }
 
-
          private void handleStartRequest() throws IOException {
              writer.write("START 1 angelina.puri@city.ac.uk:test-01" + "\n");
-           //  System.out.println("START 1 angelina.puri@city.ac.uk:test-01" + "\n");
              writer.flush();
          }
 
-         private void handleNearestRequest(String hashID) throws Exception {
-             writer.write(networkMap.getClosestNodes(hashID).toString());
-             writer.flush();
+         private void handleNearestRequest(String hashID) throws IOException {
+             try {
+                 List<Node> closestNodes = NetworkMap.findClosestNodes(hashID);
+                 writer.write("NODES " + closestNodes.size() + "\n");
+                 for (Node node : closestNodes) {
+                     writer.write(node.getName() + "\n" + node.getAddress() + "\n");
+                 }
+                 writer.flush();
+             } catch (Exception e) {
+                 System.err.println("Error handling NEAREST request: " + e.getMessage());
+                 writer.write("ERROR\n");
+                 writer.flush();
+             }
          }
+
+
 
          private void handleNotifyRequest(String startingNodeName, String startingNodeAddress) throws IOException {
              NetworkMap.addNode(startingNodeName, startingNodeAddress);

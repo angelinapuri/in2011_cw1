@@ -11,10 +11,8 @@ public class NetworkMap {
         map.put(nodeName, hashID);
     }
 
-    public List<String> getClosestNodes(String node) throws Exception {
+    public List<String> getClosestNodes(String hashID) throws Exception {
         Map<Integer, List<String>> distances = new TreeMap<>();
-        String hashID = HashID.computeHashID(node + "\n");
-
 
         // Compute distances to all nodes in the map
         for (Map.Entry<String, String> entry : map.entrySet()) {

@@ -83,13 +83,16 @@
              try {
                  String message;
                  while ((message = reader.readLine()) != null) {
-                     System.out.println("Received: " + message);
+                     System.out.println(message);
                      String[] messageParts = message.split(" ");
                      String operation = messageParts[0];
                      if (operation.equals("START")) {
                          if (!startMessageSent) {
                              handleStartRequest();
                              startMessageSent = true; // Set the flag to true after sending the START message
+                         }
+                         else if (operation.equals("NEAREST?")) {
+                             handleNearestRequest(messageParts[1]);
                          }
                      } else if (operation.equals("NOTIFY?")) {
                          handleNotifyRequest(messageParts[1], messageParts[2]);
@@ -104,7 +107,7 @@
                          writer.flush();
                      }
                  }
-             } catch (IOException e) {
+             } catch (Exception e) {
                  System.out.println("Error: " + e.getMessage());
              } finally {
                  try {
@@ -119,6 +122,11 @@
          private void handleStartRequest() throws IOException {
              writer.write("START 1 angelina.puri@city.ac.uk:test-01" + "\n");
              System.out.println("START 1 angelina.puri@city.ac.uk:test-01" + "\n");
+             writer.flush();
+         }
+
+         private void handleNearestRequest(String hashID) throws Exception {
+             writer.write(networkMap.getClosestNodes(hashID).toString());
              writer.flush();
          }
 

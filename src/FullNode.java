@@ -45,10 +45,10 @@
          try {
              serverSocket = new ServerSocket(portNumber);
              System.out.println("Listening for incoming connections on " + ipAddress + ":" + portNumber);
-             System.out.println(sendNotifyRequest(ipAddress, portNumber));
 
              while (true) {
                  Socket acceptedSocket = serverSocket.accept();
+                 System.out.println(sendNotifyRequest(ipAddress, portNumber, acceptedSocket));
                  System.out.println("New connection accepted");
                  new Thread(new ClientHandler(acceptedSocket)).start();
              }
@@ -59,34 +59,22 @@
          }
      }
 
-     private String sendNotifyRequest(String ipAddress, int portNumber) {
-         try {
-             Socket notifySocket = new Socket(ipAddress, portNumber);
-             BufferedWriter notifyWriter = new BufferedWriter(new OutputStreamWriter(notifySocket.getOutputStream()));
-             BufferedReader notifyreader = new BufferedReader(new InputStreamReader(notifySocket.getInputStream())); // Initialize reader
+     private String sendNotifyRequest(String ipAddress, int portNumber, Socket acceptedSocket) {
+         try (BufferedReader reader = new BufferedReader(new InputStreamReader(acceptedSocket.getInputStream()));
+              Writer writer = new OutputStreamWriter(acceptedSocket.getOutputStream())) {
 
-             notifyWriter.write("NOTIFY?" + "\n" + "angelina.puri@city.ac.uk:test-01" + "\n" + ipAddress + ":" + portNumber);
-             notifyWriter.flush();
+             writer.write("NOTIFY?" + "\n" + "angelina.puri@city.ac.uk:test-01" + "\n" + ipAddress + ":" + portNumber + "\n");
+             writer.flush();
 
-             String response = notifyreader.readLine();
-             if(response.equals("NOTIFIED")) {
+             String response = reader.readLine();
+             if (response != null && response.equals("NOTIFIED")) {
                  return response;
+             } else {
+                 return "No response or unexpected response: " + response;
              }
-             // Close resources
-             notifyWriter.close();
-             notifySocket.close();
          } catch (IOException e) {
              System.err.println("Error sending NOTIFY? message: " + e.getMessage());
              e.printStackTrace();
-         } finally {
-             try {
-                 if (reader != null) {
-                     reader.close(); // Close the reader if it's not null
-                 }
-             } catch (IOException e) {
-                 System.err.println("Error closing reader: " + e.getMessage());
-                 e.printStackTrace();
-             }
          }
          return null;
      }

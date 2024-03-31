@@ -121,7 +121,7 @@
 
          private void handleStartRequest() throws IOException {
              writer.write("START 1 angelina.puri@city.ac.uk:test-01" + "\n");
-             System.out.println("START 1 angelina.puri@city.ac.uk:test-01" + "\n");
+           //  System.out.println("START 1 angelina.puri@city.ac.uk:test-01" + "\n");
              writer.flush();
          }
 

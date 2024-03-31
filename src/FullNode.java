@@ -86,15 +86,25 @@
                      String[] messageParts = message.split(" ");
                      String operation = messageParts[0];
                      switch (operation) {
-                         case "start" -> handleStartRequest();
-                         case "notify" -> handleNotifyRequest(messageParts[1], messageParts[2]);
-                         case "echo" -> handleEchoRequest();
-                         case "put" -> handlePutRequest(messageParts);
-                         case "get" -> handleGetRequest(messageParts);
-                         default -> {
-                             writer.write("Unknown command");
-                             writer.flush();
-                         }
+                             case "start":
+                                 handleStartRequest();
+                                 break;
+                             case "notify":
+                                 handleNotifyRequest(messageParts[1], messageParts[2]);
+                                 break;
+                             case "echo":
+                                 handleEchoRequest();
+                                 break;
+                             case "put":
+                                 handlePutRequest(messageParts);
+                                 break;
+                             case "get":
+                                 handleGetRequest(messageParts);
+                                 break;
+                             default:
+                                 writer.write("Unknown command");
+                                 writer.flush();
+                                 break;
                      }
                  }
              } catch (IOException e) {

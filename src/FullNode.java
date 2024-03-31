@@ -68,9 +68,11 @@
              reader = new BufferedReader(new InputStreamReader(notifySocket.getInputStream())); // Initialize reader
 
              notifyWriter.write("NOTIFY?" + "\n" + "angelina.puri@city.ac.uk:test-01" + "\n" + ipAddress + ":" + portNumber + "\n");
+             System.out.println("NOTIFY?" + "\n" + "angelina.puri@city.ac.uk:test-01" + "\n" + ipAddress + ":" + portNumber + "\n");
              notifyWriter.flush();
 
              String response = reader.readLine();
+             System.out.println(response);
              if(response.equals("NOTIFIED")) {
                  return response;
              }

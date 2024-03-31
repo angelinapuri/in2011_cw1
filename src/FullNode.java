@@ -89,41 +89,24 @@
          public void run() {
              try {
                  String message;
-                 StringBuilder requestBuilder = new StringBuilder();
-                 while ((message = reader.readLine()) != null && !message.isEmpty()) {
-                     requestBuilder.append(message).append("\n");
-                 }
-                 String fullRequest = requestBuilder.toString().trim();
-                 System.out.println(fullRequest);
-                 String[] messageParts = fullRequest.split(" ");
-
-                 if (messageParts.length == 0) {
-                     writer.write("Invalid message format");
-                     writer.flush();
-                     return;
-                 }
-                 String request = messageParts[0];
-                 System.out.println(messageParts[0]);
-                 if (request.equals("START")) {
-                     if (!startMessageSent) { // Corrected syntax for conditional check
+                 while((message=reader.readLine()) != null){
+                     if (message.startsWith("START")) {
                          handleStartRequest();
-                         startMessageSent = true; // Set the flag to true after sending the START message
-                     }
-                 }
-                     else if (request.equals("NEAREST?")) {
-                         handleNearestRequest(messageParts[1], networkMap);
-                     } else if (request.equals("NOTIFY?")) {
+                     } else if (message.startsWith("NEAREST?")) {
+                         handleNearestRequest(message, networkMap);
+                     } else if (message.startsWith("NOTIFY?")) {
                          handleNotifyRequest(message);
-                     } else if (request.equals("ECHO")) {
+                     } else if (message.equals("ECHO")) {
                          handleEchoRequest();
-                     } else if (request.equals("PUT?")) {
-                         handlePutRequest(messageParts);
-                     } else if (request.equals("GET?")) {
-                         handleGetRequest(fullRequest, messageParts[1]);
+                     } else if (message.startsWith("PUT?")) {
+                         handlePutRequest(message);
+                     } else if (message.startsWith("GET?")) {
+                         handleGetRequest(message);
                      } else {
                          writer.write("Unknown command");
                          writer.flush();
                      }
+                 }
          } catch (IOException e) {
                  System.out.println("Error: " + e.getMessage());
              } finally {
@@ -226,10 +209,9 @@
              writer.flush();
          }
 
-         private void handlePutRequest(String[] messageParts) throws IOException {
-             if (messageParts.length == 3) {
-                 String keyLines = messageParts[1];
-                 String valueLines = messageParts[2];
+         private void handlePutRequest(String message) throws IOException {
+                 String keyLines = null;
+                 String valueLines = null;
 
                  int keyLineCount = Integer.parseInt(keyLines);
                  int valueLineCount = Integer.parseInt(valueLines);
@@ -265,30 +247,32 @@
                  dataStore.store(key, value);
                  writer.write("SUCCESS");
                  writer.flush();
-             } else {
-                 writer.write("Invalid request");
-                 writer.flush();
              }
          }
 
-         private void handleGetRequest(String message, String keyLines) throws IOException {
+         private void handleGetRequest(String message) throws IOException {
+             String[] messageParts = message.split(" ");
 
-             int keyLineCount = Integer.parseInt(keyLines);
-             StringBuilder keyBuilder = new StringBuilder();
-
-             // Split the message into lines
-             String[] keys = message.split("\n");
-
-             // Ensure the number of keys matches the expected count
-             if (keys.length != keyLineCount) {
-                 writer.write("FAILED: Incorrect number of keys");
+             if (messageParts.length != 2) {
+                 writer.write("Invalid message format");
                  writer.flush();
                  return;
              }
 
+             // Extract the key lines count from the message
+             int keyLineCount = Integer.parseInt(messageParts[1]);
+
+             StringBuilder keyBuilder = new StringBuilder();
+
              // Read each key from the message
-             for (String key : keys) {
-                 keyBuilder.append(key).append("\n");
+             for (int i = 0; i < keyLineCount; i++) {
+                 String line = reader.readLine();
+                 if (line == null) {
+                     writer.write("FAILED: Incomplete key");
+                     writer.flush();
+                     return;
+                 }
+                 keyBuilder.append(line).append("\n");
              }
 
              String finalKey = keyBuilder.toString().trim();
@@ -304,5 +288,4 @@
          }
 
      }
- }
      /** For get method, make sure start lincha paila ani back and forth yeaa*/

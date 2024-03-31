@@ -88,18 +88,20 @@
          @Override
          public void run() {
              try {
-                 String message = reader.readLine();
+                 String message;
+                 while ((message = reader.readLine()) != null) {
                      System.out.println(message);
                      String[] messageParts = message.split(" ");
 
                      if (messageParts.length == 0) {
+                         // Handle empty message or unexpected format
                          writer.write("Invalid message format");
                          writer.flush();
+                         continue; // Skip further processing
                      }
-
                      String request = messageParts[0];
                      if (request.equals("START")) {
-                         if (!startMessageSent) { // Corrected syntax for conditional check
+                         if (!startMessageSent) {
                              handleStartRequest();
                              startMessageSent = true; // Set the flag to true after sending the START message
                          }
@@ -117,6 +119,7 @@
                          writer.write("Unknown command");
                          writer.flush();
                      }
+                 }
 
              } catch (IOException e) {
                  System.out.println("Error: " + e.getMessage());

@@ -267,7 +267,6 @@ public class FullNode implements FullNodeInterface {
 
     private void handleGetRequest(BufferedReader reader, String keyLine) throws IOException {
         String key = reader.readLine();
-        System.out.println(key);
         StringBuilder keyBuilder = new StringBuilder();
         int keyLines = Integer.parseInt(keyLine);
         if (key.startsWith("GET?")) {
@@ -278,9 +277,10 @@ public class FullNode implements FullNodeInterface {
             }
         }
         String finalKey = keyBuilder.toString().trim();
+        System.out.println(finalKey);
         String value = dataStore.get(finalKey);
 
-        if(value != null) {
+        if(value != null && value != "{}") {
             int valueLines = value.split("\n ").length;
             writer.write("VALUE " + valueLines + "\n" + value);
             writer.flush();

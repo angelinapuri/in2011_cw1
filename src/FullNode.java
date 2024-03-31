@@ -58,8 +58,7 @@
              return false;
          }
      }
-
-
+     
      private String sendNotifyRequest(String ipAddress, int portNumber) {
          try {
              Socket notifySocket = new Socket(ipAddress, portNumber);

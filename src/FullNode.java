@@ -45,16 +45,35 @@
          try {
              serverSocket = new ServerSocket(portNumber);
              System.out.println("Listening for incoming connections on " + ipAddress + ":" + portNumber);
+             sendNotifyRequest(ipAddress, portNumber);
+
              while (true) {
                  Socket acceptedSocket = serverSocket.accept();
                  System.out.println("New connection accepted");
-                 writer.write("NOTIFY?" + "\n" + "angelina.puri@city.ac.uk:test-01" + "\n" + ipAddress + ":" + portNumber + "\n");
                  new Thread(new ClientHandler(acceptedSocket)).start();
              }
          } catch (IOException e) {
              System.err.println("Exception listening for incoming connections");
              e.printStackTrace();
              return false;
+         }
+     }
+
+
+     private void sendNotifyRequest(String ipAddress, int portNumber) {
+         try {
+             Socket notifySocket = new Socket(ipAddress, portNumber);
+             PrintWriter notifyWriter = new PrintWriter(notifySocket.getOutputStream(), true);
+
+             notifyWriter.write("NOTIFY?" + "\n" + "angelina.puri@city.ac.uk:test-01" + "\n" + ipAddress + ":" + portNumber + "\n");
+             notifyWriter.flush();
+
+             // Close resources
+             notifyWriter.close();
+             notifySocket.close();
+         } catch (IOException e) {
+             System.err.println("Error sending NOTIFY? message: " + e.getMessage());
+             e.printStackTrace();
          }
      }
 
@@ -119,6 +138,8 @@
                  }
              }
          }
+
+
 
          private void handleStartRequest() throws IOException {
              writer.write("START 1 angelina.puri@city.ac.uk:test-01" + "\n");

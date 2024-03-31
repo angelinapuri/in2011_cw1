@@ -88,15 +88,13 @@
          @Override
          public void run() {
              try {
-                 String message;
-                 while ((message = reader.readLine()) != null) {
+                 String message = reader.readLine();
                      System.out.println(message);
                      String[] messageParts = message.split(" ");
 
                      if (messageParts.length == 0) {
                          writer.write("Invalid message format");
                          writer.flush();
-                         continue;
                      }
 
                      String request = messageParts[0];
@@ -106,7 +104,7 @@
                              startMessageSent = true; // Set the flag to true after sending the START message
                          }
                      } else if (request.startsWith("NEAREST?")) {
-                         handleNearestRequest(message, networkMap);
+                         handleNearestRequest(messageParts[1], networkMap);
                      } else if (request.equals("NOTIFY?")) {
                          handleNotifyRequest(message);
                      } else if (request.equals("ECHO")) {
@@ -119,7 +117,7 @@
                          writer.write("Unknown command");
                          writer.flush();
                      }
-                 }
+
              } catch (IOException e) {
                  System.out.println("Error: " + e.getMessage());
              } finally {

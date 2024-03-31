@@ -269,7 +269,8 @@ public class FullNode implements FullNodeInterface {
         String key = reader.readLine();
         StringBuilder keyBuilder = new StringBuilder();
         int keyLines = Integer.parseInt(keyLine);
-        if (!key.isEmpty()) {
+        String firstLine = key.split(" ")[0];
+        if (key.startsWith(firstLine)) {
             keyBuilder.append(key).append("\n");
             for (int i = 0; i < keyLines; i++) {
                 String line = reader.readLine();

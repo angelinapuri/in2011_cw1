@@ -177,8 +177,8 @@
                  }
 
                  // Write the closest nodes to the console
-                 writer.write("NODES " + count);
-                 System.out.println("NODES " + count);
+                 writer.write("NODES " + count + "\n");
+                 System.out.println("NODES " + count + "\n");
                  for (Node node : closestNodes) {
                      writer.write(node.getName() + "\n" + node.getAddress());
                      System.out.println(node.getName() + "\n" + node.getAddress());

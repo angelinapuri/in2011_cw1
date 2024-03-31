@@ -108,13 +108,13 @@
                      } else if (request.startsWith("NEAREST?")) {
                          handleNearestRequest(messageParts[1], networkMap);
                      } else if (request.equals("NOTIFY?")) {
-                         handleNotifyRequest(message);
+                         handleNotifyRequest(reader);
                      } else if (request.equals("ECHO")) {
                          handleEchoRequest();
                      } else if (request.equals("PUT?")) {
-                         handlePutRequest(message);
+                         handlePutRequest(reader);
                      } else if (request.equals("GET?")) {
-                         handleGetRequest(message);
+                         handleGetRequest(reader);
                      } else {
                          writer.write("Unknown command");
                          writer.flush();
@@ -195,8 +195,8 @@
 
 
 
-         private void handleNotifyRequest(String message) throws IOException {
-
+         private void handleNotifyRequest(BufferedReader reader) throws IOException {
+String message = reader.readLine();
              String[] messageLines = message.split("\n");
              StringBuilder messageBuilder = new StringBuilder();
              if (message.startsWith("NOTTIFY?")) {
@@ -224,7 +224,7 @@
              writer.flush();
          }
 
-         private void handlePutRequest(String message) throws IOException {
+         private void handlePutRequest(BufferedReader reader) throws IOException {
                  String keyLines = null;
                  String valueLines = null;
 
@@ -265,8 +265,9 @@
              }
          }
 
-         private void handleGetRequest(String message) throws IOException {
-             String[] messageParts = message.split(" ");
+         private void handleGetRequest(BufferedReader reader) throws IOException {
+             String keyLine = reader.readLine();
+             String[] messageParts = keyLine.split(" ");
 
              if (messageParts.length != 2) {
                  writer.write("Invalid message format");

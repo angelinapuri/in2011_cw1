@@ -71,4 +71,8 @@ public class NetworkMap {
         List<Node> closestNodes = networkMap.findClosestNodes(hashID);
 
     } */
+
+ public static Map<String, String> getMap() {
+     return map;
+ }
 }

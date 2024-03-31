@@ -45,9 +45,11 @@
          try {
              serverSocket = new ServerSocket(portNumber);
              System.out.println("Listening for incoming connections on " + ipAddress + ":" + portNumber);
+             String nodeName = "angelina.puri@city.ac.uk";
              String nodeAddress = ipAddress + ":" + portNumber;
-             NetworkMap.addNode("angelina.puri@city.ac.uk", nodeAddress);
-             System.out.println("Added self as a node: " + "angelina.puri@city.ac.uk" + " at " + nodeAddress);
+             NetworkMap.addNode(nodeName, nodeAddress);
+             printNetworkMap();
+             //System.out.println("Added self as a node: " + "angelina.puri@city.ac.uk" + " at " + nodeAddress);
 
              while (true) {
                  Socket acceptedSocket = serverSocket.accept();
@@ -66,7 +68,13 @@
          NetworkMap.addNode(startingNodeName, startingNodeAddress);
          System.out.println("Connected to " + startingNodeName + " at " + startingNodeAddress);
      }
-
+     public void printNetworkMap() {
+         Map<String, String> map = NetworkMap.getMap();
+         System.out.println("Contents of the NetworkMap:");
+         for (Map.Entry<String, String> entry : map.entrySet()) {
+             System.out.println("Node Name: " + entry.getKey() + ", Node Address: " + entry.getValue());
+         }
+     }
      private class ClientHandler implements Runnable {
          private Socket clientSocket;
          private BufferedWriter writer;

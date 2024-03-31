@@ -92,7 +92,10 @@
                  System.out.println(message);
                  while(message != null) {
                      if (message.startsWith("START")) {
-                         handleStartRequest();
+                         if (!startMessageSent) { // Corrected syntax for conditional check
+                             handleStartRequest();
+                             startMessageSent = true; // Set the flag to true after sending the START message
+                         }
                      } else if (message.startsWith("NEAREST?")) {
                          handleNearestRequest(message, networkMap);
                      } else if (message.startsWith("NOTIFY?")) {

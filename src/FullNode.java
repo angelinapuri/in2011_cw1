@@ -50,7 +50,7 @@
 
              while (true) {
                  Socket acceptedSocket = serverSocket.accept();
-                // System.out.println(sendNotifyRequest(ipAddress, portNumber, acceptedSocket));
+                 // System.out.println(sendNotifyRequest(ipAddress, portNumber, acceptedSocket));
                  System.out.println("New connection accepted");
                  new Thread(new ClientHandler(acceptedSocket, networkMap)).start();
              }
@@ -133,8 +133,6 @@
          }
 
 
-
-
          private void handleStartRequest() throws IOException {
              writer.write("START 1 angelina.puri@city.ac.uk:test-01" + "\n");
              writer.flush();
@@ -193,10 +191,8 @@
          }
 
 
-
-
          private void handleNotifyRequest(BufferedReader reader) throws IOException {
-String message = reader.readLine();
+             String message = reader.readLine();
              String[] messageLines = message.split("\n");
              StringBuilder messageBuilder = new StringBuilder();
              if (message.startsWith("NOTTIFY?")) {
@@ -225,61 +221,65 @@ String message = reader.readLine();
          }
 
          private void handlePutRequest(BufferedReader reader) throws IOException {
-                 String keyLines = null;
-                 String valueLines = null;
+             String keyLines = null;
+             String valueLines = null;
 
-                 int keyLineCount = Integer.parseInt(keyLines);
-                 int valueLineCount = Integer.parseInt(valueLines);
+             int keyLineCount = Integer.parseInt(keyLines);
+             int valueLineCount = Integer.parseInt(valueLines);
 
-                 StringBuilder keyBuilder = new StringBuilder();
-                 StringBuilder valueBuilder = new StringBuilder();
+             StringBuilder keyBuilder = new StringBuilder();
+             StringBuilder valueBuilder = new StringBuilder();
 
-                 // Read the key lines
-                 for (int i = 0; i < keyLineCount; i++) {
-                     String line = reader.readLine();
-                     if (line == null) {
-                         writer.write("FAILED: Incomplete key");
-                         writer.flush();
-                         return;
-                     }
-                     keyBuilder.append(line).append("\n");
+             // Read the key lines
+             for (int i = 0; i < keyLineCount; i++) {
+                 String line = reader.readLine();
+                 if (line == null) {
+                     writer.write("FAILED: Incomplete key");
+                     writer.flush();
+                     return;
                  }
+                 keyBuilder.append(line).append("\n");
+             }
 
-                 // Read the value lines
-                 for (int i = 0; i < valueLineCount; i++) {
-                     String line = reader.readLine();
-                     if (line == null) {
-                         writer.write("FAILED: Incomplete value");
-                         writer.flush();
-                         return;
-                     }
-                     valueBuilder.append(line).append("\n");
+             // Read the value lines
+             for (int i = 0; i < valueLineCount; i++) {
+                 String line = reader.readLine();
+                 if (line == null) {
+                     writer.write("FAILED: Incomplete value");
+                     writer.flush();
+                     return;
                  }
-
-                 // Store the key-value pair
-                 String key = keyBuilder.toString().trim();
-                 String value = valueBuilder.toString().trim();
-                 dataStore.store(key, value);
-                 writer.write("SUCCESS");
-                 writer.flush();
+                 valueBuilder.append(line).append("\n");
              }
+
+             // Store the key-value pair
+             String key = keyBuilder.toString().trim();
+             String value = valueBuilder.toString().trim();
+             dataStore.store(key, value);
+             writer.write("SUCCESS");
+             writer.flush();
          }
+     }
 
-         private void handleGetRequest(BufferedReader reader) throws IOException {
-             String key = reader.readLine();
+     private void handleGetRequest(BufferedReader reader) throws IOException {
+         String key = reader.readLine();
+         StringBuilder keyBuilder = new StringBuilder();
 
-             String finalKey = key.trim();
-             String value = dataStore.get(finalKey);
-
-             if(value != null) {
-                 int valueLines = value.split("\n ").length;
-                 writer.write("VALUE " + valueLines + "\n" + value);
-                 writer.flush();
-             }
-             else {
-                 writer.write("NOPE");
-                 writer.flush();
-             }
+         int keyLines = Integer.parseInt(key.split(" ")[1]);
+         for (int i = 0; i < keyLines; i++) {
+             String line = reader.readLine();
+             keyBuilder.append(line).append("\n");
          }
+         String finalKey = keyBuilder.toString().trim();
+         String value = dataStore.get(finalKey);
+
+         if (value != null) {
+             int valueLinesCount = value.split("\n").length;
+             writer.write("VALUE " + valueLinesCount + "\n" + value);
+         } else {
+             writer.write("NOPE");
+         }
+         writer.flush();
+     }
      }
      /** For get method, make sure start lincha paila ani back and forth yeaa*/

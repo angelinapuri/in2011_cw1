@@ -266,42 +266,27 @@ String message = reader.readLine();
          }
 
          private void handleGetRequest(BufferedReader reader) throws IOException {
-             String keyLine = reader.readLine();
-             String[] messageParts = keyLine.split(" ");
+             String key = reader.readLine();
+             String[] requestParts = key.split(" ");
 
-             if (messageParts.length != 2) {
+             if (requestParts.length != 2) {
                  writer.write("Invalid message format");
                  writer.flush();
                  return;
              }
 
-             // Extract the key lines count from the message
-             int keyLineCount = Integer.parseInt(messageParts[1]);
-
-             StringBuilder keyBuilder = new StringBuilder();
-
-             // Read each key from the message
-             for (int i = 0; i < keyLineCount; i++) {
-                 String line = reader.readLine();
-                 if (line == null) {
-                     writer.write("FAILED: Incomplete key");
-                     writer.flush();
-                     return;
-                 }
-                 keyBuilder.append(line).append("\n");
-             }
-
-             String finalKey = keyBuilder.toString().trim();
+             String finalKey = key.trim();
              String value = dataStore.get(finalKey);
 
-             if (value != null) {
-                 writer.write("VALUE " + value.length() + "\n" + value + "\n");
-             } else {
-                 writer.write("NOPE");
+             if(value != null) {
+                 int valueLines = value.split("\n ").length;
+                 writer.write("VALUE " + valueLines + "\n" + value);
+                 writer.flush();
              }
-
-             writer.flush();
+             else {
+                 writer.write("NOPE");
+                 writer.flush();
+             }
          }
-
      }
      /** For get method, make sure start lincha paila ani back and forth yeaa*/

@@ -47,6 +47,7 @@
              System.out.println("Listening for incoming connections on " + ipAddress + ":" + portNumber);
              String nodeAddress = ipAddress + portNumber;
              NetworkMap.addNode("angelina.puri@city.ac.uk", nodeAddress);
+             System.out.println("Added self as a node: " + "angelina.puri@city.ac.uk" + " at " + nodeAddress);
 
              while (true) {
                  Socket acceptedSocket = serverSocket.accept();

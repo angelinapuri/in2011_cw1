@@ -263,22 +263,14 @@
 
      private void handleGetRequest(BufferedReader reader) throws IOException {
          String key = reader.readLine();
-         StringBuilder valueBuilder = new StringBuilder();
+         StringBuilder keyBuilder = new StringBuilder();
 
          // Split the key to get the command and number of lines
          String[] keyParts = key.split(" ");
-         if (keyParts.length != 2) {
-             // Handle invalid key format
-             writer.write("Invalid key format");
-             writer.flush();
-             return;
-         }
-
-         // Parse the number of lines
-         int valueLines = Integer.parseInt(keyParts[1].trim());
+         int keyLines = Integer.parseInt(keyParts[1].trim());
 
          // Read the specified number of lines
-         for (int i = 0; i < valueLines; i++) {
+         for (int i = 0; i < keyLines; i++) {
              String line = reader.readLine();
              if (line == null) {
                  // Handle incomplete data
@@ -286,11 +278,12 @@
                  writer.flush();
                  return;
              }
-             valueBuilder.append(line).append("\n");
+             keyBuilder.append(line).append("\n");
          }
 
          // Retrieve the value from the data store
-         String value = valueBuilder.toString().trim();
+         String finalKey = keyBuilder.toString().trim();
+         String value = dataStore.get(finalKey);
 
          // Send the response
          if (!value.isEmpty()) {

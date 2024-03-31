@@ -48,7 +48,7 @@
 
              while (true) {
                  Socket acceptedSocket = serverSocket.accept();
-                 System.out.println(sendNotifyRequest(ipAddress, portNumber, acceptedSocket));
+                // System.out.println(sendNotifyRequest(ipAddress, portNumber, acceptedSocket));
                  System.out.println("New connection accepted");
                  new Thread(new ClientHandler(acceptedSocket)).start();
              }
@@ -59,7 +59,7 @@
          }
      }
 
-     private String sendNotifyRequest(String ipAddress, int portNumber, Socket acceptedSocket) {
+   /*  private String sendNotifyRequest(String ipAddress, int portNumber, Socket acceptedSocket) {
          try (BufferedReader reader = new BufferedReader(new InputStreamReader(acceptedSocket.getInputStream()));
               Writer writer = new OutputStreamWriter(acceptedSocket.getOutputStream())) {
 
@@ -77,7 +77,7 @@
              e.printStackTrace();
          }
          return null;
-     }
+     } */
 
 
      public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {

@@ -94,6 +94,7 @@
                      requestBuilder.append(message).append("\n");
                  }
                  String fullRequest = requestBuilder.toString().trim();
+                 System.out.println(fullRequest);
                  String[] messageParts = fullRequest.split(" ");
 
                  if (messageParts.length == 0) {
@@ -102,6 +103,7 @@
                      return;
                  }
                  String request = messageParts[0];
+                 System.out.println(messageParts[0]);
                  if (request.equals("START")) {
                      if (!startMessageSent) { // Corrected syntax for conditional check
                          handleStartRequest();

@@ -90,6 +90,10 @@
          }
      }
 
+     private void handleStartRequest() throws IOException {
+         writer.write("START 1 angelina.puri@city.ac.uk:test-01" + "\n");
+         writer.flush();
+     }
 
      private void handleNotifyRequest(String startingNodeName, String startingNodeAddress) {
          try {
@@ -211,6 +215,8 @@
                          String[] messageParts = message.split(" ");
 
                          switch (messageParts[0]) {
+                             case "START":
+                                 handleStartRequest();
                              case "NOTIFY?":
                                  handleNotifyRequest(messageParts[1], messageParts[2]);
                                  break;

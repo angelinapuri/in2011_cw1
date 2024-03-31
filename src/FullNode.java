@@ -263,23 +263,43 @@
 
      private void handleGetRequest(BufferedReader reader) throws IOException {
          String key = reader.readLine();
-         StringBuilder keyBuilder = new StringBuilder();
+         StringBuilder valueBuilder = new StringBuilder();
 
-         int keyLines = Integer.parseInt(key.split(" ")[1]);
-         for (int i = 0; i < keyLines; i++) {
-             String line = reader.readLine();
-             keyBuilder.append(line).append("\n");
+         // Split the key to get the command and number of lines
+         String[] keyParts = key.split(" ");
+         if (keyParts.length != 2) {
+             // Handle invalid key format
+             writer.write("Invalid key format");
+             writer.flush();
+             return;
          }
-         String finalKey = keyBuilder.toString().trim();
-         String value = dataStore.get(finalKey);
 
-         if (value != null) {
-             int valueLinesCount = value.split("\n").length;
-             writer.write("VALUE " + valueLinesCount + "\n" + value);
+         // Parse the number of lines
+         int valueLines = Integer.parseInt(keyParts[1].trim());
+
+         // Read the specified number of lines
+         for (int i = 0; i < valueLines; i++) {
+             String line = reader.readLine();
+             if (line == null) {
+                 // Handle incomplete data
+                 writer.write("Incomplete data");
+                 writer.flush();
+                 return;
+             }
+             valueBuilder.append(line).append("\n");
+         }
+
+         // Retrieve the value from the data store
+         String value = valueBuilder.toString().trim();
+
+         // Send the response
+         if (!value.isEmpty()) {
+             String[] valueLinesArray = value.split("\n");
+             writer.write("VALUE " + valueLinesArray.length + "\n" + value);
          } else {
              writer.write("NOPE");
          }
          writer.flush();
      }
-     }
-     /** For get method, make sure start lincha paila ani back and forth yeaa*/
+ }
+/** For get method, make sure start lincha paila ani back and forth yeaa*/

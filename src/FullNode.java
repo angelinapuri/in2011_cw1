@@ -175,13 +175,10 @@
                  }
 
                  // Write the closest nodes to the console
-                 System.out.println("NODES " + count);
+                 writer.write("NODES " + count);
                  for (Node node : closestNodes) {
-                     System.out.println(node.getName() + "\n" + node.getAddress());
+                     writer.write(node.getName() + "\n" + node.getAddress());
                  }
-
-                 // Write the closest nodes to the client
-                 writer.write(closestNodes.toString());
                  writer.flush();
 
              } catch (Exception e) {

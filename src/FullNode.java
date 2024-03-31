@@ -114,7 +114,7 @@ public class FullNode implements FullNodeInterface {
                     } else if (request.equals("PUT?")) {
                         handlePutRequest(reader);
                     } else if (request.equals("GET?")) {
-                        handleGetRequest(reader);
+                        handleGetRequest(reader, messageParts[1]);
                     } else {
                         writer.write("Unknown command");
                         writer.flush();
@@ -265,11 +265,11 @@ public class FullNode implements FullNodeInterface {
         }
     }
 
-    private void handleGetRequest(BufferedReader reader) throws IOException {
+    private void handleGetRequest(BufferedReader reader, String keyLine) throws IOException {
         String key = reader.readLine();
         System.out.println(key);
         StringBuilder keyBuilder = new StringBuilder();
-        int keyLines = Integer.parseInt(key.split(" ")[1]);
+        int keyLines = Integer.parseInt(keyLine);
         if (key.startsWith("GET?")) {
             keyBuilder.append(key).append("\n");
             for (int i = 0; i < keyLines; i++) {

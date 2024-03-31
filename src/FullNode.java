@@ -61,17 +61,16 @@
 
 
      private String sendNotifyRequest(String ipAddress, int portNumber) {
-         BufferedReader reader = null; // Initialize reader here
          try {
              Socket notifySocket = new Socket(ipAddress, portNumber);
-             PrintWriter notifyWriter = new PrintWriter(notifySocket.getOutputStream(), true);
-             reader = new BufferedReader(new InputStreamReader(notifySocket.getInputStream())); // Initialize reader
+             BufferedWriter notifyWriter = new BufferedWriter(new OutputStreamWriter(notifySocket.getOutputStream()));
+             BufferedReader notifyreader = new BufferedReader(new InputStreamReader(notifySocket.getInputStream())); // Initialize reader
 
              notifyWriter.write("NOTIFY?" + "\n" + "angelina.puri@city.ac.uk:test-01" + "\n" + ipAddress + ":" + portNumber + "\n");
              System.out.println("NOTIFY?" + "\n" + "angelina.puri@city.ac.uk:test-01" + "\n" + ipAddress + ":" + portNumber + "\n");
              notifyWriter.flush();
 
-             String response = reader.readLine();
+             String response = notifyreader.readLine();
              System.out.println(response);
              if(response.equals("NOTIFIED")) {
                  return response;

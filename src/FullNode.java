@@ -52,7 +52,7 @@
                  Socket acceptedSocket = serverSocket.accept();
                 // System.out.println(sendNotifyRequest(ipAddress, portNumber, acceptedSocket));
                  System.out.println("New connection accepted");
-                 new Thread(new ClientHandler(acceptedSocket)).start();
+                 new Thread(new ClientHandler(acceptedSocket, networkMap)).start();
              }
          } catch (IOException e) {
              System.err.println("Exception listening for incoming connections");
@@ -71,9 +71,11 @@
          private BufferedWriter writer;
          private BufferedReader reader;
          private boolean startMessageSent = false; // Flag to track if the START message has been sent
+         private NetworkMap networkMap;
 
-         public ClientHandler(Socket clientSocket) {
+         public ClientHandler(Socket clientSocket, NetworkMap networkMap) {
              this.clientSocket = clientSocket;
+             this.networkMap = networkMap;
              try {
                  this.writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
                  this.reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -94,17 +96,17 @@
                          // Handle empty message or unexpected format
                          writer.write("Invalid message format");
                          writer.flush();
-                         continue; // Skip further processing
+                         continue;
                      }
                      String request = messageParts[0];
                      if (request.equals("START")) {
-                         if (!startMessageSent) {
+                         if (!startMessageSent) { // Corrected syntax for conditional check
                              handleStartRequest();
                              startMessageSent = true; // Set the flag to true after sending the START message
                          }
-                         else if (request.equals("NEAREST?")) {
-                             handleNearestRequest(messageParts[1]);
-                         }
+                     }
+                     else if (request.equals("NEAREST?")) {
+                         handleNearestRequest(messageParts[1], networkMap);
                      } else if (request.equals("NOTIFY?")) {
                          handleNotifyRequest(message);
                      } else if (request.equals("ECHO")) {
@@ -137,7 +139,7 @@
          }
 
 
-         private void handleNearestRequest(String hashID) throws IOException {
+         private void handleNearestRequest(String hashID, NetworkMap networkMap) throws IOException {
              try {
                  Map<Integer, List<Node>> distances = new TreeMap<>();
 

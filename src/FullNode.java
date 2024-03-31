@@ -267,13 +267,6 @@ String message = reader.readLine();
 
          private void handleGetRequest(BufferedReader reader) throws IOException {
              String key = reader.readLine();
-             String[] requestParts = key.split(" ");
-
-             if (requestParts.length != 2) {
-                 writer.write("Invalid message format");
-                 writer.flush();
-                 return;
-             }
 
              String finalKey = key.trim();
              String value = dataStore.get(finalKey);

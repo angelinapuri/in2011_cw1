@@ -64,7 +64,7 @@ public class HashID {
 			return binString.toString();
 		}
 
-		public static void main(String[] args) throws Exception {
+/**		public static void main(String[] args) throws Exception {
 
 		//	System.out.println(computeHashID("Hello World!" + "\n"));
 
@@ -79,6 +79,8 @@ public class HashID {
 				System.err.println("An error occurred: " + e.getMessage());
 			}
 		}
+ */
 	}
+
 
 

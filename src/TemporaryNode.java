@@ -74,6 +74,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
             try {
                 if (socket != null) {
                     writer.write("END: End of request");
+                    writer.flush();
                     socket.close();
                 }
             } catch (IOException e) {
@@ -116,6 +117,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
             try {
                 if (socket != null) {
                     writer.write("END: End of request");
+                    writer.flush();
                     socket.close();
                 }
             } catch (IOException e) {

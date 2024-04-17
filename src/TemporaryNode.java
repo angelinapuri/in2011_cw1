@@ -117,6 +117,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
             try {
                 if (socket != null) {
                     writer.write("END: End of request");
+                    System.out.println("END: End of request");
                     writer.flush();
                     socket.close();
                 }

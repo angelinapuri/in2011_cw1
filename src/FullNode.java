@@ -46,12 +46,13 @@ public class FullNode implements FullNodeInterface {
             String nodeName = "angelina.puri@city.ac.uk";
             String nodeAddress = ipAddress + ":" + portNumber;
             NetworkMap.addNode(nodeName, nodeAddress);
-            System.out.println("Added self as a node: " + "angelina.puri@city.ac.uk" + " at " + nodeAddress);
+            //System.out.println("Added self as a node: " + "angelina.puri@city.ac.uk" + " at " + nodeAddress);
 
             while (true) {
                 Socket acceptedSocket = serverSocket.accept();
                 // System.out.println(sendNotifyRequest(ipAddress, portNumber, acceptedSocket));
                 System.out.println("New connection accepted");
+                handleIncomingConnections(nodeName, nodeAddress);
                 new Thread(new ClientHandler(acceptedSocket, networkMap)).start();
             }
         } catch (IOException e) {
@@ -62,7 +63,6 @@ public class FullNode implements FullNodeInterface {
     }
 
     public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
-        //NetworkMap.addNode(startingNodeName, startingNodeAddress);
         System.out.println("Connected to " + startingNodeName + " at " + startingNodeAddress);
     }
 
@@ -141,7 +141,6 @@ public class FullNode implements FullNodeInterface {
 
         private void handleNearestRequest(String hashID) throws IOException {
             String nearestNodesResponse = networkMap.computeNearestNodes(hashID);
-
             writer.write(nearestNodesResponse);
             writer.flush();
         }

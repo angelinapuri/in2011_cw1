@@ -11,9 +11,9 @@ public class NetworkMap {
         map.put(nodeName, address);
     }
 
-    public static Map<String, String> getMap() {
-     return map;
- }
+    public Map<String, String> getMap() {
+        return map;
+    }
 
     public String computeNearestNodes(String hashID) {
         try {
@@ -23,11 +23,12 @@ public class NetworkMap {
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 String nodeName = entry.getKey();
                 String nodeAddress = entry.getValue();
-                String nodeHashID = HashID.computeHashID(nodeName + "\n");
+                NodeNameAndAddress nodeNameAndAddress = new NodeNameAndAddress(new NodeName(nodeName), nodeAddress);
+                String nodeHashID = HashID.computeHashID(nodeNameAndAddress.toString());
                 int distance = HashID.computeDistance(hashID, nodeHashID);
 
                 distances.putIfAbsent(distance, new ArrayList<>());
-                distances.get(distance).add(new Node(nodeName, nodeAddress));
+                distances.get(distance).add(new Node());
             }
 
             List<Node> closestNodes = new ArrayList<>();
@@ -36,30 +37,19 @@ public class NetworkMap {
             // Iterate through distances and add closest nodes to the list
             for (Map.Entry<Integer, List<Node>> entry : distances.entrySet()) {
                 List<Node> closestNodesAtDistance = entry.getValue();
-                Collections.shuffle(closestNodesAtDistance); // Shuffle to randomize selection
 
-                for (Node closestNode : closestNodesAtDistance) {
-                    closestNodes.add(closestNode);
-                    count++;
+                closestNodes.addAll(closestNodesAtDistance);
+                count += closestNodesAtDistance.size();
 
-                    if (count >= 3) {
-                        break; // Exit the loop if maximum count reached
-                    }
-                }
-
-                if (count >= 1) {
-                    break; // Exit the loop if at least one node added
+                if (count >= 3) {
+                    break; // Exit the loop if at least three nodes added
                 }
             }
-            StringBuilder nodeList = new StringBuilder();
-            for (Node node : closestNodes) {
-                nodeList.append(node.getName()).append("\n").append(node.getAddress()).append("\n");
-            }
-
-            return "NODES " + count + "\n" + nodeList.toString();
+            String nearestResponse = "NODES " + count + "\n" + closestNodes;
+            return nearestResponse;
         } catch (Exception e) {
             System.err.println("Error computing nearest nodes: " + e.getMessage());
-            return "ERROR";
+            return null;
         }
     }
 }

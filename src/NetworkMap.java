@@ -18,12 +18,13 @@ public class NetworkMap {
     public String nearestResponse(String hashID) {
         try {
             List<NodeNameAndAddress> nodes = Node.getNodes();
+            System.out.println(nodes);
             Map<Integer, List<NodeNameAndAddress>> distances = new TreeMap<>();
 
             for (NodeNameAndAddress node : nodes) {
                 String nodeName = node.getNodeName();
                 String nodeAddress = node.getNodeAddress();
-                String nodeHashID = HashID.computeHashID(nodeName) + "\n";
+                String nodeHashID = HashID.computeHashID(nodeName + "\n");
                 int distance = HashID.computeDistance(hashID, nodeHashID);
 
                 distances.putIfAbsent(distance, new ArrayList<>());

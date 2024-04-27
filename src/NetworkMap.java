@@ -23,7 +23,7 @@ public class NetworkMap {
             for (NodeNameAndAddress node : nodes) {
                 String nodeName = node.getNodeName();
                 String nodeAddress = node.getNodeAddress();
-                String nodeHashID = HashID.computeHashID(nodeName);
+                String nodeHashID = HashID.computeHashID(nodeName) + "\n";
                 int distance = HashID.computeDistance(hashID, nodeHashID);
 
                 distances.putIfAbsent(distance, new ArrayList<>());

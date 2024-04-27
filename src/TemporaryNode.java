@@ -72,11 +72,9 @@ public class TemporaryNode implements TemporaryNodeInterface {
             return false;
         } finally {
             try {
-                if (socket != null) {
                     writer.write("END: End of request");
                     writer.flush();
                     socket.close();
-                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -115,12 +113,10 @@ public class TemporaryNode implements TemporaryNodeInterface {
         }
         finally {
             try {
-                if (socket != null) {
                     writer.write("END: End of request");
                     System.out.println("END: End of request");
                     writer.flush();
                     socket.close();
-                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

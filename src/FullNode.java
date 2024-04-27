@@ -46,7 +46,7 @@ public class FullNode implements FullNodeInterface {
             String nodeName = "angelina.puri@city.ac.uk";
             String nodeAddress = ipAddress + ":" + portNumber;
             NetworkMap.addNode(nodeName, nodeAddress);
-            //System.out.println("Added self as a node: " + "angelina.puri@city.ac.uk" + " at " + nodeAddress);
+            System.out.println("Added self as a node: " + "angelina.puri@city.ac.uk" + " at " + nodeAddress);
 
             while (true) {
                 Socket acceptedSocket = serverSocket.accept();
@@ -62,7 +62,7 @@ public class FullNode implements FullNodeInterface {
     }
 
     public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
-        NetworkMap.addNode(startingNodeName, startingNodeAddress);
+        //NetworkMap.addNode(startingNodeName, startingNodeAddress);
         System.out.println("Connected to " + startingNodeName + " at " + startingNodeAddress);
     }
 
@@ -106,7 +106,7 @@ public class FullNode implements FullNodeInterface {
                             startMessageSent = true; // Set the flag to true after sending the START message
                         }
                     } else if (request.startsWith("NEAREST?")) {
-                        handleNearestRequest(messageParts[1], networkMap);
+                        handleNearestRequest(messageParts[1]);
                     } else if (request.equals("NOTIFY?")) {
                         handleNotifyRequest(reader);
                     } else if (request.equals("ECHO")) {
@@ -139,55 +139,11 @@ public class FullNode implements FullNodeInterface {
         }
 
 
-        private void handleNearestRequest(String hashID, NetworkMap networkMap) throws IOException {
-            try {
-                Map<Integer, List<Node>> distances = new TreeMap<>();
+        private void handleNearestRequest(String hashID) throws IOException {
+            String nearestNodesResponse = networkMap.computeNearestNodes(hashID);
 
-                // Compute distances to all nodes in the map
-                for (Map.Entry<String, String> entry : NetworkMap.getMap().entrySet()) {
-                    String nodeName = entry.getKey();
-                    String nodeAddress = entry.getValue();
-                    String nodeHashID = HashID.computeHashID(nodeName + "\n");
-                    int distance = HashID.computeDistance(hashID, nodeHashID);
-
-                    distances.putIfAbsent(distance, new ArrayList<>());
-                    distances.get(distance).add(new Node(nodeName, nodeAddress));
-                }
-
-                List<Node> closestNodes = new ArrayList<>();
-                int count = 0;
-
-                // Iterate through distances and add closest nodes to the list
-                for (Map.Entry<Integer, List<Node>> entry : distances.entrySet()) {
-                    List<Node> closestNodesAtDistance = entry.getValue();
-                    Collections.shuffle(closestNodesAtDistance); // Shuffle to randomize selection
-
-                    for (Node closestNode : closestNodesAtDistance) {
-                        closestNodes.add(closestNode);
-                        count++;
-
-                        if (count >= 3) {
-                            break; // Exit the loop if maximum count reached
-                        }
-                    }
-
-                    if (count >= 1) {
-                        break; // Exit the loop if at least one node added
-                    }
-                }
-                StringBuilder nodeList = new StringBuilder();
-                for (Node node : closestNodes) {
-                    nodeList.append(node.getName()).append("\n").append(node.getAddress()).append("\n");
-                }
-                writer.write("NODES " + count + "\n" + nodeList.toString()); //might not need toString
-                //System.out.println("NODES " + count + "\n" + nodeList.toString());
-                writer.flush();
-
-            } catch (Exception e) {
-                System.err.println("Error handling NEAREST request: " + e.getMessage());
-                writer.write("ERROR\n");
-                writer.flush();
-            }
+            writer.write(nearestNodesResponse);
+            writer.flush();
         }
 
 
@@ -195,7 +151,7 @@ public class FullNode implements FullNodeInterface {
             String message = reader.readLine();
             String[] messageLines = message.split("\n");
             StringBuilder messageBuilder = new StringBuilder();
-            if (message.startsWith("NOTTIFY?")) {
+            if (message.startsWith("NOTIFY?")) {
                 messageBuilder.append(message).append("\n");
                 String startingNodeName = null;
                 for (int i = 1; i < messageLines.length; i++) {
@@ -221,11 +177,11 @@ public class FullNode implements FullNodeInterface {
         }
 
         private void handlePutRequest(BufferedReader reader) throws IOException {
-            String keyLines = null;
-            String valueLines = null;
+            String keyValue = reader.readLine();
+            String[] parts = keyValue.split(" ");
 
-            int keyLineCount = Integer.parseInt(keyLines);
-            int valueLineCount = Integer.parseInt(valueLines);
+            int keyLineCount = Integer.parseInt(parts[1]);
+            int valueLineCount = Integer.parseInt(parts[2]);
 
             StringBuilder keyBuilder = new StringBuilder();
             StringBuilder valueBuilder = new StringBuilder();

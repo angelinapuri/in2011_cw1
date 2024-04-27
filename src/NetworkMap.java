@@ -11,49 +11,7 @@ public class NetworkMap {
         map.put(nodeName, address);
     }
 
-    public Map<String, String> getMap() {
+    public static Map<String, String> getMap() {
         return map;
-    }
-
-    public String computeNearestNodes(String hashID) {
-        try {
-            Map<Integer, List<Node>> distances = new TreeMap<>();
-
-            // Compute distances to all nodes in the map
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                String nodeName = entry.getKey();
-                String nodeAddress = entry.getValue();
-                //NodeNameAndAddress nodeNameAndAddress = new NodeNameAndAddress(new NodeName(nodeName), nodeAddress);
-                String nodeHashID = HashID.computeHashID(nodeName + "\n");
-                int distance = HashID.computeDistance(hashID, nodeHashID);
-
-                distances.putIfAbsent(distance, new ArrayList<>());
-                distances.get(distance).add(new Node());
-            }
-
-            List<Node> closestNodes = new ArrayList<>();
-            int count = 0;
-
-            // Iterate through distances and add closest nodes to the list
-            for (Map.Entry<Integer, List<Node>> entry : distances.entrySet()) {
-                List<Node> closestNodesAtDistance = entry.getValue();
-
-                closestNodes.addAll(closestNodesAtDistance);
-                count += closestNodesAtDistance.size();
-
-                if (count >= 3) {
-                    break; // Exit the loop if at least three nodes added
-                }
-            }
-            StringBuilder nodeList = new StringBuilder();
-            for (Node node : closestNodes) {
-                nodeList.append(node).append("\n");
-            }
-            return "NODES " + count + "\n" + nodeList.toString();
-
-        } catch (Exception e) {
-            System.err.println("Error computing nearest nodes: " + e.getMessage());
-            return null;
-        }
     }
 }

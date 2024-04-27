@@ -172,7 +172,7 @@ public class FullNode implements FullNodeInterface {
 
 
         private void handleNearestRequest(String hashID, NetworkMap networkMap) throws IOException {
-            String nearestNodesResponse = networkMap.nearestResponse(hashID);
+            String nearestNodesResponse = networkMap.nearestResponse(hashID + "\n");
             writer.write(nearestNodesResponse);
             writer.flush();
         }

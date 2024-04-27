@@ -52,6 +52,7 @@ public class FullNode implements FullNodeInterface {
                 Socket acceptedSocket = serverSocket.accept();
                 // System.out.println(sendNotifyRequest(ipAddress, portNumber, acceptedSocket));
                 System.out.println("New connection accepted");
+                sendNotifyRequests(nodeName, nodeAddress);
                 handleIncomingConnections(nodeName, nodeAddress);
                 new Thread(new ClientHandler(acceptedSocket, networkMap)).start();
             }
@@ -64,6 +65,36 @@ public class FullNode implements FullNodeInterface {
 
     public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
         System.out.println("Connected to " + startingNodeName + " at " + startingNodeAddress);
+    }
+    private void sendNotifyRequests(String startingNodeName, String startingNodeAddress) {
+        for (Map.Entry<String, String> entry : networkMap.getMap().entrySet()) {
+            String nodeName = entry.getKey();
+            String nodeAddress = entry.getValue();
+
+            // Skip sending notify request to self
+            if (!nodeName.equals(startingNodeName)) {
+                sendNotifyRequest(nodeName, nodeAddress, startingNodeName, startingNodeAddress);
+            }
+        }
+    }
+
+    private void sendNotifyRequest(String targetNodeName, String targetNodeAddress, String startingNodeName, String startingNodeAddress) {
+        try {
+            Socket socket = new Socket(targetNodeAddress.split(":")[0], Integer.parseInt(targetNodeAddress.split(":")[1]));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+            String notifyRequest = "NOTIFY?\n" + startingNodeName + "\n" + startingNodeAddress + "\n";
+
+            writer.write(notifyRequest);
+            writer.flush();
+
+            System.out.println("Notify request sent to " + targetNodeName + " at " + targetNodeAddress);
+
+            writer.close();
+            socket.close();
+        } catch (IOException e) {
+            System.err.println("Error sending notify request to " + targetNodeName + " at " + targetNodeAddress + ": " + e.getMessage());
+        }
     }
 
     private class ClientHandler implements Runnable {
@@ -142,6 +173,7 @@ public class FullNode implements FullNodeInterface {
         private void handleNearestRequest(String hashID) throws IOException {
             String nearestNodesResponse = networkMap.computeNearestNodes(hashID);
             writer.write(nearestNodesResponse);
+            System.out.println(nearestNodesResponse);
             writer.flush();
         }
 

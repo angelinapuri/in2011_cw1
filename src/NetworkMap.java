@@ -45,8 +45,12 @@ public class NetworkMap {
                     break; // Exit the loop if at least three nodes added
                 }
             }
-            String nearestResponse = "NODES " + count + "\n" + closestNodes;
-            return nearestResponse;
+            StringBuilder nodeList = new StringBuilder();
+            for (Node node : closestNodes) {
+                nodeList.append(node).append("\n");
+            }
+            return "NODES " + count + "\n" + nodeList.toString();
+
         } catch (Exception e) {
             System.err.println("Error computing nearest nodes: " + e.getMessage());
             return null;

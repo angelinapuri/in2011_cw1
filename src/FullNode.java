@@ -172,54 +172,9 @@ public class FullNode implements FullNodeInterface {
 
 
         private void handleNearestRequest(String hashID, NetworkMap networkMap) throws IOException {
-            try {
-                Map<Integer, List<Node>> distances = new TreeMap<>();
-
-                // Compute distances to all nodes in the map
-                for (Map.Entry<String, String> entry : NetworkMap.getMap().entrySet()) {
-                    String nodeName = entry.getKey();
-                    String nodeAddress = entry.getValue();
-                    String nodeHashID = HashID.computeHashID(nodeName + "\n");
-                    int distance = HashID.computeDistance(hashID, nodeHashID);
-
-                    distances.putIfAbsent(distance, new ArrayList<>());
-                    distances.get(distance).add(new Node());
-                }
-
-                List<Node> closestNodes = new ArrayList<>();
-                int count = 0;
-
-                // Iterate through distances and add closest nodes to the list
-                for (Map.Entry<Integer, List<Node>> entry : distances.entrySet()) {
-                    List<Node> closestNodesAtDistance = entry.getValue();
-                    Collections.shuffle(closestNodesAtDistance); // Shuffle to randomize selection
-
-                    for (Node closestNode : closestNodesAtDistance) {
-                        closestNodes.add(closestNode);
-                        count++;
-
-                        if (count >= 3) {
-                            break; // Exit the loop if maximum count reached
-                        }
-                    }
-
-                    if (count >= 1) {
-                        break; // Exit the loop if at least one node added
-                    }
-                }
-                StringBuilder nodeList = new StringBuilder();
-                for (Node node : closestNodes) {
-                    nodeList.append(node).append("\n");
-                }
-                writer.write("NODES " + count + "\n" + nodeList.toString()); //might not need toString
-                //System.out.println("NODES " + count + "\n" + nodeList.toString());
-                writer.flush();
-
-            } catch (Exception e) {
-                System.err.println("Error handling NEAREST request: " + e.getMessage());
-                writer.write("ERROR\n");
-                writer.flush();
-            }
+            String nearestNodesResponse = networkMap.nearestResponse(hashID);
+            writer.write(nearestNodesResponse);
+            writer.flush();
         }
 
 

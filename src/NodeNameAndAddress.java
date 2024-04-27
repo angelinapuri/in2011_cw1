@@ -1,22 +1,18 @@
 public class NodeNameAndAddress {
-    private NodeName nodeName;
-    private String address;
+    private String nodeName;
+    private String nodeAddress;
 
-    public NodeNameAndAddress(NodeName nodeName, String address) {
+    public NodeNameAndAddress(String nodeName, String nodeAddress) {
         this.nodeName = nodeName;
-        this.address = address;
+        this.nodeAddress = nodeAddress;
     }
 
-    public NodeName getNodeName() {
+    public String getNodeName() {
         return nodeName;
     }
 
-    public String getAddress() {
-        return address;
-    }
+    public String getNodeAddress() {
 
-    @Override
-    public String toString() {
-        return nodeName.toString() + " " + address;
+        return nodeAddress;
     }
 }

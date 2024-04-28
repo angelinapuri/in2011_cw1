@@ -27,9 +27,11 @@ public class NetworkMap {
                 String nodeAddress = node.getNodeAddress();
                 String nodeHashID = HashID.computeHashID(nodeName + "\n");
                 int distance = HashID.computeDistance(hashID, nodeHashID);
+                System.out.println(distance);
 
                 distances.putIfAbsent(distance, new ArrayList<>());
                 distances.get(distance).add(new NodeNameAndAddress(nodeName, nodeAddress));
+                System.out.println(distances);
             }
 
             StringBuilder responseBuilder = new StringBuilder();

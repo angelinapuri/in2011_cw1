@@ -73,7 +73,6 @@ public class FullNode implements FullNodeInterface {
             String nodeName = node.getNodeName();
             String nodeAddress = node.getNodeAddress();
             sendNotifyRequest(nodeName, nodeAddress, startingNodeName, startingNodeAddress);
-
         }
     }
 
@@ -94,7 +93,7 @@ public class FullNode implements FullNodeInterface {
                 networkMap.removeNode(targetNodeName,targetNodeAddress);
                 System.out.println("Node removed!");
             }
-            //socket.close();
+            socket.close();
 
         } catch (IOException e) {
             System.err.println("Error sending notify request to " + targetNodeName + " at " + targetNodeAddress + ": " + e.getMessage());

@@ -89,7 +89,11 @@ public class FullNode implements FullNodeInterface {
             writer.flush();
 
             System.out.println("Notify request sent to " + targetNodeName + " at " + targetNodeAddress);
+            String response = reader.readLine();
             System.out.println(reader.readLine());
+            if(response == null){
+                networkMap.removeNode(targetNodeName,targetNodeAddress);
+            }
 
             writer.close();
             socket.close();

@@ -19,6 +19,7 @@ public class NetworkMap {
         try {
             List<NodeNameAndAddress> nodes = Node.getNodes();
             System.out.println(nodes);
+
             Map<Integer, List<NodeNameAndAddress>> distances = new TreeMap<>();
 
             for (NodeNameAndAddress node : nodes) {
@@ -28,7 +29,7 @@ public class NetworkMap {
                 int distance = HashID.computeDistance(hashID, nodeHashID);
 
                 distances.putIfAbsent(distance, new ArrayList<>());
-                distances.get(distance).add(node);
+                distances.get(distance).add(new NodeNameAndAddress(nodeName, nodeAddress));
             }
 
             StringBuilder responseBuilder = new StringBuilder();

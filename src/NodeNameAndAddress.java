@@ -16,6 +16,6 @@ public class NodeNameAndAddress {
     }
     @Override
     public String toString() {
-        return "NodeName: " + nodeName + ", NodeAddress: " + nodeAddress;
+        return nodeName;
     }
 }

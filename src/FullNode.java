@@ -94,6 +94,7 @@ public class FullNode implements FullNodeInterface {
             if(response == null){
                 networkMap.removeNode(targetNodeName,targetNodeAddress);
             }
+            socket.close();
 
         } catch (IOException e) {
             System.err.println("Error sending notify request to " + targetNodeName + " at " + targetNodeAddress + ": " + e.getMessage());

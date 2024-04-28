@@ -68,15 +68,15 @@ public class FullNode implements FullNodeInterface {
     }
 
     private void sendNotifyRequests(String startingNodeName, String startingNodeAddress) {
-        for (Map.Entry<String, String> entry : networkMap.getMap().entrySet()) {
-            String nodeName = entry.getKey();
-            String nodeAddress = entry.getValue();
+      //  for (Map.Entry<String, String> entry : networkMap.getMap().entrySet()) {
+          //  String nodeName = entry.getKey();
+            //String nodeAddress = entry.getValue();
 
             // Skip sending notify request to self
-            if (!nodeName.equals(startingNodeName)) {
-                sendNotifyRequest(nodeName, nodeAddress, startingNodeName, startingNodeAddress);
-            }
-        }
+           // if (!nodeName.equals(startingNodeName)) {
+             //   sendNotifyRequest(nodeName, nodeAddress, startingNodeName, startingNodeAddress);
+        //    }
+     //   }
     }
 
     private void sendNotifyRequest(String targetNodeName, String targetNodeAddress, String startingNodeName, String startingNodeAddress) {
@@ -172,7 +172,7 @@ public class FullNode implements FullNodeInterface {
 
         public String handleNearestRequest(String hashID, NetworkMap networkMap) {
             try {
-                List<NodeNameAndAddress> nodes = Node.getNodes();
+                List<NodeNameAndAddress> nodes = new ArrayList<>(networkMap.getMap().values());
 
                 Map<Integer, List<NodeNameAndAddress>> distances = new TreeMap<>();
 

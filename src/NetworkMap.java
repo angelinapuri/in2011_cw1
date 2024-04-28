@@ -1,17 +1,37 @@
 import java.util.*;
 
 public class NetworkMap {
-    private static Map<String, String> map;
+    private static Map<String, NodeNameAndAddress> map;
 
-    public NetworkMap() {
+    static {
         map = new HashMap<>();
+        String[] nodeNamesAndAddresses = {
+                "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20000 10.0.0.164:20000",
+                "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20001 10.0.0.164:20001",
+                "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20002 10.0.0.164:20002",
+                "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20003 10.0.0.164:20003",
+                "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20004 10.0.0.164:20004",
+                "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20005 10.0.0.164:20005",
+                "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20006 10.0.0.164:20006",
+                "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20007 10.0.0.164:20007",
+                "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20008 10.0.0.164:20008",
+                "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20009 10.0.0.164:20009",
+                "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20010 10.0.0.164:20010"
+        };
+
+        for (String nodeNameAndAddress : nodeNamesAndAddresses) {
+            String[] parts = nodeNameAndAddress.split(" ");
+            String nodeName = parts[0];
+            String address = parts[1];
+            addNode(nodeName, address);
+        }
     }
 
     public static void addNode(String nodeName, String address) {
-        map.put(nodeName, address);
+        map.put(nodeName, new NodeNameAndAddress(nodeName, address));
     }
 
-    public static Map<String, String> getMap() {
+    public static Map<String, NodeNameAndAddress> getMap() {
         return map;
     }
 }

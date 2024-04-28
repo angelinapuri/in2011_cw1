@@ -77,17 +77,20 @@ public class FullNode implements FullNodeInterface {
 
     private void sendNotifyRequest(String targetNodeName, String targetNodeAddress, String startingNodeName, String startingNodeAddress) {
        try {
-            socket = new Socket(targetNodeName.split(":")[0], Integer.parseInt(targetNodeAddress.split(":")[1]));
+            socket = new Socket(targetNodeAddress.split(":")[0], Integer.parseInt(targetNodeAddress.split(":")[1]));
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            writer.write("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress + "\n");
+
+           writer.write("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress + "\n");
             writer.flush();
 
             System.out.println("Notify request sent to " + targetNodeName + " at " + targetNodeAddress);
             String response = reader.readLine();
-            System.out.println(reader.readLine());
+            System.out.println(response);
             if(response == null){
                 networkMap.removeNode(targetNodeName,targetNodeAddress);
+                System.out.println("Node removed!");
             }
             socket.close();
 

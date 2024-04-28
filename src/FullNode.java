@@ -69,10 +69,12 @@ public class FullNode implements FullNodeInterface {
 
     private void sendNotifyRequests(String startingNodeName, String startingNodeAddress) {
         List<NodeNameAndAddress> nodes = new ArrayList<>(networkMap.getMap().values());
-        String nodeName= "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20000";
-        String nodeAddress= "10.0.0.164:20000";
-                sendNotifyRequest(nodeName, nodeAddress, startingNodeName, startingNodeAddress);
+        for (NodeNameAndAddress node : nodes) {
+            String nodeName = node.getNodeName();
+            String nodeAddress = node.getNodeAddress();
+            sendNotifyRequest(nodeName, nodeAddress, startingNodeName, startingNodeAddress);
 
+        }
     }
 
     private void sendNotifyRequest(String targetNodeName, String targetNodeAddress, String startingNodeName, String startingNodeAddress) {

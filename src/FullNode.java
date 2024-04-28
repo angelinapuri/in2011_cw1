@@ -81,7 +81,7 @@ public class FullNode implements FullNodeInterface {
     }
 
     private void sendNotifyRequest(String targetNodeName, String targetNodeAddress, String startingNodeName, String startingNodeAddress) {
-        try {
+       /** try {
             socket = new Socket(targetNodeAddress.split(":")[0], Integer.parseInt(targetNodeAddress.split(":")[1]));
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
@@ -98,7 +98,7 @@ public class FullNode implements FullNodeInterface {
 
         } catch (IOException e) {
             System.err.println("Error sending notify request to " + targetNodeName + " at " + targetNodeAddress + ": " + e.getMessage());
-        }
+        } */
     }
 
     private class ClientHandler implements Runnable {

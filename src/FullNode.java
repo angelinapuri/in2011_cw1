@@ -46,7 +46,7 @@ public class FullNode implements FullNodeInterface {
             String nodeName = "angelina.puri@city.ac.uk:test-01";
             String nodeAddress = ipAddress + ":" + portNumber;
             NetworkMap.addNode(nodeName, nodeAddress);
-            System.out.println("Added self as a node: " + "angelina.puri@city.ac.uk" + " at " + nodeAddress);
+            System.out.println("Added self as a node: " + nodeName + " at " + nodeAddress);
 
             while (true) {
                 Socket acceptedSocket = serverSocket.accept();

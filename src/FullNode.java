@@ -81,24 +81,29 @@ public class FullNode implements FullNodeInterface {
             socket = new Socket(targetNodeAddress.split(":")[0], Integer.parseInt(targetNodeAddress.split(":")[1]));
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            
+
            writer.write("START 1 angelina.puri@city.ac.uk:test-01" + "\n");
            writer.flush();
+           String startResponse = reader.readLine();
+           System.out.println(startResponse);
 
-            writer.write("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress);
-            writer.flush();
+           if (startResponse != null && startResponse.equals("STARTED")) {
+               writer.write("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress);
+               writer.flush();
 
-            System.out.println("Notify request sent to " + targetNodeName + " at " + targetNodeAddress);
-            String response = reader.readLine();
-            String response2 = reader.readLine();
-           System.out.println(response);
-           System.out.println(response2);
+               System.out.println("Notify request sent to " + targetNodeName + " at " + targetNodeAddress);
+               String response = reader.readLine();
+               String response2 = reader.readLine();
+               System.out.println(response);
+               System.out.println(response2);
 
-           if(response == null){
-                networkMap.removeNode(targetNodeName,targetNodeAddress);
-                System.out.println("Node removed!");
-            }
-           writer.write("END: Notified Node");
+               writer.write("END: Notified Node");
+               writer.flush();
+           }
+           else{
+               networkMap.removeNode(targetNodeName, targetNodeAddress);
+               System.out.println("Node removed!");
+           }
             socket.close();
 
         } catch (IOException e) {

@@ -82,7 +82,7 @@ public class FullNode implements FullNodeInterface {
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
 
-           writer.write("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress + "\n");
+            writer.write("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress + "\n");
             writer.flush();
 
             System.out.println("Notify request sent to " + targetNodeName + " at " + targetNodeAddress);
@@ -92,7 +92,7 @@ public class FullNode implements FullNodeInterface {
                 networkMap.removeNode(targetNodeName,targetNodeAddress);
                 System.out.println("Node removed!");
             }
-            socket.close();
+            //socket.close();
 
         } catch (IOException e) {
             System.err.println("Error sending notify request to " + targetNodeName + " at " + targetNodeAddress + ": " + e.getMessage());

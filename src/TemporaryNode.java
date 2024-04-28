@@ -31,6 +31,8 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
             //Connect to the starting node
             socket = new Socket(startingNodeAddress.split(":")[0], parseInt(startingNodeAddress.split(":")[1]));
+            System.out.println(startingNodeName);
+            System.out.println(startingNodeAddress);
             System.out.println(startingNodeAddress.split(":")[0]);
             System.out.println(parseInt(startingNodeAddress.split(":")[1]));
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));

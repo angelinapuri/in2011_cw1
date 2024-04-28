@@ -69,47 +69,62 @@ public class FullNode implements FullNodeInterface {
 
     private void sendNotifyRequests(String startingNodeName, String startingNodeAddress) {
         List<NodeNameAndAddress> nodes = new ArrayList<>(networkMap.getMap().values());
-        for (NodeNameAndAddress node : nodes) {
-            String nodeName = node.getNodeName();
-            String nodeAddress = node.getNodeAddress();
+     //   for (NodeNameAndAddress node : nodes) {
+         //   String nodeName = node.getNodeName();
+        //    String nodeAddress = node.getNodeAddress();
+        String nodeName = "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20000";
+        String nodeAddress = "10.0.0.164:20000";
             sendNotifyRequest(nodeName, nodeAddress, startingNodeName, startingNodeAddress);
+      //  }
+    }
+
+    private void sendStartMessage(String targetNodeName, String targetNodeAddress, String startingNodeName, String startingNodeAddress) {
+        try {
+            socket = new Socket(targetNodeAddress.split(":")[0], Integer.parseInt(targetNodeAddress.split(":")[1]));
+            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            writer.write("START 1 " + startingNodeName + "\n");
+            writer.flush();
+            String startResponse = reader.readLine();
+            System.out.println(startResponse);
+            if (startResponse != null && startResponse.startsWith("START 1")) {
+            }
+            else {
+                networkMap.removeNode(targetNodeName, targetNodeAddress);
+                System.out.println("Node removed!");
+            }
+            }
+        catch (IOException e) {
+            System.err.println("Error sending START message: " + e.getMessage());
         }
     }
 
     private void sendNotifyRequest(String targetNodeName, String targetNodeAddress, String startingNodeName, String startingNodeAddress) {
-       try {
-            socket = new Socket(targetNodeAddress.split(":")[0], Integer.parseInt(targetNodeAddress.split(":")[1]));
-           writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-           reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        try {
 
-           writer.write("START 1 " + startingNodeName + "\n");
-           writer.flush();
-           String startResponse = reader.readLine();
-           System.out.println(startResponse);
 
-           if (startResponse != null && startResponse.startsWith("START 1")) {
-               writer.write("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress);
-               writer.flush();
+            // Send START message
+            sendStartMessage( targetNodeName,  targetNodeAddress,  startingNodeName,  startingNodeAddress);
 
-               System.out.println("Notify request sent to " + targetNodeName + " at " + targetNodeAddress);
-               String response = reader.readLine();
-               String response2 = reader.readLine();
-               System.out.println(response);
-               System.out.println(response2);
+                writer.write("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress);
+                writer.flush();
 
-               writer.write("END: Notified Node");
-               writer.flush();
-           }
-           else{
-               networkMap.removeNode(targetNodeName, targetNodeAddress);
-               System.out.println("Node removed!");
-           }
+                System.out.println("Notify request sent to " + targetNodeName + " at " + targetNodeAddress);
+                String response = reader.readLine();
+                String response2 = reader.readLine();
+                System.out.println(response);
+                System.out.println(response2);
+
+                writer.write("END: Notified Node");
+                writer.flush();
+
             socket.close();
 
         } catch (IOException e) {
             System.err.println("Error sending notify request to " + targetNodeName + " at " + targetNodeAddress + ": " + e.getMessage());
         }
     }
+
 
     private class ClientHandler implements Runnable {
         private Socket clientSocket;

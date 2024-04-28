@@ -79,15 +79,15 @@ public class FullNode implements FullNodeInterface {
     private void sendNotifyRequest(String targetNodeName, String targetNodeAddress, String startingNodeName, String startingNodeAddress) {
        try {
             socket = new Socket(targetNodeAddress.split(":")[0], Integer.parseInt(targetNodeAddress.split(":")[1]));
-            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+           writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+           reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-           writer.write("START 1 angelina.puri@city.ac.uk:test-01" + "\n");
+           writer.write("START 1 " + startingNodeName + "\n");
            writer.flush();
            String startResponse = reader.readLine();
            System.out.println(startResponse);
 
-           if (startResponse != null && startResponse.equals("STARTED")) {
+           if (startResponse != null && startResponse.startsWith("START 1")) {
                writer.write("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress);
                writer.flush();
 

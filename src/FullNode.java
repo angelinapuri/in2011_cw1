@@ -43,7 +43,7 @@ public class FullNode implements FullNodeInterface {
         try {
             serverSocket = new ServerSocket(portNumber);
             System.out.println("Listening for incoming connections on " + ipAddress + ":" + portNumber);
-            String nodeName = "angelina.puri@city.ac.uk";
+            String nodeName = "angelina.puri@city.ac.uk:test-01";
             String nodeAddress = ipAddress + ":" + portNumber;
             NetworkMap.addNode(nodeName, nodeAddress);
             System.out.println("Added self as a node: " + "angelina.puri@city.ac.uk" + " at " + nodeAddress);
@@ -83,7 +83,7 @@ public class FullNode implements FullNodeInterface {
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
 
-            writer.write("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress + "\n");
+            writer.write("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress);
             writer.flush();
 
             System.out.println("Notify request sent to " + targetNodeName + " at " + targetNodeAddress);
@@ -91,7 +91,7 @@ public class FullNode implements FullNodeInterface {
             String response2 = reader.readLine();
            System.out.println(response);
            System.out.println(response2);
-           
+
            if(response == null){
                 networkMap.removeNode(targetNodeName,targetNodeAddress);
                 System.out.println("Node removed!");

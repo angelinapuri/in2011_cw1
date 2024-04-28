@@ -50,7 +50,7 @@ public class FullNode implements FullNodeInterface {
 
             while (true) {
                 Socket acceptedSocket = serverSocket.accept();
-                // System.out.println(sendNotifyRequest(ipAddress, portNumber, acceptedSocket));
+                //System.out.println(sendNotifyRequest(nodeName, nodeAddress));
                 System.out.println("New connection accepted");
                 sendNotifyRequests(nodeName, nodeAddress);
                 handleIncomingConnections(nodeName, nodeAddress);
@@ -68,15 +68,16 @@ public class FullNode implements FullNodeInterface {
     }
 
     private void sendNotifyRequests(String startingNodeName, String startingNodeAddress) {
-      //  for (Map.Entry<String, String> entry : networkMap.getMap().entrySet()) {
-          //  String nodeName = entry.getKey();
-            //String nodeAddress = entry.getValue();
+        List<NodeNameAndAddress> nodes = new ArrayList<>(networkMap.getMap().values());
 
-            // Skip sending notify request to self
-           // if (!nodeName.equals(startingNodeName)) {
-             //   sendNotifyRequest(nodeName, nodeAddress, startingNodeName, startingNodeAddress);
-        //    }
-     //   }
+        for (NodeNameAndAddress node : nodes) {
+            String nodeName = node.getNodeName();
+            String nodeAddress = node.getNodeAddress();
+
+            if (!nodeName.equals(startingNodeName)) {
+                sendNotifyRequest(nodeName, nodeAddress, startingNodeName, startingNodeAddress);
+            }
+        }
     }
 
     private void sendNotifyRequest(String targetNodeName, String targetNodeAddress, String startingNodeName, String startingNodeAddress) {
@@ -84,12 +85,11 @@ public class FullNode implements FullNodeInterface {
             Socket socket = new Socket(targetNodeAddress.split(":")[0], Integer.parseInt(targetNodeAddress.split(":")[1]));
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
-            String notifyRequest = "NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress + "\n";
-
-            writer.write(notifyRequest);
+            writer.write("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress + "\n");
             writer.flush();
 
             System.out.println("Notify request sent to " + targetNodeName + " at " + targetNodeAddress);
+            System.out.println(reader.readLine());
 
             writer.close();
             socket.close();
@@ -170,7 +170,7 @@ public class FullNode implements FullNodeInterface {
             writer.flush();
         }
 
-        public String handleNearestRequest(String hashID, NetworkMap networkMap) {
+        public void handleNearestRequest(String hashID, NetworkMap networkMap) {
             try {
                 List<NodeNameAndAddress> nodes = new ArrayList<>(networkMap.getMap().values());
 
@@ -204,7 +204,6 @@ public class FullNode implements FullNodeInterface {
             } catch (Exception e) {
                 System.err.println("Error handling NEAREST request: " + e.getMessage());
             }
-            return hashID;
         }
 
         private void handleNotifyRequest(BufferedReader reader) throws IOException {

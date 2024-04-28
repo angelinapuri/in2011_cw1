@@ -31,6 +31,10 @@ public class NetworkMap {
         map.put(nodeName, new NodeNameAndAddress(nodeName, address));
     }
 
+    public static void removeNode(String nodeName, String address) {
+        map.remove(nodeName, new NodeNameAndAddress(nodeName, address));
+    }
+
     public static Map<String, NodeNameAndAddress> getMap() {
         return map;
     }

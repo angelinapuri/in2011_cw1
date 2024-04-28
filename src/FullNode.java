@@ -170,7 +170,7 @@ public class FullNode implements FullNodeInterface {
             writer.flush();
         }
 
-        public String handleNearestResponse(String hashID) {
+        public String handleNearestRequest(String hashID) {
             try {
                 List<NodeNameAndAddress> nodes = Node.getNodes();
 

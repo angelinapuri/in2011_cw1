@@ -12,7 +12,10 @@ public class NodeNameAndAddress {
     }
 
     public String getNodeAddress() {
-
         return nodeAddress;
+    }
+    @Override
+    public String toString() {
+        return "NodeName: " + nodeName + ", NodeAddress: " + nodeAddress;
     }
 }

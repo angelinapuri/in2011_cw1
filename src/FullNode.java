@@ -69,19 +69,14 @@ public class FullNode implements FullNodeInterface {
 
     private void sendNotifyRequests(String startingNodeName, String startingNodeAddress) {
         List<NodeNameAndAddress> nodes = new ArrayList<>(networkMap.getMap().values());
-
-        for (NodeNameAndAddress node : nodes) {
-            String nodeName = node.getNodeName();
-            String nodeAddress = node.getNodeAddress();
-
-            if (!nodeName.equals(startingNodeName)) {
+        String nodeName= "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20000";
+        String nodeAddress= "10.0.0.164:20000";
                 sendNotifyRequest(nodeName, nodeAddress, startingNodeName, startingNodeAddress);
-            }
-        }
+
     }
 
     private void sendNotifyRequest(String targetNodeName, String targetNodeAddress, String startingNodeName, String startingNodeAddress) {
-       /** try {
+       try {
             socket = new Socket(targetNodeAddress.split(":")[0], Integer.parseInt(targetNodeAddress.split(":")[1]));
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
@@ -98,7 +93,7 @@ public class FullNode implements FullNodeInterface {
 
         } catch (IOException e) {
             System.err.println("Error sending notify request to " + targetNodeName + " at " + targetNodeAddress + ": " + e.getMessage());
-        } */
+        }
     }
 
     private class ClientHandler implements Runnable {

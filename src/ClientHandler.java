@@ -16,12 +16,12 @@ public class ClientHandler implements Runnable {
     private BufferedWriter writer;
     private BufferedReader reader;
     private boolean startMessageSent = false; // Flag to track if the START message has been sent
-    private NetworkMap networkMap;
+    private static NetworkMap networkMap;
     private DataStore dataStore;
 
     public ClientHandler(Socket clientSocket, NetworkMap networkMap, DataStore dataStore) {
         this.clientSocket = clientSocket;
-        this.networkMap = networkMap;
+        ClientHandler.networkMap = networkMap;
         this.dataStore = dataStore;
 
         try {
@@ -90,7 +90,8 @@ public class ClientHandler implements Runnable {
     }
 
     public void handleNearestRequest(String hashID, NetworkMap networkMap) throws IOException {
-        String nearestNodes = networkMap.getNearestNodes(hashID);
+        String nearestNodes = NetworkMap.getNearestNodes(hashID);
+        assert nearestNodes != null;
         writer.write(nearestNodes);
         writer.flush();
     }
@@ -113,7 +114,7 @@ public class ClientHandler implements Runnable {
                 messageBuilder.append(line).append("\n");
                 startingNodeAddress = messageBuilder.toString().trim();
             }
-            networkMap.addNode(startingNodeName, startingNodeAddress);
+            NetworkMap.addNode(startingNodeName, startingNodeAddress);
             writer.write("NOTIFIED" + "\n");
             writer.flush();
         }
@@ -148,21 +149,25 @@ public class ClientHandler implements Runnable {
 
         String keyHash = HashID.computeHashID(key + "\n");
 
-        String nearestNodes = networkMap.getNearestNodes(keyHash);
+        String nearestNodes = NetworkMap.getNearestNodes(keyHash);
+        assert nearestNodes != null;
         String[] nearestNodesLines = nearestNodes.split("\n");
 
         boolean nodeFound = false;
-        for (int i = 1; i < nearestNodesLines.length; i += 2){
-            if (nearestNodesLines[i].equals(nodeName) && nearestNodesLines[i+1].equals(nodeAddress)){
+        for (int i = 0; i < nearestNodesLines.length; i += 2) {
+            String nearestNodeName = nearestNodesLines[i];
+            String nearestNodeAddress = nearestNodesLines[i + 1];
 
-                    dataStore.store(key, value);
-                    writer.write("SUCCESS");
-                    writer.flush();
-                    nodeFound=true;
-                    break;
+            if (nearestNodeName.equals(nodeName) && nearestNodeAddress.equals(nodeAddress)) {
+                dataStore.store(key, value);
+                writer.write("SUCCESS");
+                writer.flush();
+                nodeFound = true;
+                break;
             }
         }
-        if(!nodeFound){
+
+        if (!nodeFound) {
             writer.write("FAILED");
             writer.flush();
         }

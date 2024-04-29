@@ -25,11 +25,11 @@ public class FullNode implements FullNodeInterface {
     private Socket socket;
     private Writer writer;
     private BufferedReader reader;
-    private NetworkMap networkMap;
+    private static NetworkMap networkMap;
     private DataStore dataStore;
 
     public FullNode(NetworkMap networkMap, DataStore dataStore) {
-        this.networkMap = networkMap;
+        FullNode.networkMap = networkMap;
         this.dataStore = dataStore;
     }
 
@@ -87,9 +87,9 @@ public class FullNode implements FullNodeInterface {
             }
 
             try {
-                Socket socket = new Socket(nodeAddress.split(":")[0], Integer.parseInt(nodeAddress.split(":")[1]));
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                socket = new Socket(nodeAddress.split(":")[0], Integer.parseInt(nodeAddress.split(":")[1]));
+                writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
                 writer.write("START 1 " + startingNodeName + "\n");
                 System.out.println("START 1 " + startingNodeName + "\n");

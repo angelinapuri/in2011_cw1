@@ -154,7 +154,7 @@ public class ClientHandler implements Runnable {
         String[] nearestNodesLines = nearestNodes.split("\n");
 
         boolean nodeFound = false;
-        for (int i = 0; i < nearestNodesLines.length; i += 2) {
+        for (int i = 0; i < nearestNodesLines.length-1; i += 2) {
             String nearestNodeName = nearestNodesLines[i];
             String nearestNodeAddress = nearestNodesLines[i + 1];
 

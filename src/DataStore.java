@@ -5,7 +5,6 @@ public class DataStore {
     private Map<String, String> data;
 
     public DataStore() {
-
         this.data = new HashMap<>();
     }
 
@@ -14,9 +13,12 @@ public class DataStore {
     }
 
     public String get(String key) {
-        if (data.containsKey(key)) {
-            return data.get(key);
+        return data.get(key);
+    }
+    public void printContents() {
+        System.out.println("DataStore Contents:");
+        for (Map.Entry<String, String> entry : data.entrySet()) {
+            System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
         }
-        return null;
     }
 }

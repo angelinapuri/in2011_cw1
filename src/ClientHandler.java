@@ -162,6 +162,7 @@ public class ClientHandler implements Runnable {
                 dataStore.store(key, value);
                 writer.write("SUCCESS" + "\n");
                 writer.flush();
+                dataStore.printContents();
                 nodeFound = true;
                 break;
             }
@@ -193,7 +194,7 @@ public class ClientHandler implements Runnable {
             writer.flush();
         } else {
             int valueLines = value.split("\n").length;
-            writer.write("VALUE " + valueLines + "\n" + value);
+            writer.write("VALUE " + valueLines + "\n" + value + "\n");
             writer.flush();
         }
     }

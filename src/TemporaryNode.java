@@ -82,7 +82,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
         return false;
     }
 
-
     public String get(String key) {
         try {
             System.out.println(nearest(key));

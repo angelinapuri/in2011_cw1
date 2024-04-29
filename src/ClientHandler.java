@@ -200,19 +200,18 @@ public class ClientHandler implements Runnable {
                 keyBuilder.append(line).append("\n");
             }
 
-        String finalKey = keyBuilder.toString().trim();
-        System.out.println("Final Key: " + finalKey);
+        String key = keyBuilder.toString().trim();
+        System.out.println(key);
 
-        String value = dataStore.get(finalKey);
+        String value = dataStore.get(key);
 
-        // Send the response
-        if (value != null && !value.isEmpty()) {
-            int valueLines = value.split("\n").length;
-            writer.write("VALUE " + valueLines + "\n" + value);
-        } else {
+        if (value == null) {
             writer.write("NOPE");
             writer.flush();
+        } else {
+            int valueLines = value.split("\n").length;
+            writer.write("VALUE " + valueLines + "\n" + value);
+            writer.flush();
         }
-        writer.flush();
     }
 }

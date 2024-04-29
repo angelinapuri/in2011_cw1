@@ -147,6 +147,12 @@ public class ClientHandler implements Runnable {
         System.out.println(key);
         System.out.println(value);
 
+        List<NodeNameAndAddress> nodes = new ArrayList<>(NetworkMap.getMap().values());
+        for (NodeNameAndAddress nodeNameAndAddress : nodes) {
+            String mapNodeName = nodeNameAndAddress.getNodeName();
+            System.out.println(mapNodeName);
+        }
+
         String keyHash = HashID.computeHashID(key + "\n");
 
         String nearestNodes = NetworkMap.getNearestNodes(keyHash);

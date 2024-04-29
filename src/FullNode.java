@@ -78,12 +78,16 @@ public class FullNode implements FullNodeInterface {
             System.out.println(nodeName);
             String nodeAddress = nodeNameAndAddress.getNodeAddress();
             System.out.println(nodeAddress);
+
+            if(nodeName.startsWith(startingNodeName) && nodeAddress.equals(startingNodeAddress)){
+                continue;
+            }
+
             try {
                 Socket socket = new Socket(nodeAddress.split(":")[0], Integer.parseInt(nodeAddress.split(":")[1]));
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                // Send START message
                 writer.write("START 1 " + startingNodeName + "\n");
                 System.out.println("START 1 " + startingNodeName + "\n");
                 writer.flush();
@@ -92,7 +96,6 @@ public class FullNode implements FullNodeInterface {
                 System.out.println(response);
 
                 if (response != null && response.startsWith("START 1 ")) {
-                    // Send NOTIFY request
                     writer.write("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress + "\n");
                     writer.flush();
                     System.out.println("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress + "\n");

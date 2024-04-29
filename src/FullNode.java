@@ -100,7 +100,7 @@ public class FullNode implements FullNodeInterface {
             // Send START message
             sendStartMessage( targetNodeName,  targetNodeAddress,  startingNodeName,  startingNodeAddress);
 
-                writer.write("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress);
+                writer.write("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress + "\n");
                 writer.flush();
 
                 System.out.println("Notify request sent to " + targetNodeName + " at " + targetNodeAddress);

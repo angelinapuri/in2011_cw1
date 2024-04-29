@@ -83,9 +83,7 @@ public class FullNode implements FullNodeInterface {
             socket = new Socket(targetNodeAddress.split(":")[0], Integer.parseInt(targetNodeAddress.split(":")[1]));
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            writer.write("START 1 " + startingNodeName + "\n");
-            System.out.println("START 1 " + startingNodeName + "\n");
-            writer.flush();
+            
             String startResponse = reader.readLine();
             System.out.println(startResponse);
             if (startResponse != null && startResponse.startsWith("START 1")) {

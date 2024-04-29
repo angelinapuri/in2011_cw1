@@ -15,12 +15,9 @@ public class DataStore {
     }
 
     public String get(String key) {
-        if (data.containsKey(key) & data!=null) {
+        if (data.containsKey(key)) {
             return data.get(key);
-        } else {
-            System.out.println("Not Found");
-            System.out.println(data);
-            return null;
         }
+        return null;
     }
 }

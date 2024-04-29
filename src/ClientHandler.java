@@ -211,6 +211,7 @@ public class ClientHandler implements Runnable {
             writer.write("VALUE " + valueLines + "\n" + value);
         } else {
             writer.write("NOPE");
+            writer.flush();
         }
         writer.flush();
     }

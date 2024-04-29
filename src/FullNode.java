@@ -67,6 +67,8 @@ public class FullNode implements FullNodeInterface {
 
     public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
         try {
+            System.out.println(startingNodeName);
+            System.out.println(startingNodeAddress);
             Socket acceptedSocket = serverSocket.accept();
             System.out.println("New connection accepted from " + acceptedSocket.getInetAddress().getHostAddress() + ":" + acceptedSocket.getPort());
             new Thread(new ClientHandler(acceptedSocket, networkMap, dataStore)).start();

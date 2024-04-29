@@ -59,7 +59,7 @@ public class ClientHandler implements Runnable {
                 } else if (request.equals("ECHO")) {
                     handleEchoRequest();
                 } else if (request.equals("PUT?")) {
-                    handlePutRequest(reader);
+                    handlePutRequest(reader, messageParts[1], messageParts[2]);
                 } else if (request.equals("GET?")) {
                     handleGetRequest(reader, messageParts[1]);
                 } else if (request.startsWith("END")) {
@@ -70,7 +70,7 @@ public class ClientHandler implements Runnable {
                 }
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         } finally {
             try {
@@ -86,40 +86,10 @@ public class ClientHandler implements Runnable {
         writer.flush();
     }
 
-    public void handleNearestRequest(String hashID, NetworkMap networkMap) {
-        try {
-            List<NodeNameAndAddress> nodes = new ArrayList<>(networkMap.getMap().values());
-
-            Map<Integer, List<NodeNameAndAddress>> distances = new TreeMap<>();
-
-            for (NodeNameAndAddress node : nodes) {
-                String nodeName = node.getNodeName();
-                String nodeAddress = node.getNodeAddress();
-                String nodeHashID = HashID.computeHashID(nodeName + "\n");
-                int distance = HashID.computeDistance(hashID, nodeHashID);
-
-                distances.putIfAbsent(distance, new ArrayList<>());
-                distances.get(distance).add(new NodeNameAndAddress(nodeName, nodeAddress));
-            }
-
-            StringBuilder responseBuilder = new StringBuilder();
-            int count = 0;
-            for (Map.Entry<Integer, List<NodeNameAndAddress>> entry : distances.entrySet()) {
-                List<NodeNameAndAddress> nearestNodes = entry.getValue();
-                for (NodeNameAndAddress node : nearestNodes) {
-                    responseBuilder.append(node.getNodeName()).append("\n").append(node.getNodeAddress()).append("\n");
-                    count++;
-                    if (count >= 3) break;
-                }
-                if (count >= 3) break;
-            }
-
-            writer.write("NODES " + count + "\n" + responseBuilder.toString());
-            writer.flush();
-
-        } catch (Exception e) {
-            System.err.println("Error handling NEAREST request: " + e.getMessage());
-        }
+    public void handleNearestRequest(String hashID, NetworkMap networkMap) throws IOException {
+        String nearestNodes = networkMap.getNearestNodes(hashID);
+        writer.write(nearestNodes);
+        writer.flush();
     }
 
     private void handleNotifyRequest(BufferedReader reader) throws IOException {
@@ -140,7 +110,7 @@ public class ClientHandler implements Runnable {
                 messageBuilder.append(line).append("\n");
                 startingNodeAddress = messageBuilder.toString().trim();
             }
-            NetworkMap.addNode(startingNodeName, startingNodeAddress);
+            networkMap.addNode(startingNodeName, startingNodeAddress);
             writer.write("NOTIFIED" + "\n");
             writer.flush();
         }
@@ -151,41 +121,31 @@ public class ClientHandler implements Runnable {
         writer.flush();
     }
 
-    private void handlePutRequest(BufferedReader reader) throws IOException {
-        String keyValue = reader.readLine();
-        String[] parts = keyValue.split(" ");
-
-        int keyLineCount = Integer.parseInt(parts[1]);
-        int valueLineCount = Integer.parseInt(parts[2]);
+    private void handlePutRequest(BufferedReader reader, String keyLine, String valueLine) throws Exception {
 
         StringBuilder keyBuilder = new StringBuilder();
         StringBuilder valueBuilder = new StringBuilder();
 
-        // Read the key lines
-        for (int i = 0; i < keyLineCount; i++) {
+        int keyLines = Integer.parseInt(keyLine);
+        for (int i = 0; i < keyLines; i++) {
             String line = reader.readLine();
-            if (line == null) {
-                writer.write("FAILED: Incomplete key");
-                writer.flush();
-                return;
-            }
             keyBuilder.append(line).append("\n");
         }
 
-        // Read the value lines
-        for (int i = 0; i < valueLineCount; i++) {
+        int valueLines = Integer.parseInt(valueLine);
+        for (int i = 0; i < valueLines; i++) {
             String line = reader.readLine();
-            if (line == null) {
-                writer.write("FAILED: Incomplete value");
-                writer.flush();
-                return;
-            }
             valueBuilder.append(line).append("\n");
         }
 
-        // Store the key-value pair
         String key = keyBuilder.toString().trim();
         String value = valueBuilder.toString().trim();
+        System.out.println(key);
+        System.out.println(value);
+
+        String keyHash = HashID.computeHashID(key);
+        String nearestNodes = networkMap.getNearestNodes(keyHash);
+
         dataStore.store(key, value);
         writer.write("SUCCESS");
         writer.flush();
@@ -195,7 +155,7 @@ public class ClientHandler implements Runnable {
 
         StringBuilder keyBuilder = new StringBuilder();
 
-        int keyLines = parseInt(keyLine);
+        int keyLines = Integer.parseInt(keyLine);
             for (int i = 0; i < keyLines; i++) {
                 String line = reader.readLine();
                 keyBuilder.append(line).append("\n");

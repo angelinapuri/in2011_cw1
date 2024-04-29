@@ -38,4 +38,39 @@ public class NetworkMap {
     public static Map<String, NodeNameAndAddress> getMap() {
         return map;
     }
+
+    public static String getNearestNodes(String hashID) {
+        try {
+            Map<Integer, List<NodeNameAndAddress>> distances = new TreeMap<>();
+
+            for (NodeNameAndAddress node : map.values()) {
+                String nodeName = node.getNodeName();
+                String nodeAddress = node.getNodeAddress();
+                String nodeHashID = HashID.computeHashID(nodeName + "\n");
+                int distance = HashID.computeDistance(hashID, nodeHashID);
+
+                distances.putIfAbsent(distance, new ArrayList<>());
+                distances.get(distance).add(new NodeNameAndAddress(nodeName, nodeAddress));
+            }
+
+            StringBuilder responseBuilder = new StringBuilder();
+            int count = 0;
+            for (Map.Entry<Integer, List<NodeNameAndAddress>> entry : distances.entrySet()) {
+                List<NodeNameAndAddress> nearestNodes = entry.getValue();
+                for (NodeNameAndAddress node : nearestNodes) {
+                    responseBuilder.append(node.getNodeName()).append("\n").append(node.getNodeAddress()).append("\n");
+                    count++;
+                    if (count >= 3) break;
+                }
+                if (count >= 3) break;
+            }
+
+            return "NODES " + count + "\n" + responseBuilder.toString();
+
+        } catch (Exception e) {
+            System.err.println("Error handling NEAREST request: " + e.getMessage());
+            return null;
+        }
+    }
+
 }

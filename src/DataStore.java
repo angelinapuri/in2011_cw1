@@ -10,7 +10,6 @@ public class DataStore {
     }
 
     public void store(String key, String value) {
-
         data.put(key, value);
     }
 

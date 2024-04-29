@@ -47,12 +47,12 @@ public class FullNode implements FullNodeInterface {
             String nodeAddress = ipAddress + ":" + portNumber;
             NetworkMap.addNode(nodeName, nodeAddress);
             System.out.println("Added self as a node: " + nodeName + " at " + nodeAddress);
+            sendNotifyRequests(nodeName, nodeAddress);
 
             while (true) {
                 Socket acceptedSocket = serverSocket.accept();
                 //System.out.println(sendNotifyRequest(nodeName, nodeAddress));
                 System.out.println("New connection accepted");
-                sendNotifyRequests(nodeName, nodeAddress);
                 handleIncomingConnections(nodeName, nodeAddress);
                 new Thread(new ClientHandler(acceptedSocket, networkMap)).start();
             }

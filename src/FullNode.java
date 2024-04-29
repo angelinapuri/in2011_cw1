@@ -45,17 +45,17 @@ public class FullNode implements FullNodeInterface {
             //InetAddress host = InetAddress.getByName(ipAddress);
             serverSocket = new ServerSocket(portNumber);
             System.out.println("Listening for incoming connections on " + ipAddress + ":" + portNumber);
+
             String nodeName = "angelina.puri@city.ac.uk:test-01";
             String nodeAddress = ipAddress + ":" + portNumber;
+
             NetworkMap.addNode(nodeName, nodeAddress);
             System.out.println("Added self as a node: " + nodeName + " at " + nodeAddress);
+
             sendNotifyRequests(nodeName, nodeAddress);
+
             System.out.println("Connected to the network");
-            List<NodeNameAndAddress> nodes = new ArrayList<>(NetworkMap.getMap().values());
-            for (NodeNameAndAddress nodeNameAndAddress : nodes) {
-                System.out.println(nodeNameAndAddress);
-            }
-            
+
             return true;
 
         } catch (IOException e) {

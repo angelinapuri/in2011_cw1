@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+import static java.lang.Integer.parseInt;
+
 public class ClientHandler implements Runnable {
     private Socket clientSocket;
     private BufferedWriter writer;
@@ -189,28 +191,18 @@ public class ClientHandler implements Runnable {
     }
 
     private void handleGetRequest(BufferedReader reader, String keyLine) throws IOException {
+
         StringBuilder keyBuilder = new StringBuilder();
-        int keyLines = Integer.parseInt(keyLine);
 
-        // Append the provided key line to the keyBuilder
-        keyBuilder.append(keyLine).append("\n");
-
-        // Read the remaining key lines
-        for (int i = 1; i < keyLines; i++) {
-            String line = reader.readLine();
-            if (line == null) {
-                // Handle incomplete data
-                writer.write("Incomplete data");
-                writer.flush();
-                return;
+        int keyLines = parseInt(keyLine);
+            for (int i = 0; i < keyLines; i++) {
+                String line = reader.readLine();
+                keyBuilder.append(line).append("\n");
             }
-            keyBuilder.append(line).append("\n");
-        }
 
         String finalKey = keyBuilder.toString().trim();
         System.out.println("Final Key: " + finalKey);
 
-        // Retrieve the value from the data store
         String value = dataStore.get(finalKey);
 
         // Send the response

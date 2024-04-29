@@ -23,6 +23,7 @@ public class ClientHandler implements Runnable {
         this.clientSocket = clientSocket;
         this.networkMap = networkMap;
         this.dataStore = dataStore;
+
         try {
             this.writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
             this.reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -35,6 +36,8 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
+            String nodeName = "angelina.puri@city.ac.uk:test-01";
+            String nodeAddress = "10.0.0.119:20000";
             String message;
             while ((message = reader.readLine()) != null) {
                 System.out.println(message);
@@ -49,7 +52,7 @@ public class ClientHandler implements Runnable {
                 String request = messageParts[0];
                 if (request.equals("START")) {
                     if (!startMessageSent) {
-                        handleStartRequest();
+                        handleStartRequest(nodeName);
                         startMessageSent = true; // Set the flag to true after sending the START message
                     }
                 } else if (request.startsWith("NEAREST?")) {
@@ -59,7 +62,7 @@ public class ClientHandler implements Runnable {
                 } else if (request.equals("ECHO")) {
                     handleEchoRequest();
                 } else if (request.equals("PUT?")) {
-                    handlePutRequest(reader, messageParts[1], messageParts[2]);
+                    handlePutRequest(reader, messageParts[1], messageParts[2], nodeName, nodeAddress);
                 } else if (request.equals("GET?")) {
                     handleGetRequest(reader, messageParts[1]);
                 } else if (request.startsWith("END")) {
@@ -81,8 +84,8 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void handleStartRequest() throws IOException {
-        writer.write("START 1 angelina.puri@city.ac.uk:test-01" + "\n");
+    private void handleStartRequest(String nodeName) throws IOException {
+        writer.write("START 1 " + nodeName + "\n");
         writer.flush();
     }
 
@@ -121,7 +124,7 @@ public class ClientHandler implements Runnable {
         writer.flush();
     }
 
-    private void handlePutRequest(BufferedReader reader, String keyLine, String valueLine) throws Exception {
+    private void handlePutRequest(BufferedReader reader, String keyLine, String valueLine, String nodeName, String nodeAddress) throws Exception {
 
         StringBuilder keyBuilder = new StringBuilder();
         StringBuilder valueBuilder = new StringBuilder();
@@ -144,11 +147,25 @@ public class ClientHandler implements Runnable {
         System.out.println(value);
 
         String keyHash = HashID.computeHashID(key);
-        String nearestNodes = networkMap.getNearestNodes(keyHash);
 
-        dataStore.store(key, value);
-        writer.write("SUCCESS");
-        writer.flush();
+        String nearestNodes = networkMap.getNearestNodes(keyHash);
+        String[] nearestNodesLines = nearestNodes.split("\n");
+
+        boolean nodeFound = false;
+        for (int i = 1; i < nearestNodesLines.length; i += 2){
+            if (nearestNodesLines[i].equals(nodeName) && nearestNodesLines[i+1].equals(nodeAddress)){
+
+                    dataStore.store(key, value);
+                    writer.write("SUCCESS");
+                    writer.flush();
+                    nodeFound=true;
+                    break;
+            }
+        }
+        if(!nodeFound){
+            writer.write("FAILED");
+            writer.flush();
+        }
     }
 
     private void handleGetRequest(BufferedReader reader, String keyLine) throws IOException {

@@ -87,6 +87,7 @@ public class FullNode implements FullNodeInterface {
             writer.write("START 1 " + startingNodeName + "\n");
             System.out.println("START 1 " + startingNodeName + "\n");
             writer.flush();
+            System.out.println(reader.readLine());
             }
         catch (IOException e) {
             System.err.println("Error sending START message: " + e.getMessage());
@@ -95,7 +96,7 @@ public class FullNode implements FullNodeInterface {
 
     private void sendNotifyRequest(String targetNodeName, String targetNodeAddress, String startingNodeName, String startingNodeAddress) {
         try {
-            
+
             // Send START message
             sendStartMessage( targetNodeName,  targetNodeAddress,  startingNodeName,  startingNodeAddress);
 

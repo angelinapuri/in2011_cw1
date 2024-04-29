@@ -188,6 +188,7 @@ public class ClientHandler implements Runnable {
         System.out.println(key);
 
         String value = dataStore.get(key);
+        System.out.println(value);
 
         if (value == null) {
             writer.write("NOPE" + "\n");

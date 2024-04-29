@@ -62,7 +62,9 @@ public class ClientHandler implements Runnable {
                     handlePutRequest(reader);
                 } else if (request.equals("GET?")) {
                     handleGetRequest(reader, messageParts[1]);
-                } else {
+                } else if (request.startsWith("END")) {
+                    handleEndRequest();
+                }else {
                     writer.write("Unknown command");
                     writer.flush();
                 }
@@ -78,7 +80,6 @@ public class ClientHandler implements Runnable {
             }
         }
     }
-
 
     private void handleStartRequest() throws IOException {
         writer.write("START 1 angelina.puri@city.ac.uk:test-01" + "\n");
@@ -213,5 +214,9 @@ public class ClientHandler implements Runnable {
             writer.write("VALUE " + valueLines + "\n" + value);
             writer.flush();
         }
+    }
+
+    private void handleEndRequest() throws IOException {
+        clientSocket.close();
     }
 }

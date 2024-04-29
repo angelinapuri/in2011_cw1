@@ -61,8 +61,8 @@ public class FullNode implements FullNodeInterface {
     }
 
     public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
-    try{
-    Socket acceptedSocket = serverSocket.accept();
+        try {
+            Socket acceptedSocket = serverSocket.accept();
             System.out.println("New connection accepted from " + acceptedSocket.getInetAddress().getHostAddress() + ":" + acceptedSocket.getPort());
             new Thread(new ClientHandler(acceptedSocket, networkMap, dataStore)).start();
         } catch (IOException e) {
@@ -72,14 +72,16 @@ public class FullNode implements FullNodeInterface {
     }
 
     private void sendNotifyRequests(String startingNodeName, String startingNodeAddress) {
-        //List<NodeNameAndAddress> nodes = new ArrayList<>(networkMap.getMap().values());
-        String nodeName = "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20000";
-        String nodeAddress = "10.0.0.164:20000";
-        try {
-                socket = new Socket(nodeAddress.split(":")[0], Integer.parseInt(nodeAddress.split(":")[1]));
-                writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        List<NodeNameAndAddress> nodes = new ArrayList<>(networkMap.getMap().values());
+        for (NodeNameAndAddress nodeNameAndAddress : nodes) {
+            String nodeName = nodeNameAndAddress.getNodeName();
+            String nodeAddress = nodeNameAndAddress.getNodeAddress();
+            try {
+                Socket socket = new Socket(nodeAddress.split(":")[0], Integer.parseInt(nodeAddress.split(":")[1]));
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
+                // Send START message
                 writer.write("START 1 " + startingNodeName + "\n");
                 System.out.println("START 1 " + startingNodeName + "\n");
                 writer.flush();
@@ -87,21 +89,27 @@ public class FullNode implements FullNodeInterface {
                 String response = reader.readLine();
                 System.out.println(response);
 
-                if (response != null && response.startsWith("START 1 ")){
+                if (response != null && response.startsWith("START 1 ")) {
+                    // Send NOTIFY request
                     writer.write("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress + "\n");
                     writer.flush();
                     System.out.println("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress + "\n");
 
                     System.out.println("Notify request sent to " + nodeName + " at " + nodeAddress);
+
                     String response2 = reader.readLine();
                     System.out.println(response2);
-                    if (response != null && response.equals("NOTIFIED")) {
+
+                    if (response2 != null && response2.equals("NOTIFIED")) {
                         writer.write("END: Notified Node");
                         writer.flush();
                     }
                 }
-        } catch (IOException e) {
-            System.err.println("Error sending notify request to " + nodeName + " at " + nodeAddress + ": " + e.getMessage());
+                socket.close();
+            } catch (IOException e) {
+                System.err.println("Error sending notify request to " + nodeName + " at " + nodeAddress + ": " + e.getMessage());
+            }
         }
     }
+
 }

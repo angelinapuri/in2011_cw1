@@ -102,6 +102,7 @@ public class FullNode implements FullNodeInterface {
 
                 writer.write("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress + "\n");
                 writer.flush();
+            System.out.println("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress + "\n");
 
                 System.out.println("Notify request sent to " + targetNodeName + " at " + targetNodeAddress);
                 String response = reader.readLine();

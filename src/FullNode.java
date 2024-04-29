@@ -51,7 +51,11 @@ public class FullNode implements FullNodeInterface {
             System.out.println("Added self as a node: " + nodeName + " at " + nodeAddress);
             sendNotifyRequests(nodeName, nodeAddress);
             System.out.println("Connected to the network");
-            System.out.println(NetworkMap.getMap());
+            List<NodeNameAndAddress> nodes = new ArrayList<>(NetworkMap.getMap().values());
+            for (NodeNameAndAddress nodeNameAndAddress : nodes) {
+                System.out.println(nodeNameAndAddress);
+            }
+            
             return true;
 
         } catch (IOException e) {
@@ -76,9 +80,7 @@ public class FullNode implements FullNodeInterface {
         List<NodeNameAndAddress> nodes = new ArrayList<>(NetworkMap.getMap().values());
         for (NodeNameAndAddress nodeNameAndAddress : nodes) {
             String nodeName = nodeNameAndAddress.getNodeName();
-            System.out.println(nodeName);
             String nodeAddress = nodeNameAndAddress.getNodeAddress();
-            System.out.println(nodeAddress);
 
             if(nodeName.startsWith(startingNodeName) && nodeAddress.equals(startingNodeAddress)){
                 continue;

@@ -206,7 +206,7 @@ public class ClientHandler implements Runnable {
         String value = dataStore.get(key);
 
         if (value == null) {
-            writer.write("NOPE");
+            writer.write("NOPE" + "\n");
             writer.flush();
         } else {
             int valueLines = value.split("\n").length;

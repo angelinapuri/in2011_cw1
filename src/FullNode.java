@@ -7,6 +7,7 @@
 // YOUR_EMAIL_GOES_HERE
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
@@ -41,18 +42,18 @@ public class FullNode implements FullNodeInterface {
 
     public boolean listen(String ipAddress, int portNumber) {
         try {
+            //InetAddress host = InetAddress.getByName(ipAddress);
             serverSocket = new ServerSocket(portNumber);
             System.out.println("Listening for incoming connections on " + ipAddress + ":" + portNumber);
             String nodeName = "angelina.puri@city.ac.uk:test-01";
             String nodeAddress = ipAddress + ":" + portNumber;
             NetworkMap.addNode(nodeName, nodeAddress);
             System.out.println("Added self as a node: " + nodeName + " at " + nodeAddress);
-            sendNotifyRequests(nodeName, nodeAddress);
+            handleIncomingConnections(nodeName, nodeAddress);
 
             while (true) {
                 Socket acceptedSocket = serverSocket.accept();
                 System.out.println("New connection accepted");
-                handleIncomingConnections(nodeName, nodeAddress);
                 new Thread(new ClientHandler(acceptedSocket, networkMap, dataStore)).start();
             }
         } catch (IOException e) {
@@ -63,19 +64,10 @@ public class FullNode implements FullNodeInterface {
     }
 
     public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
-        System.out.println("Connected to " + startingNodeName + " at " + startingNodeAddress);
+        System.out.println("Connected to the network");
+        sendNotifyRequest(startingNodeName, startingNodeAddress);
     }
 
-    private void sendNotifyRequests(String startingNodeName, String startingNodeAddress) {
-        List<NodeNameAndAddress> nodes = new ArrayList<>(networkMap.getMap().values());
-        //   for (NodeNameAndAddress node : nodes) {
-        //   String nodeName = node.getNodeName();
-        //    String nodeAddress = node.getNodeAddress();
-        String nodeName = "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20000";
-        String nodeAddress = "10.0.0.164:20000";
-        sendNotifyRequest(nodeName, nodeAddress, startingNodeName, startingNodeAddress);
-        //  }
-    }
 
     private void sendStartMessage(String targetNodeName, String targetNodeAddress, String startingNodeName, String startingNodeAddress) {
         try {
@@ -92,17 +84,20 @@ public class FullNode implements FullNodeInterface {
         }
     }
 
-    private void sendNotifyRequest(String targetNodeName, String targetNodeAddress, String startingNodeName, String startingNodeAddress) {
+    private void sendNotifyRequest(String startingNodeName, String startingNodeAddress) {
+        List<NodeNameAndAddress> nodes = new ArrayList<>(networkMap.getMap().values());
+        String nodeName = "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20000";
+        String nodeAddress = "10.0.0.164:20000";
         try {
 
             // Send START message
-            sendStartMessage(targetNodeName, targetNodeAddress, startingNodeName, startingNodeAddress);
+            sendStartMessage(nodeName, nodeAddress, startingNodeName, startingNodeAddress);
 
             writer.write("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress + "\n");
             writer.flush();
             System.out.println("NOTIFY?" + "\n" + startingNodeName + "\n" + startingNodeAddress + "\n");
 
-            System.out.println("Notify request sent to " + targetNodeName + " at " + targetNodeAddress);
+            System.out.println("Notify request sent to " + nodeName + " at " + nodeAddress);
             String response = reader.readLine();
             String response2 = reader.readLine();
             System.out.println(response);
@@ -114,7 +109,7 @@ public class FullNode implements FullNodeInterface {
             socket.close();
 
         } catch (IOException e) {
-            System.err.println("Error sending notify request to " + targetNodeName + " at " + targetNodeAddress + ": " + e.getMessage());
+            System.err.println("Error sending notify request to " + nodeName + " at " + nodeAddress + ": " + e.getMessage());
         }
     }
 }

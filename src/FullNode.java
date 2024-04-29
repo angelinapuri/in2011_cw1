@@ -83,15 +83,10 @@ public class FullNode implements FullNodeInterface {
             socket = new Socket(targetNodeAddress.split(":")[0], Integer.parseInt(targetNodeAddress.split(":")[1]));
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            
-            String startResponse = reader.readLine();
-            System.out.println(startResponse);
-            if (startResponse != null && startResponse.startsWith("START 1")) {
-            }
-            else {
-                networkMap.removeNode(targetNodeName, targetNodeAddress);
-                System.out.println("Node removed!");
-            }
+
+            writer.write("START 1 " + startingNodeName + "\n");
+            System.out.println("START 1 " + startingNodeName + "\n");
+            writer.flush();
             }
         catch (IOException e) {
             System.err.println("Error sending START message: " + e.getMessage());
@@ -100,8 +95,7 @@ public class FullNode implements FullNodeInterface {
 
     private void sendNotifyRequest(String targetNodeName, String targetNodeAddress, String startingNodeName, String startingNodeAddress) {
         try {
-
-
+            
             // Send START message
             sendStartMessage( targetNodeName,  targetNodeAddress,  startingNodeName,  startingNodeAddress);
 

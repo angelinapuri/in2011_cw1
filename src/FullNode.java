@@ -75,7 +75,9 @@ public class FullNode implements FullNodeInterface {
         List<NodeNameAndAddress> nodes = new ArrayList<>(networkMap.getMap().values());
         for (NodeNameAndAddress nodeNameAndAddress : nodes) {
             String nodeName = nodeNameAndAddress.getNodeName();
+            System.out.println(nodeName);
             String nodeAddress = nodeNameAndAddress.getNodeAddress();
+            System.out.println(nodeAddress);
             try {
                 Socket socket = new Socket(nodeAddress.split(":")[0], Integer.parseInt(nodeAddress.split(":")[1]));
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));

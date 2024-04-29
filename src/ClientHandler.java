@@ -147,12 +147,6 @@ public class ClientHandler implements Runnable {
         System.out.println(key);
         System.out.println(value);
 
-        List<NodeNameAndAddress> nodes = new ArrayList<>(NetworkMap.getMap().values());
-        for (NodeNameAndAddress nodeNameAndAddress : nodes) {
-            String mapNodeName = nodeNameAndAddress.getNodeName();
-            System.out.println(mapNodeName);
-        }
-
         String keyHash = HashID.computeHashID(key + "\n");
 
         String nearestNodes = NetworkMap.getNearestNodes(keyHash);
@@ -160,7 +154,7 @@ public class ClientHandler implements Runnable {
         String[] nearestNodesLines = nearestNodes.split("\n");
 
         boolean nodeFound = false;
-        for (int i = 0; i < nearestNodesLines.length-1; i += 2) {
+        for (int i = 1; i < nearestNodesLines.length-1; i += 2) {
             String nearestNodeName = nearestNodesLines[i];
             String nearestNodeAddress = nearestNodesLines[i + 1];
 

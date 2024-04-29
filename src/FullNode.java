@@ -51,11 +51,6 @@ public class FullNode implements FullNodeInterface {
 
             NetworkMap.addNode(nodeName, nodeAddress);
             System.out.println("Added self as a node: " + nodeName + " at " + nodeAddress);
-            List<NodeNameAndAddress> nodes = new ArrayList<>(NetworkMap.getMap().values());
-            for (NodeNameAndAddress nodeNameAndAddress : nodes) {
-                String mapNodeName = nodeNameAndAddress.getNodeName();
-                System.out.println(mapNodeName);
-            }
 
             sendNotifyRequests(nodeName, nodeAddress);
 

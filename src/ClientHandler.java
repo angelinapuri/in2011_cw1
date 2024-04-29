@@ -160,7 +160,7 @@ public class ClientHandler implements Runnable {
 
             if (nearestNodeName.equals(nodeName) && nearestNodeAddress.equals(nodeAddress)) {
                 dataStore.store(key, value);
-                writer.write("SUCCESS");
+                writer.write("SUCCESS" + "\n");
                 writer.flush();
                 nodeFound = true;
                 break;
@@ -168,7 +168,7 @@ public class ClientHandler implements Runnable {
         }
 
         if (!nodeFound) {
-            writer.write("FAILED");
+            writer.write("FAILED" + "\n");
             writer.flush();
         }
     }

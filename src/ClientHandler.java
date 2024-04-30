@@ -39,11 +39,25 @@ public class ClientHandler implements Runnable {
         try {
             String nodeName = "angelina.puri@city.ac.uk:test-01";
             String nodeAddress = "10.0.0.119:20000";
-            String message;
-            while ((message = reader.readLine()) != null) {
+            writer.write("START 1 " + nodeName + "\n");
+            writer.flush();
+            String startMessage = reader.readLine();
+
+            System.out.println(startMessage);
+            String[] startMessageParts = startMessage.split(" ");
+
+            String startRequest = startMessageParts[0];
+            if (startRequest.equals("START")) {
+                if (!startMessageSent) {
+                    handleStartRequest(nodeName, startMessageParts);
+                    startMessageSent = true;
+                }
+            }
+
+            String message = reader.readLine();
+            while (message != null) {
                 System.out.println(message);
                 String[] messageParts = message.split(" ");
-
                 if (messageParts.length == 0) {
                     // Handle empty message or unexpected format
                     writer.write("Invalid message format");
@@ -51,12 +65,7 @@ public class ClientHandler implements Runnable {
                     continue; // Skip further processing
                 }
                 String request = messageParts[0];
-                if (request.equals("START")) {
-                    if (!startMessageSent) {
-                        handleStartRequest(nodeName, messageParts);
-                        startMessageSent = true; // Set the flag to true after sending the START message
-                    }
-                } else if (request.startsWith("NEAREST?")) {
+                if (request.startsWith("NEAREST?")) {
                     handleNearestRequest(messageParts[1], networkMap);
                 } else if (request.equals("NOTIFY?")) {
                     handleNotifyRequest(reader);
@@ -99,8 +108,6 @@ public class ClientHandler implements Runnable {
             else if(!messageParts[2].contains(":")) {
                 throw new Exception("Node names must contain a colon");
             }
-            writer.write("START 1 " + nodeName + "\n");
-            writer.flush();
         }
         catch(Exception e) {
             try {

@@ -16,7 +16,6 @@ public class ClientHandler implements Runnable {
     private Socket clientSocket;
     private BufferedWriter writer;
     private BufferedReader reader;
-    private boolean startMessageSent = false;
     private static NetworkMap networkMap;
     private final DataStore dataStore;
 
@@ -42,17 +41,9 @@ public class ClientHandler implements Runnable {
             writer.write("START 1 " + nodeName + "\n");
             writer.flush();
             String startMessage = reader.readLine();
-
+            
             System.out.println(startMessage);
-            String[] startMessageParts = startMessage.split(" ");
-
-            String startRequest = startMessageParts[0];
-            if (startRequest.equals("START")) {
-                if (!startMessageSent) {
-                    handleStartRequest(nodeName, startMessageParts);
-                    startMessageSent = true;
-                }
-            }
+            handleStartRequest(startMessage);
 
             String message = reader.readLine();
             while (message != null) {
@@ -94,18 +85,23 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void handleStartRequest(String nodeName, String [] messageParts) throws IOException {
+    private void handleStartRequest(String startMessage) throws IOException {
         try {
-            if(messageParts.length!=3) {
+            String[] startMessageParts = startMessage.split(" ");
+
+            if(!startMessageParts[0].equals("START")) {
                 throw new Exception("Start messages must have three parts");
             }
-            else if(!messageParts[1].equals("1")) {
+            if(startMessageParts.length!=3) {
+                throw new Exception("Start messages must have three parts");
+            }
+            else if(!startMessageParts[1].equals("1")) {
                 throw new Exception("Incorrect protocol number! (It should be 1)");
             }
-            else if(!messageParts[2].contains("@")) {
+            else if(!startMessageParts[2].contains("@")) {
                 throw new Exception("Node names must contain a valid e-mail address");
             }
-            else if(!messageParts[2].contains(":")) {
+            else if(!startMessageParts[2].contains(":")) {
                 throw new Exception("Node names must contain a colon");
             }
         }

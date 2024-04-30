@@ -15,14 +15,14 @@ public class ClientHandler implements Runnable {
     private Socket clientSocket;
     private BufferedWriter writer;
     private BufferedReader reader;
-    private boolean startMessageSent = false; // Flag to track if the START message has been sent
+    private boolean startMessageSent = false;
     private static NetworkMap networkMap;
-    private DataStore dataStore;
-
+    private DataStore dataStore = DataStore.getInstance();
     public ClientHandler(Socket clientSocket, NetworkMap networkMap, DataStore dataStore) {
         this.clientSocket = clientSocket;
         ClientHandler.networkMap = networkMap;
         this.dataStore = dataStore;
+
         try {
             this.writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
             this.reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));

@@ -1,13 +1,14 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DataStore {
 
     private static final DataStore INSTANCE = new DataStore();
     private Map<String, String> data;
 
-    DataStore() {
-        this.data = new HashMap<>();
+    private DataStore() {
+        this.data = new ConcurrentHashMap<>();
     }
 
     public static DataStore getInstance() {

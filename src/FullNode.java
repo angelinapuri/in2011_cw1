@@ -27,6 +27,8 @@ public class FullNode implements FullNodeInterface {
     private BufferedReader reader;
     private static NetworkMap networkMap;
     private static DataStore dataStore;
+    String nodeName = "angelina.puri@city.ac.uk:test-01";
+
     public FullNode(NetworkMap networkMap) {
         this.networkMap = networkMap;
         if (dataStore == null) {
@@ -37,7 +39,6 @@ public class FullNode implements FullNodeInterface {
 
     public FullNode() {
         networkMap = new NetworkMap();
-
     }
 
     public boolean listen(String ipAddress, int portNumber) {
@@ -46,7 +47,6 @@ public class FullNode implements FullNodeInterface {
             serverSocket = new ServerSocket(portNumber);
             System.out.println("Listening for incoming connections on " + ipAddress + ":" + portNumber);
 
-            String nodeName = "angelina.puri@city.ac.uk:test-01";
             String nodeAddress = ipAddress + ":" + portNumber;
 
             NetworkMap.addNode(nodeName, nodeAddress);
@@ -69,6 +69,8 @@ public class FullNode implements FullNodeInterface {
         try {
             Socket acceptedSocket = serverSocket.accept();
             System.out.println("New connection accepted from " + acceptedSocket.getInetAddress().getHostAddress() + ":" + acceptedSocket.getPort());
+            writer.write("START 1 " + nodeName + "\n");
+            writer.flush();
             new Thread(new ClientHandler(acceptedSocket, networkMap, dataStore)).start();
         } catch (IOException e) {
             System.err.println("Error connecting to " + startingNodeAddress);

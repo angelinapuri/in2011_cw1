@@ -23,7 +23,6 @@ public class ClientHandler implements Runnable {
         this.clientSocket = clientSocket;
         ClientHandler.networkMap = networkMap;
         this.dataStore = dataStore;
-
         try {
             this.writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
             this.reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));

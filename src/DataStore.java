@@ -2,18 +2,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DataStore {
+
+    private static final DataStore INSTANCE = new DataStore();
     private Map<String, String> data;
 
-    public DataStore() {
+    DataStore() {
         this.data = new HashMap<>();
     }
 
     public static DataStore getInstance() {
-        if (instance == null) {
-            instance = new DataStore();
-        }
-        return instance;
+        return INSTANCE;
     }
+
 
     public void store(String key, String value) {
         data.put(key, value);

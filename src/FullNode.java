@@ -30,7 +30,7 @@ public class FullNode implements FullNodeInterface {
 
     public FullNode(NetworkMap networkMap, DataStore dataStore) {
         FullNode.networkMap = networkMap;
-        this.dataStore = dataStore;
+        this.dataStore = DataStore.getInstance();
     }
 
 

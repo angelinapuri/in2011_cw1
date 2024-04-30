@@ -59,7 +59,7 @@ public class ClientHandler implements Runnable {
                     handleNearestRequest(messageParts[1], networkMap);
                 } else if (request.equals("NOTIFY?")) {
                     handleNotifyRequest(reader);
-                } else if (request.equals("ECHO")) {
+                } else if (request.equals("ECHO?")) {
                     handleEchoRequest();
                 } else if (request.equals("PUT?")) {
                     handlePutRequest(reader, messageParts[1], messageParts[2], nodeName, nodeAddress);

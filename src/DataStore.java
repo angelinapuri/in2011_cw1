@@ -8,6 +8,13 @@ public class DataStore {
         this.data = new HashMap<>();
     }
 
+    public static DataStore getInstance() {
+        if (instance == null) {
+            instance = new DataStore();
+        }
+        return instance;
+    }
+
     public void store(String key, String value) {
         data.put(key, value);
     }

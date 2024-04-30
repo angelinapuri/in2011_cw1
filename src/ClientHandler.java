@@ -17,11 +17,11 @@ public class ClientHandler implements Runnable {
     private BufferedReader reader;
     private boolean startMessageSent = false;
     private static NetworkMap networkMap;
-    private DataStore dataStore = DataStore.getInstance();
+    private DataStore dataStore;
     public ClientHandler(Socket clientSocket, NetworkMap networkMap, DataStore dataStore) {
         this.clientSocket = clientSocket;
         ClientHandler.networkMap = networkMap;
-        this.dataStore = dataStore;
+        this.dataStore = DataStore.getInstance();
 
         try {
             this.writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));

@@ -38,12 +38,8 @@ public class ClientHandler implements Runnable {
         try {
             String nodeName = "angelina.puri@city.ac.uk:test-01";
             String nodeAddress = "10.0.0.119:20000";
-            writer.write("START 1 " + nodeName + "\n");
-            writer.flush();
-            String startMessage = reader.readLine();
-            
-            System.out.println(startMessage);
-            handleStartRequest(startMessage);
+
+            handleStartRequest(nodeName);
 
             String message = reader.readLine();
             while (message != null) {
@@ -53,7 +49,7 @@ public class ClientHandler implements Runnable {
                     // Handle empty message or unexpected format
                     writer.write("Invalid message format");
                     writer.flush();
-                    continue; // Skip further processing
+                    continue;
                 }
                 String request = messageParts[0];
                 if (request.startsWith("NEAREST?")) {
@@ -85,8 +81,13 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void handleStartRequest(String startMessage) throws IOException {
+    private void handleStartRequest(String nodeName) {
         try {
+            writer.write("START 1 " + nodeName + "\n");
+            writer.flush();
+            String startMessage = reader.readLine();
+
+            System.out.println(startMessage);
             String[] startMessageParts = startMessage.split(" ");
 
             if(!startMessageParts[0].equals("START")) {

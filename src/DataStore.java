@@ -6,7 +6,7 @@ public class DataStore {
 
     private static final DataStore INSTANCE = new DataStore();
 
-    private static Map<String, String> keyValueMap = new ConcurrentHashMap<>();
+    private final Map<String, String> keyValueMap = new ConcurrentHashMap<>();
 
     private DataStore() {
     }
@@ -21,12 +21,12 @@ public class DataStore {
     }
 
     public void store(String key, String value) {
-        keyValueMap.put(key, value);
+        this.keyValueMap.put(key, value);
     }
 
     public String get(String key) {
         return
-                keyValueMap.get(key);
+                this.keyValueMap.get(key);
     }
     public void printContents() {
         System.out.println("DataStore Contents:");

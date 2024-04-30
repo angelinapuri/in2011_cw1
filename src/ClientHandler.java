@@ -18,8 +18,8 @@ public class ClientHandler implements Runnable {
     private BufferedReader reader;
     private boolean startMessageSent = false;
     private static NetworkMap networkMap;
-    private DataStore dataStore;
-    
+    private final DataStore dataStore;
+
     public ClientHandler(Socket clientSocket, NetworkMap networkMap, DataStore dataStore) {
         this.clientSocket = clientSocket;
         ClientHandler.networkMap = networkMap;

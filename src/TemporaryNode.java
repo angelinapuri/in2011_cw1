@@ -34,13 +34,15 @@ public class TemporaryNode implements TemporaryNodeInterface {
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            writer.write("START 1 angelina.puri@city.ac.uk:MyImplementation" + "\n");
-            writer.flush();
-
             // Return true if the 2D#4 network can be contacted
             String response = reader.readLine();
             // Return false if the 2D#4 network can't be contacted
             System.out.println(response);
+            
+            writer.write("START 1 angelina.puri@city.ac.uk:MyImplementation" + "\n");
+            writer.flush();
+
+
             return response != null && response.startsWith("START 1 ");
         } catch (Exception e) {
             System.err.println("IOException occurred: " + e.getMessage());

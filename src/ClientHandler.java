@@ -53,7 +53,7 @@ public class ClientHandler implements Runnable {
                 String request = messageParts[0];
                 if (request.equals("START")) {
                     if (!startMessageSent) {
-                        handleStartRequest(nodeName);
+                        handleStartRequest(nodeName, messageParts);
                         startMessageSent = true; // Set the flag to true after sending the START message
                     }
                 } else if (request.startsWith("NEAREST?")) {
@@ -85,9 +85,32 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void handleStartRequest(String nodeName) throws IOException {
-        writer.write("START 1 " + nodeName + "\n");
-        writer.flush();
+    private void handleStartRequest(String nodeName, String [] messageParts) throws IOException {
+        try {
+            if(messageParts.length!=3) {
+                throw new Exception("Start messages must have three parts");
+            }
+            else if(!messageParts[1].equals("1")) {
+                throw new Exception("Incorrect protocol number! (It should be 1)");
+            }
+            else if(!messageParts[2].contains("@")) {
+                throw new Exception("Node names must contain a valid e-mail address");
+            }
+            else if(!messageParts[2].contains(":")) {
+                throw new Exception("Node names must contain a colon");
+            }
+            writer.write("START 1 " + nodeName + "\n");
+            writer.flush();
+        }
+        catch(Exception e) {
+            try {
+                writer.write("END java.lang.Exception: " + e.getMessage() + "\n");
+                writer.flush();
+                clientSocket.close();
+            } catch (IOException ioException) {
+                System.err.println("Error handling client connection: " + ioException.getMessage());
+            }
+        }
     }
 
     public void handleNearestRequest(String hashID, NetworkMap networkMap) throws IOException {

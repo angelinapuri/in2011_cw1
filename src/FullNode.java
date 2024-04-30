@@ -28,8 +28,8 @@ public class FullNode implements FullNodeInterface {
     private static NetworkMap networkMap;
     private DataStore dataStore;
     public FullNode(NetworkMap networkMap, DataStore dataStore) {
-        FullNode.networkMap = networkMap;
-        this.dataStore = DataStore.getInstance();
+        this.networkMap = networkMap;
+        this.dataStore = dataStore;
     }
 
 

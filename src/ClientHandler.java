@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.Integer.parseInt;
 
@@ -18,6 +19,7 @@ public class ClientHandler implements Runnable {
     private boolean startMessageSent = false;
     private static NetworkMap networkMap;
     private DataStore dataStore;
+    
     public ClientHandler(Socket clientSocket, NetworkMap networkMap, DataStore dataStore) {
         this.clientSocket = clientSocket;
         ClientHandler.networkMap = networkMap;

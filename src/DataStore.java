@@ -5,27 +5,32 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DataStore {
 
     private static final DataStore INSTANCE = new DataStore();
-    private Map<String, String> data;
+
+    private static Map<String, String> keyValueMap = new ConcurrentHashMap<>();
 
     private DataStore() {
-        this.data = new ConcurrentHashMap<>();
     }
 
     public static DataStore getInstance() {
-        return INSTANCE;
+        return DataStore.INSTANCE;
     }
 
+    @SuppressWarnings("Not Used")
+    private DataStore readResolve() {
+        return DataStore.INSTANCE;
+    }
 
     public void store(String key, String value) {
-        data.put(key, value);
+        keyValueMap.put(key, value);
     }
 
     public String get(String key) {
-        return data.get(key);
+        return
+                keyValueMap.get(key);
     }
     public void printContents() {
         System.out.println("DataStore Contents:");
-        for (Map.Entry<String, String> entry : data.entrySet()) {
+        for (Map.Entry<String, String> entry : keyValueMap.entrySet()) {
             System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
         }
     }

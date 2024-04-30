@@ -26,16 +26,17 @@ public class FullNode implements FullNodeInterface {
     private Writer writer;
     private BufferedReader reader;
     private static NetworkMap networkMap;
-    private DataStore dataStore;
-    public FullNode(NetworkMap networkMap, DataStore dataStore) {
+    private static DataStore dataStore;
+    public FullNode(NetworkMap networkMap) {
         this.networkMap = networkMap;
-        this.dataStore = dataStore;
+        if (dataStore == null) {
+            dataStore = DataStore.getInstance();
+        }
     }
 
 
     public FullNode() {
         networkMap = new NetworkMap();
-        dataStore = DataStore.getInstance();
 
     }
 

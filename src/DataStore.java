@@ -15,10 +15,6 @@ public class DataStore {
         return DataStore.INSTANCE;
     }
 
-    @SuppressWarnings("Not Used")
-    private DataStore readResolve() {
-        return DataStore.INSTANCE;
-    }
 
     public void store(String key, String value) {
         this.keyValueMap.put(key, value);

@@ -100,7 +100,7 @@ public class ClientHandler implements Runnable {
             else if(!startMessageParts[1].equals("1")) {
                 throw new Exception("Incorrect protocol number! (It should be 1)");
             }
-            else if(!isValidEmail(startMessageParts[2])) {
+            else if(!startMessageParts[2].contains("@") && !startMessageParts[2].contains(".")) {
                 throw new Exception("Node names must contain a valid e-mail address");
             }
             else if(!startMessageParts[2].contains(":")) {
@@ -118,13 +118,6 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private boolean isValidEmail(String email){
-        String regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
-                + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
-        Pattern pattern = Pattern.compile(regexPattern);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
 
     public void handleNearestRequest(String hashID, NetworkMap networkMap)  {
         try {
@@ -151,13 +144,13 @@ public class ClientHandler implements Runnable {
 
         try{
             String notifierNodeName= reader.readLine();
-            if(!isValidEmail(notifierNodeName)) {
+            if(!notifierNodeName.contains("@") && !notifierNodeName.contains(".")) {
                 throw new Exception("Node names must contain a valid e-mail address");
             }
-            if(!notifierNodeName.contains(":")) {
+            else if(!notifierNodeName.contains(":")) {
                 throw new Exception("Node names must contain a colon");
             }
-            if(reader.readLine() == null){
+            else if(reader.readLine() == null){
                 throw new Exception("Invalid format");
             }
 
@@ -165,7 +158,7 @@ public class ClientHandler implements Runnable {
             if(!notifierNodeAddress.contains(":")) {
                 throw new Exception("Address must contain :");
             }
-            if(reader.readLine() != null){
+            else if(reader.readLine() != null){
                 throw new Exception("Invalid format");
             }
 
@@ -175,7 +168,7 @@ public class ClientHandler implements Runnable {
             for (NodeNameAndAddress nodeNameAndAddress : nodes) {
                 System.out.println(nodeNameAndAddress);
             }
-            
+
             writer.write("NOTIFIED" + "\n");
             writer.flush();
         }

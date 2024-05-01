@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.lang.Integer.parseInt;
 
@@ -98,7 +100,7 @@ public class ClientHandler implements Runnable {
             else if(!startMessageParts[1].equals("1")) {
                 throw new Exception("Incorrect protocol number! (It should be 1)");
             }
-            else if(!startMessageParts[2].contains("@")) {
+            else if(!isValidEmail(startMessageParts[2])) {
                 throw new Exception("Node names must contain a valid e-mail address");
             }
             else if(!startMessageParts[2].contains(":")) {
@@ -116,34 +118,76 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    public void handleNearestRequest(String hashID, NetworkMap networkMap) throws IOException {
-        String nearestNodes = NetworkMap.getNearestNodes(hashID);
-        assert nearestNodes != null;
-        writer.write(nearestNodes);
-        writer.flush();
+    private boolean isValidEmail(String email){
+        String regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
+                + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+        Pattern pattern = Pattern.compile(regexPattern);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
+    public void handleNearestRequest(String hashID, NetworkMap networkMap)  {
+        try {
+            if(hashID.length() != 64) {
+                throw new Exception("A hashID must have 64 hex digits.");
+            }
+            String nearestNodes = NetworkMap.getNearestNodes(hashID);
+            assert nearestNodes != null;
+            writer.write(nearestNodes);
+            writer.flush();
+        }
+        catch(Exception e) {
+            try {
+                writer.write("END java.lang.Exception: " + e.getMessage() + "\n");
+                writer.flush();
+                clientSocket.close();
+            } catch (IOException ioException) {
+                System.err.println("Error handling client connection: " + ioException.getMessage());
+            }
+        }
     }
 
     private void handleNotifyRequest(BufferedReader reader) throws IOException {
-        String message = reader.readLine();
-        String[] messageLines = message.split("\n");
-        StringBuilder messageBuilder = new StringBuilder();
-        if (message.startsWith("NOTIFY?")) {
-            messageBuilder.append(message).append("\n");
-            String startingNodeName = null;
-            for (int i = 1; i < messageLines.length; i++) {
-                String line = reader.readLine();
-                messageBuilder.append(line).append("\n");
-                startingNodeName = messageBuilder.toString().trim();
+
+        try{
+            String notifierNodeName= reader.readLine();
+            if(!isValidEmail(notifierNodeName)) {
+                throw new Exception("Node names must contain a valid e-mail address");
             }
-            String startingNodeAddress = null;
-            for (int i = 2; i < messageLines.length; i++) {
-                String line = reader.readLine();
-                messageBuilder.append(line).append("\n");
-                startingNodeAddress = messageBuilder.toString().trim();
+            if(!notifierNodeName.contains(":")) {
+                throw new Exception("Node names must contain a colon");
             }
-            NetworkMap.addNode(startingNodeName, startingNodeAddress);
+            if(reader.readLine() == null){
+                throw new Exception("Invalid format");
+            }
+
+            String notifierNodeAddress= reader.readLine();
+            if(!notifierNodeAddress.contains(":")) {
+                throw new Exception("Address must contain :");
+            }
+            if(reader.readLine() != null){
+                throw new Exception("Invalid format");
+            }
+
+            NetworkMap.addNode(notifierNodeName, notifierNodeAddress);
+
+            List<NodeNameAndAddress> nodes = new ArrayList<>(NetworkMap.getMap().values());
+            for (NodeNameAndAddress nodeNameAndAddress : nodes) {
+                System.out.println(nodeNameAndAddress);
+            }
+            
             writer.write("NOTIFIED" + "\n");
             writer.flush();
+        }
+
+        catch(Exception e) {
+            try {
+                writer.write("END java.lang.Exception: " + e.getMessage() + "\n");
+                writer.flush();
+                clientSocket.close();
+            } catch (IOException ioException) {
+                System.err.println("Error handling client connection: " + ioException.getMessage());
+            }
         }
     }
 

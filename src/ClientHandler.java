@@ -150,16 +150,10 @@ public class ClientHandler implements Runnable {
             else if(!notifierNodeName.contains(":")) {
                 throw new Exception("Node names must contain a colon");
             }
-            else if(reader.readLine() == null){
-                throw new Exception("Invalid format");
-            }
 
             String notifierNodeAddress= reader.readLine();
             if(!notifierNodeAddress.contains(":")) {
                 throw new Exception("Address must contain :");
-            }
-            else if(reader.readLine() != null){
-                throw new Exception("Invalid format");
             }
 
             NetworkMap.addNode(notifierNodeName, notifierNodeAddress);

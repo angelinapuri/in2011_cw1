@@ -40,14 +40,12 @@ public class ClientHandler implements Runnable {
             String nodeAddress = "10.0.0.119:20000";
 
             handleStartRequest(nodeName);
-            boolean startMessageSent = true;
 
-            String message = reader.readLine();
-            while (message != null && startMessageSent) {
+            while (true) {
+                String message = reader.readLine();
                 System.out.println(message);
                 String[] messageParts = message.split(" ");
                 if (messageParts.length == 0) {
-                    // Handle empty message or unexpected format
                     writer.write("Invalid message format");
                     writer.flush();
                     continue;
@@ -69,7 +67,6 @@ public class ClientHandler implements Runnable {
                     writer.write("END: Unknown command");
                     writer.flush();
                 }
-                startMessageSent = false;
             }
 
         } catch (Exception e) {

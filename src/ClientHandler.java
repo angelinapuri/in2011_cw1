@@ -55,19 +55,26 @@ public class ClientHandler implements Runnable {
                 String request = messageParts[0];
                 if (request.startsWith("NEAREST?")) {
                     handleNearestRequest(messageParts[1], networkMap);
+                    break;
                 } else if (request.equals("NOTIFY?")) {
                     handleNotifyRequest(reader);
+                    break;
                 } else if (request.equals("ECHO?")) {
                     handleEchoRequest();
+                    break;
                 } else if (request.equals("PUT?")) {
                     handlePutRequest(reader, messageParts[1], messageParts[2], nodeName, nodeAddress);
+                    break;
                 } else if (request.equals("GET?")) {
                     handleGetRequest(reader, messageParts[1]);
+                    break;
                 } else if (request.startsWith("END")) {
                     handleEndRequest();
+                    break;
                 }else {
-                    writer.write("Unknown command");
+                    writer.write("END: Unknown command");
                     writer.flush();
+                    break;
                 }
             }
 

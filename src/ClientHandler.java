@@ -40,9 +40,10 @@ public class ClientHandler implements Runnable {
             String nodeAddress = "10.0.0.119:20000";
 
             handleStartRequest(nodeName);
+            boolean startMessageSent = true;
 
             String message = reader.readLine();
-            while (message != null) {
+            while (message != null && startMessageSent) {
                 System.out.println(message);
                 String[] messageParts = message.split(" ");
                 if (messageParts.length == 0) {

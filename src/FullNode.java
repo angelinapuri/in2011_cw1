@@ -70,6 +70,7 @@ public class FullNode implements FullNodeInterface {
     public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
         sendNotifyRequests(startingNodeName, startingNodeAddress);
         findNodes(startingNodeName, startingNodeAddress);
+
         List<NodeNameAndAddress> nodes = new ArrayList<>(NetworkMap.getMap().values());
         for (NodeNameAndAddress nodeNameAndAddress : nodes) {
             System.out.println(nodeNameAndAddress);
@@ -114,7 +115,6 @@ public class FullNode implements FullNodeInterface {
 
             writer.write("NEAREST? " + HashID.computeHashID(nodeName + "\n") + "\n");
             System.out.println("NEAREST? " + HashID.computeHashID(nodeName + "\n") + "\n");
-
             writer.flush();
 
             String response = reader.readLine();
@@ -137,7 +137,9 @@ public class FullNode implements FullNodeInterface {
                 String nearestNodeAddress = nearestNodesLines[i+1];
                 System.out.println(nearestNodeName);
                 System.out.println(nearestNodeAddress);
-                sendNotifyRequests(nearestNodeName, nearestNodeAddress);
+                if(!NetworkMap.getMap().containsKey(nearestNodeName) || !NetworkMap.getMap().get(nearestNodeName).getNodeAddress().equals(nearestNodeAddress)) {
+                    sendNotifyRequests(nearestNodeName, nearestNodeAddress);
+                }
             }
 
         } catch (IOException e) {
@@ -156,19 +158,20 @@ public class FullNode implements FullNodeInterface {
                 start(startingNodeName, startingNodeAddress);
 
 
-                    writer.write("NOTIFY?" + "\n" + nodeName + "\n" + ipAddress + ":" + portNumber + "\n");
+                writer.write("NOTIFY?" + "\n" + nodeName + "\n" + ipAddress + ":" + portNumber + "\n");
+                writer.flush();
+                System.out.println("NOTIFY?" + "\n" + nodeName + "\n" + ipAddress + ":" + portNumber + "\n");
+
+                System.out.println("Notify request sent to " + startingNodeName + " at " + startingNodeAddress);
+
+                String response2 = reader.readLine();
+                System.out.println(response2);
+
+                if (response2 != null && response2.equals("NOTIFIED")) {
+                    writer.write("END: Notified Node");
                     writer.flush();
-                    System.out.println("NOTIFY?" + "\n" + nodeName + "\n" + ipAddress + ":" + portNumber + "\n");
+                }
 
-                    System.out.println("Notify request sent to " + startingNodeName + " at " + startingNodeAddress);
-
-                    String response2 = reader.readLine();
-                    System.out.println(response2);
-
-                    if (response2 != null && response2.equals("NOTIFIED")) {
-                        writer.write("END: Notified Node");
-                        writer.flush();
-                    }
                 NetworkMap.addNode(startingNodeName, startingNodeAddress);
 
                 socket.close();

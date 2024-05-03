@@ -115,13 +115,13 @@ public class FullNode implements FullNodeInterface {
 
     private void sendNotifyRequests(String startingNodeName, String startingNodeAddress) {
             try {
-                socket = new Socket(startingNodeName.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
+                socket = new Socket(startingNodeAddress.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
                 writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                 reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
                 writer.write("START 1 " + nodeName + "\n");
-                System.out.println("START 1 " + nodeName + "\n");
                 writer.flush();
+                System.out.println("START 1 " + nodeName + "\n");
 
                 String response = reader.readLine();
                 System.out.println(response);

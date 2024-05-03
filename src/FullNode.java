@@ -125,7 +125,19 @@ public class FullNode implements FullNodeInterface {
                     nodeInfoBuilder.append(line).append("\n");
                 }
             }
-            System.out.println(nodeInfoBuilder.toString().trim());
+            String nearestNodesList = nodeInfoBuilder.toString().trim();
+            System.out.println(nearestNodesList);
+
+            String [] nearestNodesLines = nearestNodesList.split("\n");
+            for (int i = 1; i < nearestNodesLines.length; i+=2){
+                String nearestNodeName = nearestNodesLines[i];
+                String nearestNodeAddress = nearestNodesLines[i+1];
+                System.out.println(nearestNodeName);
+                System.out.println(nearestNodeAddress);
+                
+                sendNotifyRequests(nearestNodeName, nearestNodeAddress);
+            }
+
         } catch (IOException e) {
             System.err.println("Error sending nearest request to " + bootstrapNodeAddress + " at " + bootstrapNodeAddress + ": " + e.getMessage());
         } catch (Exception e) {

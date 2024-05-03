@@ -111,24 +111,18 @@ public class FullNode implements FullNodeInterface {
 
             writer.write("NEAREST? " + HashID.computeHashID(nodeName + "\n") + "\n");
             System.out.println("NEAREST? " + HashID.computeHashID(nodeName + "\n") + "\n");
+
             writer.flush();
 
             String response = reader.readLine();
-
             StringBuilder nodeInfoBuilder = new StringBuilder();
-
             int nodes = Integer.parseInt(response.split(" ")[1]);
-            int nearestNodesLines = (nodes*2);
+            int nodeLines = (nodes*2);
             if (response.startsWith("NODES")) {
                 nodeInfoBuilder.append(response).append("\n");
-                for (int i = 1; i < nearestNodesLines; i ++) {
+                for (int i = 0; i < nodeLines; i++) {
                     String line = reader.readLine();
                     nodeInfoBuilder.append(line).append("\n");
-                  //  if(!NetworkMap.getMap().containsKey(nearestNodeName)) {
-                    //    NetworkMap.addNode(nearestNodeName, nearestNodeAddress);
-                        //sendNotifyRequests(nearestNodeName, nearestNodeAddress);
-                        //findNodes(nearestNodeAddress);
-                 //   }
                 }
             }
             System.out.println(nodeInfoBuilder.toString().trim());

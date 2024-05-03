@@ -64,7 +64,8 @@ public class ClientHandler implements Runnable {
                 } else if (request.equals("GET?")) {
                     handleGetRequest(reader, messageParts[1]);
                 } else if (request.startsWith("END")) {
-                    handleEndRequest();
+                    String requesterAddress = clientSocket.getInetAddress().getHostAddress() + ":" + clientSocket.getPort();
+                    handleEndRequest(requesterAddress);
                 }else {
                     writer.write("END: Unknown command");
                     writer.flush();
@@ -91,6 +92,8 @@ public class ClientHandler implements Runnable {
             System.out.println(startMessage);
             String[] startMessageParts = startMessage.split(" ");
 
+            String requesterNodeName = startMessageParts[2];
+
             if(!startMessageParts[0].equals("START")) {
                 throw new Exception("Start messages must have three parts");
             }
@@ -100,10 +103,10 @@ public class ClientHandler implements Runnable {
             else if(!startMessageParts[1].equals("1")) {
                 throw new Exception("Incorrect protocol number! (It should be 1)");
             }
-            else if(!startMessageParts[2].contains("@") && !startMessageParts[2].contains(".")) {
+            else if(!requesterNodeName.contains("@") && !startMessageParts[2].contains(".")) {
                 throw new Exception("Node names must contain a valid e-mail address");
             }
-            else if(!startMessageParts[2].contains(":")) {
+            else if(!requesterNodeName.contains(":")) {
                 throw new Exception("Node names must contain a colon");
             }
         }
@@ -140,8 +143,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void handleNotifyRequest(BufferedReader reader) throws IOException {
-
+    private void handleNotifyRequest(BufferedReader reader) {
         try{
             String notifierNodeName= reader.readLine();
             if(!notifierNodeName.contains("@") && !notifierNodeName.contains(".")) {
@@ -259,7 +261,8 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void handleEndRequest() throws IOException {
+    private void handleEndRequest(String requesterAddress) throws IOException {
+        NetworkMap.removeNode(requesterAddress);
         clientSocket.close();
     }
 }

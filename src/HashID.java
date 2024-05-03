@@ -68,13 +68,14 @@ public class HashID {
 
 			System.out.println(computeHashID("Hello World!" + "\n"));
 
-			String H1 = "0f033be6cea034bd45a0352775a219ef5dc7825ce55d1f7dae9762d80ce64411";
-			String H2 = "0f0139b167bb7b4a416b8f6a7e0daa7e24a08172b9892171e5fdc615bb7f999b";
+			String sirko = "dc98db702fef1fe85881eb9caddf587fb4aca668d0d5c01efd3bac1c2ead2921";
+			String email = "710c3906ca8b54f86c9e020d989792d03b9a0d8904d7b57b3f57e74ab1746625";
+			String test = "7bdfdc0ad1f3759a6d411ab7d27bfaadb57147d1c4f14dbb5a0e833df05fcae4";
 
 			try {
-				System.out.println("Hash 1: " + H1);
-				System.out.println("Hash 2: " + H2);
-				System.out.println("Distance: " + computeDistance(H1, H2));
+				System.out.println("Hash 1: " + email);
+				System.out.println("Hash 2: " + sirko);
+				System.out.println("Distance: " + computeDistance(email, sirko));
 			} catch (Exception e) {
 				System.err.println("An error occurred: " + e.getMessage());
 			}

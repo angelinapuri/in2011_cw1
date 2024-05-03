@@ -22,17 +22,26 @@ public class NetworkMap {
         for (String nodeNameAndAddress : nodeNamesAndAddresses) {
             String[] parts = nodeNameAndAddress.split(" ");
             String nodeName = parts[0];
-            String address = parts[1];
-            addNode(nodeName, address);
+            String nodeAddress = parts[1];
+            addNode(nodeName, nodeAddress);
         }
     }
 
-    public static void addNode(String nodeName, String address) {
-        map.put(nodeName, new NodeNameAndAddress(nodeName, address));
+    public static void addNode(String nodeName, String nodeAddress) {
+        map.put(nodeName, new NodeNameAndAddress(nodeName, nodeAddress));
     }
 
-    public static void removeNode(String nodeName, String address) {
-        map.remove(nodeName, new NodeNameAndAddress(nodeName, address));
+    public static void removeNode(String address) {
+        NodeNameAndAddress nodeToRemove = null;
+        for (NodeNameAndAddress node : map.values()) {
+                if (node.getNodeAddress().equals(address))
+                    nodeToRemove = node;
+                break;
+            }
+        if (nodeToRemove!=null) {
+            map.remove(nodeToRemove.getNodeName());
+            System.out.println(nodeToRemove.getNodeName() + nodeToRemove.getNodeAddress() + "node removed from network map");
+        }
     }
 
     public static Map<String, NodeNameAndAddress> getMap() {

@@ -16,6 +16,7 @@ public class NodeNameAndAddress {
     }
     @Override
     public String toString() {
-        return nodeName;
+        return nodeName + "\n" + nodeAddress;
+
     }
 }

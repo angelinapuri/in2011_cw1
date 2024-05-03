@@ -121,7 +121,7 @@ public class FullNode implements FullNodeInterface {
             int nearestNodesLines = (nodes*2);
             if (response.startsWith("NODES")) {
                 nodeInfoBuilder.append(response).append("\n");
-                for (int i = 1; i < nearestNodesLines; i += 2) {
+                for (int i = 1; i < nearestNodesLines; i ++) {
                     String line = reader.readLine();
                     nodeInfoBuilder.append(line).append("\n");
                   //  if(!NetworkMap.getMap().containsKey(nearestNodeName)) {

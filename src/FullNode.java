@@ -11,6 +11,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 
+import static java.lang.Integer.parseInt;
+
 // DO NOT EDIT starts
 interface FullNodeInterface {
     public boolean listen(String ipAddress, int portNumber);
@@ -67,7 +69,7 @@ public class FullNode implements FullNodeInterface {
 
     public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
         sendNotifyRequests(startingNodeName, startingNodeAddress);
-        findNodes(startingNodeAddress);
+        findNodes(startingNodeName, startingNodeAddress);
         System.out.println("Connected to the network");
 
         try {
@@ -80,11 +82,32 @@ public class FullNode implements FullNodeInterface {
         }
     }
 
-    private void findNodes(String bootstrapNodeAddress){
+    public boolean start(String startingNodeName, String startingNodeAddress) {
+        try {
+
+            //Connect to the starting node
+            socket = new Socket(startingNodeAddress.split(":")[0], parseInt(startingNodeAddress.split(":")[1]));
+            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+            String response = reader.readLine();
+            System.out.println(response);
+
+            writer.write("START 1 angelina.puri@city.ac.uk:MyImplementation" + "\n");
+            writer.flush();
+
+        } catch (Exception e) {
+            System.err.println("IOException occurred: " + e.getMessage());
+        }
+    }
+
+    private void findNodes(String bootstrapNodeName, String bootstrapNodeAddress){
         try {
             socket = new Socket(bootstrapNodeAddress.split(":")[0], Integer.parseInt(bootstrapNodeAddress.split(":")[1]));
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+            start(bootstrapNodeName, bootstrapNodeAddress);
 
             writer.write("NEAREST? " + HashID.computeHashID(nodeName + "\n") + "\n");
             System.out.println("NEAREST? " + HashID.computeHashID(nodeName + "\n") + "\n");
@@ -123,14 +146,9 @@ public class FullNode implements FullNodeInterface {
                 writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                 reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                writer.write("START 1 " + nodeName + "\n");
-                writer.flush();
-                System.out.println("START 1 " + nodeName + "\n");
+                start(startingNodeName, startingNodeAddress);
 
-                String response = reader.readLine();
-                System.out.println(response);
 
-                if (response != null && response.startsWith("START 1 ")) {
                     writer.write("NOTIFY?" + "\n" + nodeName + "\n" + ipAddress + ":" + portNumber + "\n");
                     writer.flush();
                     System.out.println("NOTIFY?" + "\n" + nodeName + "\n" + ipAddress + ":" + portNumber + "\n");
@@ -144,7 +162,7 @@ public class FullNode implements FullNodeInterface {
                         writer.write("END: Notified Node");
                         writer.flush();
                     }
-                }
+                    
                 socket.close();
             } catch (IOException e) {
                 System.err.println("Error sending notify request to " + startingNodeName + " at " + startingNodeAddress + ": " + e.getMessage());

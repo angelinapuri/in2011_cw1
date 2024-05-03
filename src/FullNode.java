@@ -67,7 +67,7 @@ public class FullNode implements FullNodeInterface {
 
     public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
         sendNotifyRequests(startingNodeName, startingNodeAddress);
-        //findNodes(startingNodeAddress);
+        findNodes(startingNodeAddress);
         System.out.println("Connected to the network");
 
         try {
@@ -80,17 +80,45 @@ public class FullNode implements FullNodeInterface {
         }
     }
 
+    private void findNodes(String bootstrapNodeAddress){
+        try {
+            socket = new Socket(bootstrapNodeAddress.split(":")[0], Integer.parseInt(bootstrapNodeAddress.split(":")[1]));
+            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+            writer.write("NEAREST? " + HashID.computeHashID(nodeName + "\n"));
+            writer.flush();
+
+            String response = reader.readLine();
+            StringBuilder nodeInfoBuilder = new StringBuilder();
+            int nodes = Integer.parseInt(response.split(" ")[1]);
+            int nearestNodesLines = (nodes*2);
+            if (response.startsWith("NODES")) {
+                nodeInfoBuilder.append(response).append("\n");
+                for (int i = 1; i < nearestNodesLines; i += 2) {
+                    String nearestNodeName = reader.readLine();
+                    String nearestNodeAddress = reader.readLine();
+                    if(!NetworkMap.getMap().containsKey(nearestNodeName)) {
+                        NetworkMap.addNode(nearestNodeName, nearestNodeAddress);
+                        System.out.println(nearestNodeName, nearestNodeAddress);
+                        //sendNotifyRequests(nearestNodeName, nearestNodeAddress);
+                        //findNodes(nearestNodeAddress);
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error sending nearest request to " + bootstrapNodeAddress + " at " + bootstrapNodeAddress + ": " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void sendNotifyRequests(String startingNodeName, String startingNodeAddress) {
             try {
                 socket = new Socket(startingNodeAddress.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
                 writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                 reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-                System.out.println(startingNodeName);
-                System.out.println(startingNodeAddress);
-                System.out.println(nodeName);
-                System.out.println(ipAddress + ":" + portNumber);
-
 
                 writer.write("START 1 " + nodeName + "\n");
                 writer.flush();

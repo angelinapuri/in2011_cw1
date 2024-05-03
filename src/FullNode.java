@@ -70,8 +70,10 @@ public class FullNode implements FullNodeInterface {
     public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
         sendNotifyRequests(startingNodeName, startingNodeAddress);
         findNodes(startingNodeName, startingNodeAddress);
-        System.out.println(NetworkMap.getMap());
-        System.out.println("Connected to the network");
+        List<NodeNameAndAddress> nodes = new ArrayList<>(NetworkMap.getMap().values());
+        for (NodeNameAndAddress nodeNameAndAddress : nodes) {
+            System.out.println(nodeNameAndAddress);
+        }        System.out.println("Connected to the network");
 
         try {
             Socket acceptedSocket = serverSocket.accept();

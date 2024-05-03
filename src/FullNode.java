@@ -87,27 +87,29 @@ public class FullNode implements FullNodeInterface {
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             writer.write("NEAREST? " + HashID.computeHashID(nodeName + "\n"));
+            System.out.println("NEAREST? " + HashID.computeHashID(nodeName + "\n"));
             writer.flush();
 
             String response = reader.readLine();
             System.out.println(response);
 
+            StringBuilder nodeInfoBuilder = new StringBuilder();
+
             int nodes = Integer.parseInt(response.split(" ")[1]);
             int nearestNodesLines = (nodes*2);
             if (response.startsWith("NODES")) {
+                nodeInfoBuilder.append(response).append("\n");
                 for (int i = 1; i < nearestNodesLines; i += 2) {
                     String nearestNodeName = reader.readLine();
                     String nearestNodeAddress = reader.readLine();
                     if(!NetworkMap.getMap().containsKey(nearestNodeName)) {
                         NetworkMap.addNode(nearestNodeName, nearestNodeAddress);
-                        System.out.println(nearestNodeName);
-                        System.out.println(nearestNodeAddress);
                         //sendNotifyRequests(nearestNodeName, nearestNodeAddress);
                         //findNodes(nearestNodeAddress);
                     }
+                    System.out.println(nodeInfoBuilder.toString().trim());
                 }
             }
-
         } catch (IOException e) {
             System.err.println("Error sending nearest request to " + bootstrapNodeAddress + " at " + bootstrapNodeAddress + ": " + e.getMessage());
         } catch (Exception e) {

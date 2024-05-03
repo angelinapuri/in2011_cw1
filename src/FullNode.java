@@ -130,9 +130,10 @@ public class FullNode implements FullNodeInterface {
                         //sendNotifyRequests(nearestNodeName, nearestNodeAddress);
                         //findNodes(nearestNodeAddress);
                     }
-                    System.out.println(nodeInfoBuilder.toString().trim());
                 }
             }
+            System.out.println(nodeInfoBuilder.toString().trim());
+
         } catch (IOException e) {
             System.err.println("Error sending nearest request to " + bootstrapNodeAddress + " at " + bootstrapNodeAddress + ": " + e.getMessage());
         } catch (Exception e) {

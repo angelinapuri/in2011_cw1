@@ -137,7 +137,6 @@ public class FullNode implements FullNodeInterface {
                 String nearestNodeAddress = nearestNodesLines[i+1];
                 System.out.println(nearestNodeName);
                 System.out.println(nearestNodeAddress);
-                NetworkMap.addNode(nearestNodeName, nearestNodeAddress);
                 sendNotifyRequests(nearestNodeName, nearestNodeAddress);
             }
 
@@ -170,6 +169,7 @@ public class FullNode implements FullNodeInterface {
                         writer.write("END: Notified Node");
                         writer.flush();
                     }
+                NetworkMap.addNode(startingNodeName, startingNodeAddress);
 
                 socket.close();
             } catch (IOException e) {

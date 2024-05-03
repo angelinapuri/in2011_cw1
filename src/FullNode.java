@@ -70,6 +70,7 @@ public class FullNode implements FullNodeInterface {
     public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
         sendNotifyRequests(startingNodeName, startingNodeAddress);
         findNodes(startingNodeName, startingNodeAddress);
+        System.out.println(NetworkMap.getMap());
         System.out.println("Connected to the network");
 
         try {
@@ -134,7 +135,7 @@ public class FullNode implements FullNodeInterface {
                 String nearestNodeAddress = nearestNodesLines[i+1];
                 System.out.println(nearestNodeName);
                 System.out.println(nearestNodeAddress);
-                
+                NetworkMap.addNode(nearestNodeName, nearestNodeAddress);
                 sendNotifyRequests(nearestNodeName, nearestNodeAddress);
             }
 

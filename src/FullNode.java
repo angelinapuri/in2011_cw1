@@ -135,8 +135,6 @@ public class FullNode implements FullNodeInterface {
             for (int i = 1; i < nearestNodesLines.length; i+=2){
                 String nearestNodeName = nearestNodesLines[i];
                 String nearestNodeAddress = nearestNodesLines[i+1];
-                System.out.println(nearestNodeName);
-                System.out.println(nearestNodeAddress);
                 if(!NetworkMap.getMap().containsKey(nearestNodeName) || !NetworkMap.getMap().get(nearestNodeName).getNodeAddress().equals(nearestNodeAddress)) {
                     sendNotifyRequests(nearestNodeName, nearestNodeAddress);
                     findNodes(nearestNodeName, nearestNodeAddress);
@@ -157,7 +155,6 @@ public class FullNode implements FullNodeInterface {
                 reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
                 start(startingNodeName, startingNodeAddress);
-
 
                 writer.write("NOTIFY?" + "\n" + nodeName + "\n" + ipAddress + ":" + portNumber + "\n");
                 writer.flush();

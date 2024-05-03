@@ -90,11 +90,11 @@ public class FullNode implements FullNodeInterface {
             writer.flush();
 
             String response = reader.readLine();
-            StringBuilder nodeInfoBuilder = new StringBuilder();
+            System.out.println(response);
+
             int nodes = Integer.parseInt(response.split(" ")[1]);
             int nearestNodesLines = (nodes*2);
             if (response.startsWith("NODES")) {
-                nodeInfoBuilder.append(response).append("\n");
                 for (int i = 1; i < nearestNodesLines; i += 2) {
                     String nearestNodeName = reader.readLine();
                     String nearestNodeAddress = reader.readLine();

@@ -86,8 +86,8 @@ public class FullNode implements FullNodeInterface {
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            writer.write("NEAREST? " + HashID.computeHashID(nodeName) + "\n");
-            System.out.println("NEAREST? " + HashID.computeHashID(nodeName) + "\n");
+            writer.write("NEAREST? " + HashID.computeHashID(nodeName + "\n") + "\n");
+            System.out.println("NEAREST? " + HashID.computeHashID(nodeName + "\n") + "\n");
             writer.flush();
 
             String response = reader.readLine();

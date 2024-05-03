@@ -119,12 +119,14 @@ public class FullNode implements FullNodeInterface {
             StringBuilder nodeInfoBuilder = new StringBuilder();
 
             int nodes = Integer.parseInt(response.split(" ")[1]);
-            int nearestNodesLines = (nodes*2);
+            int nearestNodesLines = (nodes);
             if (response.startsWith("NODES")) {
                 nodeInfoBuilder.append(response).append("\n");
                 for (int i = 1; i < nearestNodesLines; i += 2) {
                     String nearestNodeName = reader.readLine();
                     String nearestNodeAddress = reader.readLine();
+                    nodeInfoBuilder.append(nearestNodeName).append("\n");
+                    nodeInfoBuilder.append(nearestNodeAddress).append("\n");
                     if(!NetworkMap.getMap().containsKey(nearestNodeName)) {
                         NetworkMap.addNode(nearestNodeName, nearestNodeAddress);
                         //sendNotifyRequests(nearestNodeName, nearestNodeAddress);
@@ -133,7 +135,6 @@ public class FullNode implements FullNodeInterface {
                 }
             }
             System.out.println(nodeInfoBuilder.toString().trim());
-
         } catch (IOException e) {
             System.err.println("Error sending nearest request to " + bootstrapNodeAddress + " at " + bootstrapNodeAddress + ": " + e.getMessage());
         } catch (Exception e) {

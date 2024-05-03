@@ -82,7 +82,7 @@ public class FullNode implements FullNodeInterface {
         }
     }
 
-    public boolean start(String startingNodeName, String startingNodeAddress) {
+    public void start(String startingNodeName, String startingNodeAddress) {
         try {
 
             //Connect to the starting node
@@ -162,7 +162,7 @@ public class FullNode implements FullNodeInterface {
                         writer.write("END: Notified Node");
                         writer.flush();
                     }
-                    
+
                 socket.close();
             } catch (IOException e) {
                 System.err.println("Error sending notify request to " + startingNodeName + " at " + startingNodeAddress + ": " + e.getMessage());

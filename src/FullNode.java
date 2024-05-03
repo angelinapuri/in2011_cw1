@@ -138,8 +138,8 @@ public class FullNode implements FullNodeInterface {
                 System.out.println(nearestNodeName);
                 System.out.println(nearestNodeAddress);
                 if(!NetworkMap.getMap().containsKey(nearestNodeName) || !NetworkMap.getMap().get(nearestNodeName).getNodeAddress().equals(nearestNodeAddress)) {
-                    findNodes(nearestNodeName, nearestNodeAddress);
                     sendNotifyRequests(nearestNodeName, nearestNodeAddress);
+                    findNodes(nearestNodeName, nearestNodeAddress);
                 }
             }
 

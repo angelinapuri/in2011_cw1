@@ -114,24 +114,21 @@ public class FullNode implements FullNodeInterface {
             writer.flush();
 
             String response = reader.readLine();
-            System.out.println(response);
 
             StringBuilder nodeInfoBuilder = new StringBuilder();
 
             int nodes = Integer.parseInt(response.split(" ")[1]);
-            int nearestNodesLines = (nodes);
+            int nearestNodesLines = (nodes*2);
             if (response.startsWith("NODES")) {
                 nodeInfoBuilder.append(response).append("\n");
                 for (int i = 1; i < nearestNodesLines; i += 2) {
-                    String nearestNodeName = reader.readLine();
-                    String nearestNodeAddress = reader.readLine();
-                    nodeInfoBuilder.append(nearestNodeName).append("\n");
-                    nodeInfoBuilder.append(nearestNodeAddress).append("\n");
-                    if(!NetworkMap.getMap().containsKey(nearestNodeName)) {
-                        NetworkMap.addNode(nearestNodeName, nearestNodeAddress);
+                    String line = reader.readLine();
+                    nodeInfoBuilder.append(line).append("\n");
+                  //  if(!NetworkMap.getMap().containsKey(nearestNodeName)) {
+                    //    NetworkMap.addNode(nearestNodeName, nearestNodeAddress);
                         //sendNotifyRequests(nearestNodeName, nearestNodeAddress);
                         //findNodes(nearestNodeAddress);
-                    }
+                 //   }
                 }
             }
             System.out.println(nodeInfoBuilder.toString().trim());

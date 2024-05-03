@@ -100,7 +100,8 @@ public class FullNode implements FullNodeInterface {
                     String nearestNodeAddress = reader.readLine();
                     if(!NetworkMap.getMap().containsKey(nearestNodeName)) {
                         NetworkMap.addNode(nearestNodeName, nearestNodeAddress);
-                        System.out.println(nearestNodeName, nearestNodeAddress);
+                        System.out.println(nearestNodeName);
+                        System.out.println(nearestNodeAddress);
                         //sendNotifyRequests(nearestNodeName, nearestNodeAddress);
                         //findNodes(nearestNodeAddress);
                     }

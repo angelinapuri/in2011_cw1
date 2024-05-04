@@ -44,6 +44,7 @@ public class FullNode implements FullNodeInterface {
 
     public FullNode() {
         networkMap = new NetworkMap();
+        checkIfAlive();
     }
 
     public boolean listen(String ipAddress, int portNumber) {
@@ -77,7 +78,6 @@ public class FullNode implements FullNodeInterface {
         for (NodeNameAndAddress nodeNameAndAddress : nodes) {
             System.out.println(nodeNameAndAddress);
         }
-        checkIfAlive();
         System.out.println("Connected to the network");
 
         try {

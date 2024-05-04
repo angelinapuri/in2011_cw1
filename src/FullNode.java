@@ -195,7 +195,7 @@ public class FullNode implements FullNodeInterface {
                         start(nodeToCheckName, nodeToCheckAddress);
 
                         try {
-                            socket = new Socket(nodeToCheckName.split(":")[0], Integer.parseInt(nodeToCheckAddress.split(":")[1]));
+                            socket = new Socket(nodeToCheckAddress.split(":")[0], Integer.parseInt(nodeToCheckAddress.split(":")[1]));
                             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 

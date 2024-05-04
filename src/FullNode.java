@@ -130,7 +130,7 @@ public class FullNode implements FullNodeInterface {
                     }
                 }
                 String nearestNodesList = nodeInfoBuilder.toString().trim();
-                System.out.println(nearestNodesList);
+                //System.out.println(nearestNodesList);
 
                 String[] nearestNodesLines = nearestNodesList.split("\n");
                 for (int i = 1; i < nearestNodesLines.length; i += 2) {

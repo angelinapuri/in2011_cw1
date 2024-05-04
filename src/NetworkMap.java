@@ -3,10 +3,10 @@ import java.util.*;
 public class NetworkMap {
     private static Map<String, NodeNameAndAddress> map;
 
-    static {
+   /** static {
         map = new HashMap<>();
         String[] nodeNamesAndAddresses = {
-              /**  "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20000 10.0.0.164:20000",
+                "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20000 10.0.0.164:20000",
                 "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20001 10.0.0.164:20001",
                 "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20002 10.0.0.164:20002",
                 "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20003 10.0.0.164:20003",
@@ -16,7 +16,7 @@ public class NetworkMap {
                 "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20007 10.0.0.164:20007",
                 "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20008 10.0.0.164:20008",
                 "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20009 10.0.0.164:20009",
-                "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20010 10.0.0.164:20010" */
+                "martin.brain@city.ac.uk:martins-implementation-1.0,fullNode-20010 10.0.0.164:20010"
         };
 
         for (String nodeNameAndAddress : nodeNamesAndAddresses) {
@@ -25,10 +25,13 @@ public class NetworkMap {
             String nodeAddress = parts[1];
             addNode(nodeName, nodeAddress);
         }
-    }
+    } */
 
     public static void addNode(String nodeName, String nodeAddress) {
-        map.put(nodeName, new NodeNameAndAddress(nodeName, nodeAddress));
+        if(!map.containsKey(nodeName)) {
+            map.put(nodeName, new NodeNameAndAddress(nodeName, nodeAddress));
+            System.out.println("Node added to map");
+        }
     }
 
     public static void removeNode(String address) {

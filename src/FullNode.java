@@ -59,9 +59,7 @@ public class FullNode implements FullNodeInterface {
             NetworkMap.addNode(nodeName, nodeAddress);
             System.out.println("Added self to network map: " + nodeName + " at " + nodeAddress);
 
-            if(checkIfAlive()){
-                System.out.println("Network Map updated!");
-            }
+            checkIfAlive();
 
             return true;
 
@@ -183,7 +181,7 @@ public class FullNode implements FullNodeInterface {
         }
     }
 
-    private boolean checkIfAlive(){
+    private void checkIfAlive(){
         Timer timer= new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -218,6 +216,6 @@ public class FullNode implements FullNodeInterface {
                 }
             }
         }, 0, 60 * 1000);
-        return true;
+        System.out.println("Network Map updated!");
     }
 }

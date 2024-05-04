@@ -85,6 +85,7 @@ public class ClientHandler implements Runnable {
 
     private void handleStartRequest(String nodeName) {
         try {
+            NetworkMap.getNearestNodes(HashID.computeHashID(nodeName + "\n") + "\n");
             writer.write("START 1 " + nodeName + "\n");
             writer.flush();
             String startMessage = reader.readLine();

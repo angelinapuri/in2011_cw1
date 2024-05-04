@@ -67,7 +67,7 @@ public class FullNode implements FullNodeInterface {
         }
     }
 
-    public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) throws Exception {
+    public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
         sendNotifyRequests(startingNodeName, startingNodeAddress);
         findNodes(startingNodeName, startingNodeAddress);
 
@@ -75,8 +75,6 @@ public class FullNode implements FullNodeInterface {
         for (NodeNameAndAddress nodeNameAndAddress : nodes) {
             System.out.println(nodeNameAndAddress);
         }
-        NetworkMap.getNearestNodes(HashID.computeHashID(nodeName + "\n"));
-        System.out.println(nodeName + "\n");
         System.out.println("Connected to the network");
 
         try {

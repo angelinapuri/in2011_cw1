@@ -76,6 +76,7 @@ public class FullNode implements FullNodeInterface {
             System.out.println(nodeNameAndAddress);
         }
         NetworkMap.getNearestNodes(nodeName + "\n");
+        System.out.println(nodeName + "\n");
         System.out.println("Connected to the network");
 
         try {

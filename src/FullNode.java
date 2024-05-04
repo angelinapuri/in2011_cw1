@@ -221,6 +221,6 @@ public class FullNode implements FullNodeInterface {
                     }
                 }
             }
-        }, 0, 60 * 1000);
+        }, 0, 10 * 1000);
     }
 }

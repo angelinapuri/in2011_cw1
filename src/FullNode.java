@@ -211,11 +211,12 @@ public class FullNode implements FullNodeInterface {
                                 NetworkMap.removeNode(nodeToCheckName, nodeToCheckAddress);
                             }
                             else{
-                                System.out.println(nodeToCheckName + " at " + nodeToCheckAddress + " is alive!");
+                                //System.out.println(nodeToCheckName + " at " + nodeToCheckAddress + " is alive!");
                             }
+                            System.out.println("Network Map updated!");
+
                             socket.close();
-                        } catch (IOException e) {
-                            System.err.println("RunTimeException occurred: " + e.getMessage());
+                        } catch (IOException ignored) {
                         }
 
                     }

@@ -171,11 +171,6 @@ public class ClientHandler implements Runnable {
 
             NetworkMap.addNode(notifierNodeName, notifierNodeAddress);
 
-            List<NodeNameAndAddress> nodes = new ArrayList<>(NetworkMap.getMap().values());
-            for (NodeNameAndAddress nodeNameAndAddress : nodes) {
-                System.out.println(nodeNameAndAddress);
-            }
-
             writer.write("NOTIFIED" + "\n");
             writer.flush();
         }

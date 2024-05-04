@@ -39,6 +39,13 @@ public class FullNode implements FullNodeInterface {
         if (dataStore == null) {
             dataStore = DataStore.getInstance();
         }
+        try {
+            this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        } catch (IOException e) {
+            System.err.println("Error initializing socket streams: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 
@@ -71,6 +78,7 @@ public class FullNode implements FullNodeInterface {
     }
 
     public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
+
         sendNotifyRequests(startingNodeName, startingNodeAddress);
         findNodes(startingNodeName, startingNodeAddress);
 
@@ -92,11 +100,8 @@ public class FullNode implements FullNodeInterface {
 
     public void start(String startingNodeName, String startingNodeAddress) {
         try {
-
             //Connect to the starting node
             socket = new Socket(startingNodeAddress.split(":")[0], parseInt(startingNodeAddress.split(":")[1]));
-            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             String response = reader.readLine();
             //System.out.println(response);
@@ -112,8 +117,6 @@ public class FullNode implements FullNodeInterface {
     private void findNodes(String bootstrapNodeName, String bootstrapNodeAddress){
         try {
             socket = new Socket(bootstrapNodeAddress.split(":")[0], Integer.parseInt(bootstrapNodeAddress.split(":")[1]));
-            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             start(bootstrapNodeName, bootstrapNodeAddress);
 
@@ -158,9 +161,7 @@ public class FullNode implements FullNodeInterface {
 
     private void sendNotifyRequests(String startingNodeName, String startingNodeAddress) {
             try {
-               /**  socket = new Socket(startingNodeAddress.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
-                writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                reader = new BufferedReader(new InputStreamReader(socket.getInputStream())); */
+                socket = new Socket(startingNodeAddress.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
 
                 start(startingNodeName, startingNodeAddress);
 
@@ -197,6 +198,7 @@ public class FullNode implements FullNodeInterface {
                         start(nodeToCheckName, nodeToCheckAddress);
 
                         try {
+                            socket = new Socket(nodeToCheckName.split(":")[0], Integer.parseInt(nodeToCheckAddress.split(":")[1]));
                             writer.write("ECHO?" + "\n");
                             writer.flush();
 

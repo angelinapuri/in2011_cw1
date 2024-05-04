@@ -30,15 +30,29 @@ public class NetworkMap {
 
     public static void addNode(String nodeName, String nodeAddress) {
         if(!map.containsKey(nodeName)) {
+            if (nodeName == null) {
+                nodeName = "Temporary Node";
+            }
             map.put(nodeName, new NodeNameAndAddress(nodeName, nodeAddress));
             System.out.println("Node added to map " + nodeName +  " at " + nodeAddress );
+            List<NodeNameAndAddress> nodes = new ArrayList<>(NetworkMap.getMap().values());
+            for (NodeNameAndAddress nodeNameAndAddress : nodes) {
+                System.out.println(nodeNameAndAddress);
+            }
         }
     }
 
     public static void removeNode(String nodeName, String nodeAddress) {
-        if(!map.containsKey(nodeName)) {
+        if (!map.containsKey(nodeName)) {
+            if (nodeName == null) {
+                nodeName = "Temporary Node";
+            }
             map.remove(nodeName, new NodeNameAndAddress(nodeName, nodeAddress));
-            System.out.println("Node added to map " + nodeName +  " at " + nodeAddress );
+            System.out.println("Node removed from map: " + nodeName + " at " + nodeAddress);
+            List<NodeNameAndAddress> nodes = new ArrayList<>(NetworkMap.getMap().values());
+            for (NodeNameAndAddress nodeNameAndAddress : nodes) {
+                System.out.println(nodeNameAndAddress);
+            }
         }
     }
 

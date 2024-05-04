@@ -20,6 +20,8 @@ public class ClientHandler implements Runnable {
     private BufferedReader reader;
     private static NetworkMap networkMap;
     private final DataStore dataStore;
+    private final String nodeName = "angelina.puri@city.ac.uk:test-01";
+
 
     public ClientHandler(Socket clientSocket, NetworkMap networkMap, DataStore dataStore) {
         this.clientSocket = clientSocket;
@@ -38,7 +40,6 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            String nodeName = "angelina.puri@city.ac.uk:test-01";
             String nodeAddress = "10.0.0.119:20000";
 
             handleStartRequest(nodeName);
@@ -85,9 +86,6 @@ public class ClientHandler implements Runnable {
 
     private void handleStartRequest(String nodeName) {
         try {
-            System.out.println(NetworkMap.getNearestNodes(HashID.computeHashID(nodeName + "\n") + "\n"));
-
-
             writer.write("START 1 " + nodeName + "\n");
             writer.flush();
             String startMessage = reader.readLine();
@@ -127,6 +125,7 @@ public class ClientHandler implements Runnable {
 
     public void handleNearestRequest(String hashID, NetworkMap networkMap)  {
         try {
+            System.out.println(NetworkMap.getNearestNodes(HashID.computeHashID(nodeName + "\n") + "\n"));
             if(hashID.length() != 64) {
                 throw new Exception("A hashID must have 64 hex digits.");
             }

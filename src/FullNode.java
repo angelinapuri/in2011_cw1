@@ -74,7 +74,9 @@ public class FullNode implements FullNodeInterface {
         List<NodeNameAndAddress> nodes = new ArrayList<>(NetworkMap.getMap().values());
         for (NodeNameAndAddress nodeNameAndAddress : nodes) {
             System.out.println(nodeNameAndAddress);
-        }        System.out.println("Connected to the network");
+        }
+        NetworkMap.getNearestNodes(nodeName + "\n");
+        System.out.println("Connected to the network");
 
         try {
             Socket acceptedSocket = serverSocket.accept();

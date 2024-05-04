@@ -113,31 +113,33 @@ public class FullNode implements FullNodeInterface {
 
             start(bootstrapNodeName, bootstrapNodeAddress);
 
-            writer.write("NEAREST? " + HashID.computeHashID(bootstrapNodeName + "\n") + "\n");
-            System.out.println("NEAREST? " + HashID.computeHashID(bootstrapNodeName + "\n") + "\n");
-            writer.flush();
+            for(char c = 'a' ; c <= 'z' ; c++){
+                writer.write("NEAREST? " + HashID.computeHashID(c + "\n") + "\n");
+                System.out.println("NEAREST? " + HashID.computeHashID(c + "\n") + "\n");
+                writer.flush();
 
-            String response = reader.readLine();
-            StringBuilder nodeInfoBuilder = new StringBuilder();
-            int nodes = Integer.parseInt(response.split(" ")[1]);
-            int nodeLines = (nodes*2);
-            if (response.startsWith("NODES")) {
-                nodeInfoBuilder.append(response).append("\n");
-                for (int i = 0; i < nodeLines; i++) {
-                    String line = reader.readLine();
-                    nodeInfoBuilder.append(line).append("\n");
+                String response = reader.readLine();
+                StringBuilder nodeInfoBuilder = new StringBuilder();
+                int nodes = Integer.parseInt(response.split(" ")[1]);
+                int nodeLines = (nodes * 2);
+                if (response.startsWith("NODES")) {
+                    nodeInfoBuilder.append(response).append("\n");
+                    for (int i = 0; i < nodeLines; i++) {
+                        String line = reader.readLine();
+                        nodeInfoBuilder.append(line).append("\n");
+                    }
                 }
-            }
-            String nearestNodesList = nodeInfoBuilder.toString().trim();
-            System.out.println(nearestNodesList);
+                String nearestNodesList = nodeInfoBuilder.toString().trim();
+                System.out.println(nearestNodesList);
 
-            String [] nearestNodesLines = nearestNodesList.split("\n");
-            for (int i = 1; i < nearestNodesLines.length; i+=2){
-                String nearestNodeName = nearestNodesLines[i];
-                String nearestNodeAddress = nearestNodesLines[i+1];
-                if(!NetworkMap.getMap().containsKey(nearestNodeName) || !NetworkMap.getMap().get(nearestNodeName).getNodeAddress().equals(nearestNodeAddress)) {
-                    sendNotifyRequests(nearestNodeName, nearestNodeAddress);
-                    findNodes(nearestNodeName, nearestNodeAddress);
+                String[] nearestNodesLines = nearestNodesList.split("\n");
+                for (int i = 1; i < nearestNodesLines.length; i += 2) {
+                    String nearestNodeName = nearestNodesLines[i];
+                    String nearestNodeAddress = nearestNodesLines[i + 1];
+                    if (!NetworkMap.getMap().containsKey(nearestNodeName) || !NetworkMap.getMap().get(nearestNodeName).getNodeAddress().equals(nearestNodeAddress)) {
+                        sendNotifyRequests(nearestNodeName, nearestNodeAddress);
+                        findNodes(nearestNodeName, nearestNodeAddress);
+                    }
                 }
             }
 

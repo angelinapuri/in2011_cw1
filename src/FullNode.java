@@ -113,8 +113,8 @@ public class FullNode implements FullNodeInterface {
 
             start(bootstrapNodeName, bootstrapNodeAddress);
 
-            writer.write("NEAREST? " + HashID.computeHashID(nodeName + "\n") + "\n");
-            System.out.println("NEAREST? " + HashID.computeHashID(nodeName + "\n") + "\n");
+            writer.write("NEAREST? " + HashID.computeHashID(bootstrapNodeName + "\n") + "\n");
+            System.out.println("NEAREST? " + HashID.computeHashID(bootstrapNodeName + "\n") + "\n");
             writer.flush();
 
             String response = reader.readLine();

@@ -201,6 +201,7 @@ public class FullNode implements FullNodeInterface {
                             start(nodeToCheckName, nodeToCheckAddress);
 
                             writer.write("ECHO?" + "\n");
+                            System.out.println("ECHO?" + "\n");
                             writer.flush();
 
                             String response = reader.readLine();

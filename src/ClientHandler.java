@@ -20,13 +20,18 @@ public class ClientHandler implements Runnable {
     private BufferedReader reader;
     private static NetworkMap networkMap;
     private final DataStore dataStore;
-    private final String nodeName = "angelina.puri@city.ac.uk:test-01";
+    private final String nodeName;
+    private final String ipAddress;
+    private final int portNumber;
 
 
-    public ClientHandler(Socket clientSocket, NetworkMap networkMap, DataStore dataStore) {
+    public ClientHandler(Socket clientSocket, NetworkMap networkMap, DataStore dataStore, String nodeName, String ipAddress,int portNumber) {
         this.clientSocket = clientSocket;
         ClientHandler.networkMap = networkMap;
         this.dataStore = DataStore.getInstance();
+        this.nodeName = nodeName;
+        this.ipAddress = ipAddress;
+        this.portNumber = portNumber;
 
         try {
             this.writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
@@ -40,9 +45,10 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            String nodeAddress = "10.0.0.119:20000";
+            String nodeAddress = ipAddress + ":" + portNumber;
+            String requesterNodeAddress = clientSocket.getInetAddress().getHostAddress() + ":" + clientSocket.getPort();
 
-            handleStartRequest(nodeName);
+            handleStartRequest(nodeName, requesterNodeAddress);
 
             while (true) {
                 String message = reader.readLine();
@@ -55,9 +61,9 @@ public class ClientHandler implements Runnable {
                 }
                 String request = messageParts[0];
                 if (request.startsWith("NEAREST?")) {
-                    handleNearestRequest(messageParts[1], networkMap);
+                    handleNearestRequest(messageParts[1], networkMap, requesterNodeAddress);
                 } else if (request.equals("NOTIFY?")) {
-                    handleNotifyRequest(reader);
+                    handleNotifyRequest(reader, requesterNodeAddress);
                 } else if (request.equals("ECHO?")) {
                     handleEchoRequest();
                 } else if (request.equals("PUT?")) {
@@ -65,8 +71,7 @@ public class ClientHandler implements Runnable {
                 } else if (request.equals("GET?")) {
                     handleGetRequest(reader, messageParts[1]);
                 } else if (request.startsWith("END")) {
-                    String requesterAddress = clientSocket.getInetAddress().getHostAddress() + ":" + clientSocket.getPort();
-                    handleEndRequest(requesterAddress);
+                    handleEndRequest(requesterNodeAddress);
                 }else {
                     writer.write("END: Unknown command");
                     writer.flush();
@@ -84,7 +89,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void handleStartRequest(String nodeName) {
+    private void handleStartRequest(String nodeName, String requesterNodeAddress) {
         try {
             writer.write("START 1 " + nodeName + "\n");
             writer.flush();
@@ -110,6 +115,7 @@ public class ClientHandler implements Runnable {
             else if(!requesterNodeName.contains(":")) {
                 throw new Exception("Node names must contain a colon");
             }
+            NetworkMap.addNode(requesterNodeName, requesterNodeAddress);
         }
         catch(Exception e) {
             try {
@@ -123,9 +129,8 @@ public class ClientHandler implements Runnable {
     }
 
 
-    public void handleNearestRequest(String hashID, NetworkMap networkMap)  {
+    public void handleNearestRequest(String hashID, NetworkMap networkMap, String requesterNodeAddress)  {
         try {
-            System.out.println(NetworkMap.getNearestNodes(HashID.computeHashID(nodeName + "\n")));
             if(hashID.length() != 64) {
                 throw new Exception("A hashID must have 64 hex digits.");
             }
@@ -138,6 +143,7 @@ public class ClientHandler implements Runnable {
             try {
                 writer.write("END java.lang.Exception: " + e.getMessage() + "\n");
                 writer.flush();
+                NetworkMap.removeNode(requesterNodeAddress);
                 clientSocket.close();
             } catch (IOException ioException) {
                 System.err.println("Error handling client connection: " + ioException.getMessage());
@@ -145,7 +151,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void handleNotifyRequest(BufferedReader reader) {
+    private void handleNotifyRequest(BufferedReader reader, String requesterNodeAddress) {
         try{
             String notifierNodeName= reader.readLine();
             if(!notifierNodeName.contains("@") && !notifierNodeName.contains(".")) {
@@ -175,6 +181,7 @@ public class ClientHandler implements Runnable {
             try {
                 writer.write("END java.lang.Exception: " + e.getMessage() + "\n");
                 writer.flush();
+                NetworkMap.removeNode(requesterNodeAddress);
                 clientSocket.close();
             } catch (IOException ioException) {
                 System.err.println("Error handling client connection: " + ioException.getMessage());
@@ -263,8 +270,8 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void handleEndRequest(String requesterAddress) throws IOException {
-        NetworkMap.removeNode(requesterAddress);
+    private void handleEndRequest(String requesterNodeAddress) throws IOException {
+        NetworkMap.removeNode(requesterNodeAddress);
         clientSocket.close();
     }
 }

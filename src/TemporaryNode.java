@@ -52,8 +52,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
     public boolean store(String key, String value) {
         try {
-            System.out.println(nearest(key));
-
             String[] keyLines = key.split("\n");
             String[] valueLines = value.split("\n");
             writer.write("PUT? " + keyLines.length + " " + valueLines.length + "\n" + key + value);
@@ -66,6 +64,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
             }
             // Return false if the store failed
             else if (response.equals("FAILED")) {
+                System.out.println(nearest(key));
                 return false;
             }
         } catch (Exception e) {
@@ -85,8 +84,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
     public String get(String key) {
         try {
-            System.out.println(nearest(key));
-
                 String[] keyLines = key.split("\n");
                 writer.write("GET? " + keyLines.length + "\n" + key);
                 writer.flush();
@@ -104,6 +101,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
                     }
                     return valueBuilder.toString().trim();
                 } else {
+                    System.out.println(nearest(key));
                     // Value not found
                     return "NOPE";
                 }

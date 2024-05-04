@@ -10,6 +10,8 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static java.lang.Integer.parseInt;
 
@@ -28,7 +30,7 @@ public class FullNode implements FullNodeInterface {
     private BufferedReader reader;
     private static NetworkMap networkMap;
     private static DataStore dataStore;
-    private String nodeName = "angelina.puri@city.ac.uk:test-01";
+    private final String nodeName = "angelina.puri@city.ac.uk:test-01";
     private String ipAddress;
     private int portNumber;
 
@@ -42,6 +44,7 @@ public class FullNode implements FullNodeInterface {
 
     public FullNode() {
         networkMap = new NetworkMap();
+        checkIfAlive();
     }
 
     public boolean listen(String ipAddress, int portNumber) {
@@ -80,7 +83,7 @@ public class FullNode implements FullNodeInterface {
         try {
             Socket acceptedSocket = serverSocket.accept();
             System.out.println("New connection accepted from " + acceptedSocket.getInetAddress().getHostAddress() + ":" + acceptedSocket.getPort());
-            new Thread(new ClientHandler(acceptedSocket, networkMap, dataStore)).start();
+            new Thread(new ClientHandler(acceptedSocket, networkMap, dataStore, nodeName, ipAddress, portNumber)).start();
         } catch (IOException e) {
             System.err.println("Error connecting to " + startingNodeAddress);
             System.err.println(e);
@@ -98,7 +101,7 @@ public class FullNode implements FullNodeInterface {
             String response = reader.readLine();
             //System.out.println(response);
 
-            writer.write("START 1 angelina.puri@city.ac.uk:MyImplementation" + "\n");
+            writer.write("START 1 " + nodeName + "\n");
             writer.flush();
 
         } catch (Exception e) {
@@ -137,9 +140,11 @@ public class FullNode implements FullNodeInterface {
                 for (int i = 1; i < nearestNodesLines.length; i += 2) {
                     String nearestNodeName = nearestNodesLines[i];
                     String nearestNodeAddress = nearestNodesLines[i + 1];
-                    if (!NetworkMap.getMap().containsKey(nearestNodeName) || !NetworkMap.getMap().get(nearestNodeName).getNodeAddress().equals(nearestNodeAddress)) {
-                        sendNotifyRequests(nearestNodeName, nearestNodeAddress);
-                        findNodes(nearestNodeName, nearestNodeAddress);
+                    if(!nearestNodeName.equals(nodeName)) {
+                        if (!NetworkMap.getMap().containsKey(nearestNodeName) && !NetworkMap.getMap().get(nearestNodeName).getNodeAddress().equals(nearestNodeAddress)) {
+                            sendNotifyRequests(nearestNodeName, nearestNodeAddress);
+                            findNodes(nearestNodeName, nearestNodeAddress);
+                        }
                     }
                 }
             }
@@ -153,9 +158,9 @@ public class FullNode implements FullNodeInterface {
 
     private void sendNotifyRequests(String startingNodeName, String startingNodeAddress) {
             try {
-                socket = new Socket(startingNodeAddress.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
+               /**  socket = new Socket(startingNodeAddress.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
                 writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                reader = new BufferedReader(new InputStreamReader(socket.getInputStream())); */
 
                 start(startingNodeName, startingNodeAddress);
 
@@ -171,13 +176,45 @@ public class FullNode implements FullNodeInterface {
                 if (response2 != null && response2.equals("NOTIFIED")) {
                     writer.write("END: Notified Node");
                     writer.flush();
+                    NetworkMap.addNode(startingNodeName, startingNodeAddress);
                 }
-
-                NetworkMap.addNode(startingNodeName, startingNodeAddress);
 
                 socket.close();
             } catch (IOException e) {
                 System.err.println("Error sending notify request to " + startingNodeName + " at " + startingNodeAddress + ": " + e.getMessage());
             }
         }
+
+        private void checkIfAlive(){
+        Timer timer= new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                for (NodeNameAndAddress nodeNameAndAddress : NetworkMap.getMap().values()) {
+                    String nodeToCheckName = nodeNameAndAddress.getNodeName();
+                    String nodeToCheckAddress = nodeNameAndAddress.getNodeAddress();
+                    if (!nodeToCheckName.equals(nodeName)) {
+                        start(nodeToCheckName, nodeToCheckAddress);
+
+                        try {
+                            writer.write("ECHO?" + "\n");
+                            writer.flush();
+
+                            String response = reader.readLine();
+                            System.out.println(response);
+                            if (!response.equals("OHCE")) {
+                                NetworkMap.removeNode(nodeToCheckAddress);
+                            }
+                            else{
+                                System.out.println(nodeToCheckName + "at" + nodeToCheckAddress + "is alive!");
+                            }
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    }
+                }
+        }
+        }, 0, 60 * 1000);
     }
+}

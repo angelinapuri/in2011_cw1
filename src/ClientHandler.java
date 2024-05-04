@@ -125,7 +125,7 @@ public class ClientHandler implements Runnable {
 
     public void handleNearestRequest(String hashID, NetworkMap networkMap)  {
         try {
-            System.out.println(NetworkMap.getNearestNodes(HashID.computeHashID(nodeName + "\n") + "\n"));
+            System.out.println(NetworkMap.getNearestNodes(HashID.computeHashID(nodeName + "\n")));
             if(hashID.length() != 64) {
                 throw new Exception("A hashID must have 64 hex digits.");
             }

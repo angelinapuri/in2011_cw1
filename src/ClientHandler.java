@@ -191,7 +191,7 @@ public class ClientHandler implements Runnable {
 
     private void handleEchoRequest() throws IOException {
         writer.write("OHCE" + "\n");
-        writer.write("OHCE" + "\n");
+        System.out.println("OHCE" + "\n");
         writer.flush();
     }
 

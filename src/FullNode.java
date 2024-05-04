@@ -115,7 +115,7 @@ public class FullNode implements FullNodeInterface {
 
             for(char c = 'a' ; c <= 'z' ; c++){
                 writer.write("NEAREST? " + HashID.computeHashID(c + "\n") + "\n");
-                System.out.println("NEAREST? " + HashID.computeHashID(c + "\n") + "\n");
+                //System.out.println("NEAREST? " + HashID.computeHashID(c + "\n") + "\n");
                 writer.flush();
 
                 String response = reader.readLine();

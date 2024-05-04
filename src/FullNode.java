@@ -208,7 +208,7 @@ public class FullNode implements FullNodeInterface {
 
                             String response = reader.readLine();
                             if (!response.equals("OHCE")) {
-                                NetworkMap.removeNode(nodeToCheckAddress);
+                                NetworkMap.removeNode(nodeToCheckName, nodeToCheckAddress);
                             }
                             else{
                                 System.out.println(nodeToCheckName + " at " + nodeToCheckAddress + " is alive!");

@@ -35,16 +35,10 @@ public class NetworkMap {
         }
     }
 
-    public static void removeNode(String address) {
-        NodeNameAndAddress nodeToRemove = null;
-        for (NodeNameAndAddress node : map.values()) {
-                if (node.getNodeAddress().equals(address))
-                    nodeToRemove = node;
-                break;
-            }
-        if (nodeToRemove!=null) {
-            map.remove(nodeToRemove.getNodeName());
-            System.out.println(nodeToRemove.getNodeName() + nodeToRemove.getNodeAddress() + " node removed from network map");
+    public static void removeNode(String nodeName, String nodeAddress) {
+        if(!map.containsKey(nodeName)) {
+            map.remove(nodeName, new NodeNameAndAddress(nodeName, nodeAddress));
+            System.out.println("Node added to map " + nodeName +  " at " + nodeAddress );
         }
     }
 

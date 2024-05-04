@@ -23,7 +23,8 @@ public class ClientHandler implements Runnable {
     private final String nodeName;
     private final String ipAddress;
     private final int portNumber;
-
+    private final String requesterNodeName;
+    private final String requesterNodeAddress;
 
     public ClientHandler(Socket clientSocket, NetworkMap networkMap, DataStore dataStore, String nodeName, String ipAddress,int portNumber) {
         this.clientSocket = clientSocket;
@@ -32,6 +33,8 @@ public class ClientHandler implements Runnable {
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
         this.portNumber = portNumber;
+        this.requesterNodeName = null;
+        this.requesterNodeAddress = null;
 
         try {
             this.writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
@@ -61,9 +64,9 @@ public class ClientHandler implements Runnable {
                 }
                 String request = messageParts[0];
                 if (request.startsWith("NEAREST?")) {
-                    handleNearestRequest(messageParts[1], networkMap, requesterNodeAddress);
+                    handleNearestRequest(messageParts[1], networkMap, requesterNodeName, requesterNodeAddress);
                 } else if (request.equals("NOTIFY?")) {
-                    handleNotifyRequest(reader, requesterNodeAddress);
+                    handleNotifyRequest(reader, requesterNodeName, requesterNodeAddress);
                 } else if (request.equals("ECHO?")) {
                     handleEchoRequest();
                 } else if (request.equals("PUT?")) {
@@ -71,7 +74,7 @@ public class ClientHandler implements Runnable {
                 } else if (request.equals("GET?")) {
                     handleGetRequest(reader, messageParts[1]);
                 } else if (request.startsWith("END")) {
-                    handleEndRequest(requesterNodeAddress);
+                    handleEndRequest(requesterNodeName, requesterNodeAddress);
                 }else {
                     writer.write("END: Unknown command");
                     writer.flush();
@@ -129,7 +132,7 @@ public class ClientHandler implements Runnable {
     }
 
 
-    public void handleNearestRequest(String hashID, NetworkMap networkMap, String requesterNodeAddress)  {
+    public void handleNearestRequest(String hashID, NetworkMap networkMap, String requesterNodeName, String requesterNodeAddress)  {
         try {
             if(hashID.length() != 64) {
                 throw new Exception("A hashID must have 64 hex digits.");
@@ -143,7 +146,7 @@ public class ClientHandler implements Runnable {
             try {
                 writer.write("END java.lang.Exception: " + e.getMessage() + "\n");
                 writer.flush();
-                NetworkMap.removeNode(requesterNodeAddress);
+                NetworkMap.removeNode(requesterNodeName, requesterNodeAddress);
                 clientSocket.close();
             } catch (IOException ioException) {
                 System.err.println("Error handling client connection: " + ioException.getMessage());
@@ -151,7 +154,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void handleNotifyRequest(BufferedReader reader, String requesterNodeAddress) {
+    private void handleNotifyRequest(BufferedReader reader, String requesterNodeName, String requesterNodeAddress) {
         try{
             String notifierNodeName= reader.readLine();
             if(!notifierNodeName.contains("@") && !notifierNodeName.contains(".")) {
@@ -181,7 +184,7 @@ public class ClientHandler implements Runnable {
             try {
                 writer.write("END java.lang.Exception: " + e.getMessage() + "\n");
                 writer.flush();
-                NetworkMap.removeNode(requesterNodeAddress);
+                NetworkMap.removeNode(requesterNodeName, requesterNodeAddress);
                 clientSocket.close();
             } catch (IOException ioException) {
                 System.err.println("Error handling client connection: " + ioException.getMessage());
@@ -270,8 +273,8 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void handleEndRequest(String requesterNodeAddress) throws IOException {
-        NetworkMap.removeNode(requesterNodeAddress);
+    private void handleEndRequest(String requesterNodeName, String requesterNodeAddress) throws IOException {
+        NetworkMap.removeNode(requesterNodeName, requesterNodeAddress);
         clientSocket.close();
     }
 }

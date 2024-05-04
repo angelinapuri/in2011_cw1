@@ -103,7 +103,6 @@ public class FullNode implements FullNodeInterface {
 
             writer.write("START 1 " + nodeName + "\n");
             writer.flush();
-            socket.close();
         } catch (Exception e) {
             System.err.println("IOException occurred: " + e.getMessage());
         }
@@ -111,10 +110,6 @@ public class FullNode implements FullNodeInterface {
 
     private void findNodes(String bootstrapNodeName, String bootstrapNodeAddress){
         try {
-            socket = new Socket(bootstrapNodeAddress.split(":")[0], Integer.parseInt(bootstrapNodeAddress.split(":")[1]));
-            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
             start(bootstrapNodeName, bootstrapNodeAddress);
 
             for(char c = 'a' ; c <= 'z' ; c++){
@@ -159,10 +154,6 @@ public class FullNode implements FullNodeInterface {
 
     private void sendNotifyRequests(String startingNodeName, String startingNodeAddress) {
             try {
-                socket = new Socket(startingNodeAddress.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
-                writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
                 start(startingNodeName, startingNodeAddress);
 
                 writer.write("NOTIFY?" + "\n" + nodeName + "\n" + ipAddress + ":" + portNumber + "\n");
@@ -179,7 +170,6 @@ public class FullNode implements FullNodeInterface {
                     writer.flush();
                     NetworkMap.addNode(startingNodeName, startingNodeAddress);
                 }
-
                 socket.close();
             } catch (IOException e) {
                 System.err.println("Error sending notify request to " + startingNodeName + " at " + startingNodeAddress + ": " + e.getMessage());

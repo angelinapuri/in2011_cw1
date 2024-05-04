@@ -150,8 +150,6 @@ public class FullNode implements FullNodeInterface {
                     }
                 }
             }
-            socket.close();
-
         } catch (IOException e) {
             System.err.println("Error sending nearest request to " + bootstrapNodeAddress + " at " + bootstrapNodeAddress + ": " + e.getMessage());
         } catch (Exception e) {

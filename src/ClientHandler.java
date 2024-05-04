@@ -88,6 +88,7 @@ public class ClientHandler implements Runnable {
                 }else {
                     writer.write("END: Unknown command");
                     writer.flush();
+                    break;
                 }
             }
 

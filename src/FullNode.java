@@ -76,11 +76,7 @@ public class FullNode implements FullNodeInterface {
        sendNotifyRequests(startingNodeName, startingNodeAddress);
        findNodes(startingNodeName, startingNodeAddress);
 
-        List<NodeNameAndAddress> nodes = new ArrayList<>(NetworkMap.getMap().values());
-        for (NodeNameAndAddress nodeNameAndAddress : nodes) {
-            System.out.println(nodeNameAndAddress);
-        }
-        System.out.println("Connected to the network");
+       System.out.println("Connected to the network");
 
         while(true) {
             try {
@@ -102,9 +98,6 @@ public class FullNode implements FullNodeInterface {
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            String response = reader.readLine();
-            System.out.println(response);
-
             writer.write("START 1 " + nodeName + "\n");
             writer.flush();
 
@@ -123,7 +116,6 @@ public class FullNode implements FullNodeInterface {
 
             for(char c = 'a' ; c <= 'z' ; c++){
                 writer.write("NEAREST? " + HashID.computeHashID(c + "\n") + "\n");
-                //System.out.println("NEAREST? " + HashID.computeHashID(c + "\n") + "\n");
                 writer.flush();
 
                 String response = reader.readLine();
@@ -137,9 +129,8 @@ public class FullNode implements FullNodeInterface {
                         nodeInfoBuilder.append(line).append("\n");
                     }
                 }
-                String nearestNodesList = nodeInfoBuilder.toString().trim();
-                //System.out.println(nearestNodesList);
 
+                String nearestNodesList = nodeInfoBuilder.toString().trim();
                 String[] nearestNodesLines = nearestNodesList.split("\n");
                 for (int i = 1; i < nearestNodesLines.length; i += 2) {
                     String nearestNodeName = nearestNodesLines[i];
@@ -167,7 +158,6 @@ public class FullNode implements FullNodeInterface {
 
             writer.write("NOTIFY?" + "\n" + nodeName + "\n" + ipAddress + ":" + portNumber + "\n");
             writer.flush();
-            //System.out.println("NOTIFY?" + "\n" + nodeName + "\n" + ipAddress + ":" + portNumber + "\n");
 
             System.out.println("Notify request sent to " + startingNodeName + " at " + startingNodeAddress);
 
@@ -213,12 +203,10 @@ public class FullNode implements FullNodeInterface {
                             else{
                                 //System.out.println(nodeToCheckName + " at " + nodeToCheckAddress + " is alive!");
                             }
-                            System.out.println("Network Map updated!");
-
                             socket.close();
                         } catch (IOException ignored) {
                         }
-
+                        System.out.println("Network Map updated!");
                     }
                 }
             }

@@ -16,7 +16,7 @@ import static java.lang.Integer.parseInt;
 // DO NOT EDIT starts
 interface FullNodeInterface {
     public boolean listen(String ipAddress, int portNumber);
-    public void handleIncomingConnections(String startingNodeName, String startingNodeAddress);
+    public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) throws Exception;
 }
 // DO NOT EDIT ends
 
@@ -67,7 +67,7 @@ public class FullNode implements FullNodeInterface {
         }
     }
 
-    public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
+    public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) throws Exception {
         sendNotifyRequests(startingNodeName, startingNodeAddress);
         findNodes(startingNodeName, startingNodeAddress);
 
@@ -75,7 +75,7 @@ public class FullNode implements FullNodeInterface {
         for (NodeNameAndAddress nodeNameAndAddress : nodes) {
             System.out.println(nodeNameAndAddress);
         }
-        NetworkMap.getNearestNodes(nodeName + "\n");
+        NetworkMap.getNearestNodes(HashID.computeHashID(nodeName + "\n");
         System.out.println(nodeName + "\n");
         System.out.println("Connected to the network");
 

@@ -148,6 +148,7 @@ public class FullNode implements FullNodeInterface {
                     }
                 }
             }
+            socket.close();
 
         } catch (IOException e) {
             System.err.println("Error sending nearest request to " + bootstrapNodeAddress + " at " + bootstrapNodeAddress + ": " + e.getMessage());
@@ -203,11 +204,9 @@ public class FullNode implements FullNodeInterface {
                             start(nodeToCheckName, nodeToCheckAddress);
 
                             writer.write("ECHO?" + "\n");
-                            System.out.println("ECHO?");
                             writer.flush();
 
                             String response = reader.readLine();
-                            System.out.println(response);
                             if (!response.equals("OHCE")) {
                                 NetworkMap.removeNode(nodeToCheckAddress);
                             }

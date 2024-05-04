@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class NetworkMap {
-    private static Map<String, NodeNameAndAddress> map;
+    private static Map<String, NodeNameAndAddress> map = new HashMap<>();
 
    /** static {
         map = new HashMap<>();

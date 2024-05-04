@@ -44,7 +44,7 @@ public class FullNode implements FullNodeInterface {
 
     public FullNode() {
         networkMap = new NetworkMap();
-        checkIfAlive();
+        //checkIfAlive();
     }
 
     public boolean listen(String ipAddress, int portNumber) {
@@ -183,43 +183,43 @@ public class FullNode implements FullNodeInterface {
         }
     }
 
-    private void checkIfAlive(){
-        Timer timer= new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                for (NodeNameAndAddress nodeNameAndAddress : NetworkMap.getMap().values()) {
-                    String nodeToCheckName = nodeNameAndAddress.getNodeName();
-                    String nodeToCheckAddress = nodeNameAndAddress.getNodeAddress();
-                    if (!nodeToCheckName.equals(nodeName)) {
-
-                        try {
-                            socket = new Socket(nodeToCheckAddress.split(":")[0], Integer.parseInt(nodeToCheckAddress.split(":")[1]));
-                            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-                            start(nodeToCheckName, nodeToCheckAddress);
-
-                            writer.write("ECHO?" + "\n");
-                            System.out.println("ECHO?" + "\n");
-                            writer.flush();
-
-                            String response = reader.readLine();
-                            System.out.println(response);
-                            if (!response.equals("OHCE")) {
-                                NetworkMap.removeNode(nodeToCheckAddress);
-                            }
-                            else{
-                                System.out.println(nodeToCheckName + "at" + nodeToCheckAddress + "is alive!");
-                            }
-                            socket.close();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                    }
-                }
-            }
-        }, 0, 10 * 1000);
-    }
+//    private void checkIfAlive(){
+//        Timer timer= new Timer();
+//        timer.scheduleAtFixedRate(new TimerTask() {
+//            @Override
+//            public void run() {
+//                for (NodeNameAndAddress nodeNameAndAddress : NetworkMap.getMap().values()) {
+//                    String nodeToCheckName = nodeNameAndAddress.getNodeName();
+//                    String nodeToCheckAddress = nodeNameAndAddress.getNodeAddress();
+//                    if (!nodeToCheckName.equals(nodeName)) {
+//
+//                        try {
+//                            socket = new Socket(nodeToCheckAddress.split(":")[0], Integer.parseInt(nodeToCheckAddress.split(":")[1]));
+//                            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+//                            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+//
+//                            start(nodeToCheckName, nodeToCheckAddress);
+//
+//                            writer.write("ECHO?" + "\n");
+//                            System.out.println("ECHO?" + "\n");
+//                            writer.flush();
+//
+//                            String response = reader.readLine();
+//                            System.out.println(response);
+//                            if (!response.equals("OHCE")) {
+//                                NetworkMap.removeNode(nodeToCheckAddress);
+//                            }
+//                            else{
+//                                System.out.println(nodeToCheckName + " at " + nodeToCheckAddress + " is alive!");
+//                            }
+//                            socket.close();
+//                        } catch (IOException e) {
+//                            throw new RuntimeException(e);
+//                        }
+//
+//                    }
+//                }
+//            }
+//        }, 0, 10 * 1000);
+//    }
 }

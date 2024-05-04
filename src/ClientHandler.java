@@ -231,7 +231,7 @@ public class ClientHandler implements Runnable {
                 dataStore.store(key, value);
                 writer.write("SUCCESS" + "\n");
                 writer.flush();
-                dataStore.printContents();
+                //dataStore.printContents();
                 nodeFound = true;
                 break;
             }

@@ -31,7 +31,7 @@ public class NetworkMap {
     public static void addNode(String nodeName, String nodeAddress) {
         if(!map.containsKey(nodeName)) {
             map.put(nodeName, new NodeNameAndAddress(nodeName, nodeAddress));
-            System.out.println("Node added to map" + nodeName +  "at" + nodeAddress );
+            System.out.println("Node added to map " + nodeName +  " at " + nodeAddress );
         }
     }
 
@@ -44,7 +44,7 @@ public class NetworkMap {
             }
         if (nodeToRemove!=null) {
             map.remove(nodeToRemove.getNodeName());
-            System.out.println(nodeToRemove.getNodeName() + nodeToRemove.getNodeAddress() + "node removed from network map");
+            System.out.println(nodeToRemove.getNodeName() + nodeToRemove.getNodeAddress() + " node removed from network map");
         }
     }
 

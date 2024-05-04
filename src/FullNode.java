@@ -51,7 +51,6 @@ public class FullNode implements FullNodeInterface {
             this.ipAddress = ipAddress;
             this.portNumber = portNumber;
 
-            //InetAddress host = InetAddress.getByName(ipAddress);
             serverSocket = new ServerSocket(portNumber);
             System.out.println("Listening for incoming connections on " + ipAddress + ":" + portNumber);
 
@@ -77,10 +76,12 @@ public class FullNode implements FullNodeInterface {
        sendNotifyRequests(startingNodeName, startingNodeAddress);
        findNodes(startingNodeName, startingNodeAddress);
 
-        List<NodeNameAndAddress> nodes = new ArrayList<>(NetworkMap.getMap().values());
-        for (NodeNameAndAddress nodeNameAndAddress : nodes) {
-            System.out.println(nodeNameAndAddress);
-        }
+//     Print out the network map
+//        List<NodeNameAndAddress> nodes = new ArrayList<>(NetworkMap.getMap().values());
+//        for (NodeNameAndAddress nodeNameAndAddress : nodes) {
+//            System.out.println(nodeNameAndAddress);
+//        }
+
         System.out.println("Connected to the network");
 
         while(true) {
@@ -138,7 +139,6 @@ public class FullNode implements FullNodeInterface {
                     }
                 }
                 String nearestNodesList = nodeInfoBuilder.toString().trim();
-                //System.out.println(nearestNodesList);
 
                 String[] nearestNodesLines = nearestNodesList.split("\n");
                 for (int i = 1; i < nearestNodesLines.length; i += 2) {
@@ -167,9 +167,6 @@ public class FullNode implements FullNodeInterface {
 
             writer.write("NOTIFY?" + "\n" + nodeName + "\n" + ipAddress + ":" + portNumber + "\n");
             writer.flush();
-            //System.out.println("NOTIFY?" + "\n" + nodeName + "\n" + ipAddress + ":" + portNumber + "\n");
-
-            System.out.println("Notify request sent to " + startingNodeName + " at " + startingNodeAddress);
 
             String response = reader.readLine();
             System.out.println(response);

@@ -92,7 +92,6 @@ public class FullNode implements FullNodeInterface {
 
     public void start(String startingNodeName, String startingNodeAddress) {
         try {
-
             //Connect to the starting node
             socket = new Socket(startingNodeAddress.split(":")[0], parseInt(startingNodeAddress.split(":")[1]));
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -110,6 +109,10 @@ public class FullNode implements FullNodeInterface {
 
     private void findNodes(String bootstrapNodeName, String bootstrapNodeAddress){
         try {
+            socket = new Socket(bootstrapNodeAddress.split(":")[0], Integer.parseInt(bootstrapNodeAddress.split(":")[1]));
+            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
             start(bootstrapNodeName, bootstrapNodeAddress);
 
             for(char c = 'a' ; c <= 'z' ; c++){
@@ -154,6 +157,10 @@ public class FullNode implements FullNodeInterface {
 
     private void sendNotifyRequests(String startingNodeName, String startingNodeAddress) {
             try {
+                socket = new Socket(startingNodeAddress.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
+                writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
                 start(startingNodeName, startingNodeAddress);
 
                 writer.write("NOTIFY?" + "\n" + nodeName + "\n" + ipAddress + ":" + portNumber + "\n");
@@ -170,6 +177,7 @@ public class FullNode implements FullNodeInterface {
                     writer.flush();
                     NetworkMap.addNode(startingNodeName, startingNodeAddress);
                 }
+
                 socket.close();
             } catch (IOException e) {
                 System.err.println("Error sending notify request to " + startingNodeName + " at " + startingNodeAddress + ": " + e.getMessage());

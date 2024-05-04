@@ -215,7 +215,7 @@ public class FullNode implements FullNodeInterface {
                             }
                             socket.close();
                         } catch (IOException e) {
-                            throw new RuntimeException(e);
+                            System.err.println("RunTimeException occurred: " + e.getMessage());
                         }
 
                     }

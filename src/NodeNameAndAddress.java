@@ -14,6 +14,8 @@ public class NodeNameAndAddress {
     public String getNodeAddress() {
         return nodeAddress;
     }
+
+    //Converts nodeName and nodeAddress to string
     @Override
     public String toString() {
         return nodeName + "\n" + nodeAddress;

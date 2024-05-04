@@ -52,6 +52,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
     public boolean store(String key, String value) {
         try {
+            //Send a PUT? request
             String[] keyLines = key.split("\n");
             String[] valueLines = value.split("\n");
             writer.write("PUT? " + keyLines.length + " " + valueLines.length + "\n" + key + value);
@@ -64,13 +65,15 @@ public class TemporaryNode implements TemporaryNodeInterface {
             }
             // Return false if the store failed
             else if (response.equals("FAILED")) {
-                System.out.println(nearest(key));
+                System.out.println(nearest(key)); //Print the list of nodes nearest to the key
                 return false;
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.err.println("Exception occurred: " + e.getMessage());
             return false;
-        } finally {
+        }
+        finally {
             try {
                     writer.write("END: End of request");
                     writer.flush();
@@ -84,26 +87,29 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
     public String get(String key) {
         try {
+                //Send a GET? request
                 String[] keyLines = key.split("\n");
                 writer.write("GET? " + keyLines.length + "\n" + key);
                 writer.flush();
 
                 // Read GET response
-                String response2 = reader.readLine();
+                String response = reader.readLine();
                 StringBuilder valueBuilder = new StringBuilder();
 
-                if (response2.startsWith("VALUE")) {
-                    valueBuilder.append(response2).append("\n");
-                    int valueLines = Integer.parseInt(response2.split(" ")[1]);
+                //Return value receive
+                if (response.startsWith("VALUE")) {
+                    valueBuilder.append(response).append("\n");
+                    int valueLines = Integer.parseInt(response.split(" ")[1]);
                     for (int i = 0; i < valueLines; i++) {
                         String line = reader.readLine();
                         valueBuilder.append(line).append("\n");
                     }
                     return valueBuilder.toString().trim();
-                } else {
-                    System.out.println(nearest(key));
+                }
+                else {
                     // Value not found
-                    return "NOPE";
+                    System.out.println(nearest(key));
+                    return response;
                 }
         } catch (Exception e) {
             System.err.println("Exception occurred: " + e.getMessage());
@@ -111,10 +117,10 @@ public class TemporaryNode implements TemporaryNodeInterface {
         }
         finally {
             try {
-                    writer.write("END: End of request");
-                    System.out.println("END: End of request");
-                    writer.flush();
-                    socket.close();
+                writer.write("END: End of request");
+                System.out.println("END: End of request");
+                writer.flush();
+                socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -122,10 +128,12 @@ public class TemporaryNode implements TemporaryNodeInterface {
     }
 
     private String nearest(String string) throws Exception {
+
         // Send NEAREST request
         writer.write("NEAREST? " + HashID.computeHashID(string) + "\n");
         writer.flush();
 
+        //Build response returned from nearest request
         String response = reader.readLine();
         StringBuilder nodeInfoBuilder = new StringBuilder();
         int nodes = Integer.parseInt(response.split(" ")[1]);

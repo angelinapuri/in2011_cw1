@@ -15,15 +15,19 @@ public class DataStore {
         return DataStore.INSTANCE;
     }
 
-
+    //Store key-value pair
     public void store(String key, String value) {
+
         this.keyValueMap.put(key, value);
     }
 
+    //Retrieve key-value pair
     public String get(String key) {
         return
                 this.keyValueMap.get(key);
     }
+
+    //Print contents of the dataStore
     public void printContents() {
         System.out.println("DataStore Contents:");
         for (Map.Entry<String, String> entry : keyValueMap.entrySet()) {

@@ -25,6 +25,7 @@ public class HashID {
 		private static String bytesToHex(byte[] hash) {
 			StringBuilder hexString = new StringBuilder(2 * hash.length);
 			for (byte b : hash) {
+				// Convert the strings to hexadecimal strings
 				String hex = Integer.toHexString(0xff & b);
 				if (hex.length() == 1) {
 					hexString.append('0');
@@ -35,18 +36,17 @@ public class HashID {
 		}
 
 		public static int computeDistance(String H1, String H2) {
-			int distance = 256; // Initialize distance to 256
+			int distance = 256;
 
-			// Convert the hexadecimal strings to binary strings
 			String bin1 = hexToBin(H1);
 			String bin2 = hexToBin(H2);
 
 			// Count the number of matching leading bits
 			for (int i = 0; i < bin1.length(); i++) {
 				if (bin1.charAt(i) == bin2.charAt(i)) {
-					distance--; // Decrement distance for each matching bit
+					distance--;
 				} else {
-					break; // Stop counting if bits don't match
+					break;
 				}
 			}
 
@@ -56,31 +56,13 @@ public class HashID {
 		private static String hexToBin(String hexString) {
 			StringBuilder binString = new StringBuilder();
 			for (char c : hexString.toCharArray()) {
-
+				// Convert the hexadecimal strings to binary strings
 				String bin = Integer.toBinaryString(Integer.parseInt(String.valueOf(c), 16));
 				bin = "0000".substring(bin.length()) + bin;
 				binString.append(bin);
 			}
 			return binString.toString();
 		}
-
-		public static void main(String[] args) throws Exception {
-
-			System.out.println(computeHashID("Hello World!" + "\n"));
-
-			String sirko = "dc98db702fef1fe85881eb9caddf587fb4aca668d0d5c01efd3bac1c2ead2921";
-			String email = "710c3906ca8b54f86c9e020d989792d03b9a0d8904d7b57b3f57e74ab1746625";
-			String test = "7bdfdc0ad1f3759a6d411ab7d27bfaadb57147d1c4f14dbb5a0e833df05fcae4";
-
-			try {
-				System.out.println("Hash 1: " + email);
-				System.out.println("Hash 2: " + sirko);
-				System.out.println("Distance: " + computeDistance(email, sirko));
-			} catch (Exception e) {
-				System.err.println("An error occurred: " + e.getMessage());
-			}
-		}
-
 	}
 
 

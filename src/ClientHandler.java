@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,12 +64,12 @@ public class ClientHandler implements Runnable {
                     continue;
                 }
                 String request = messageParts[0];
-                if (request.startsWith("NEAREST?")) {
-                    handleNearestRequest(messageParts[1], networkMap, requesterNodeName, requesterNodeAddress);
-                } else if (request.equals("NOTIFY?")) {
-                    handleNotifyRequest(reader, requesterNodeName, requesterNodeAddress);
-                } else if (request.equals("ECHO?")) {
+                if (request.equals("ECHO?")) {
                     handleEchoRequest();
+                }else if (request.equals("NOTIFY?")) {
+                    handleNotifyRequest(reader, requesterNodeName, requesterNodeAddress);
+                }else if (request.startsWith("NEAREST?")) {
+                    handleNearestRequest(messageParts[1], networkMap, requesterNodeName, requesterNodeAddress);
                 } else if (request.equals("PUT?")) {
                     handlePutRequest(reader, messageParts[1], messageParts[2], nodeName, nodeAddress);
                 } else if (request.equals("GET?")) {
@@ -81,7 +82,10 @@ public class ClientHandler implements Runnable {
                 }
             }
 
-        } catch (Exception e) {
+        } catch (TimeoutException e) {
+            System.out.println("Timeout error: " + e.getMessage());
+        }
+        catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         } finally {
             try {

@@ -1,7 +1,8 @@
 import java.util.*;
 
 public class NetworkMap {
-    private static Map<String, NodeNameAndAddress> map = new HashMap<>();
+    private static final int MAX_NODES_PER_DISTANCE = 3;
+    private static Map<String, NodeNameAndAddress> map = new LinkedHashMap<>();
 
    /** static {
         map = new HashMap<>();
@@ -72,9 +73,9 @@ public class NetworkMap {
                 for (NodeNameAndAddress node : nearestNodes) {
                     responseBuilder.append(node.getNodeName()).append("\n").append(node.getNodeAddress()).append("\n");
                     count++;
-                    if (count >= 3) break;
+                    if (count >= MAX_NODES_PER_DISTANCE) break;
                 }
-                if (count >= 3) break;
+                if (count >= MAX_NODES_PER_DISTANCE) break;
             }
 
             return "NODES " + count + "\n" + responseBuilder.toString();

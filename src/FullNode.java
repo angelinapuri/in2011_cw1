@@ -97,7 +97,7 @@ public class FullNode implements FullNodeInterface {
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             String response = reader.readLine();
-            System.out.println(response);
+            //System.out.println(response);
 
             writer.write("START 1 angelina.puri@city.ac.uk:MyImplementation" + "\n");
             writer.flush();
@@ -162,7 +162,7 @@ public class FullNode implements FullNodeInterface {
 
                 writer.write("NOTIFY?" + "\n" + nodeName + "\n" + ipAddress + ":" + portNumber + "\n");
                 writer.flush();
-                System.out.println("NOTIFY?" + "\n" + nodeName + "\n" + ipAddress + ":" + portNumber + "\n");
+                //System.out.println("NOTIFY?" + "\n" + nodeName + "\n" + ipAddress + ":" + portNumber + "\n");
 
                 System.out.println("Notify request sent to " + startingNodeName + " at " + startingNodeAddress);
 

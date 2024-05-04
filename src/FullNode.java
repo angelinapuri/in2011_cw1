@@ -192,12 +192,13 @@ public class FullNode implements FullNodeInterface {
                     String nodeToCheckName = nodeNameAndAddress.getNodeName();
                     String nodeToCheckAddress = nodeNameAndAddress.getNodeAddress();
                     if (!nodeToCheckName.equals(nodeName)) {
-                        start(nodeToCheckName, nodeToCheckAddress);
 
                         try {
                             socket = new Socket(nodeToCheckAddress.split(":")[0], Integer.parseInt(nodeToCheckAddress.split(":")[1]));
                             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+                            start(nodeToCheckName, nodeToCheckAddress);
 
                             writer.write("ECHO?" + "\n");
                             writer.flush();
@@ -218,6 +219,6 @@ public class FullNode implements FullNodeInterface {
                     }
                 }
             }
-        }, 0, 60 * 1000);
+        }, 0, 10 * 1000);
     }
 }

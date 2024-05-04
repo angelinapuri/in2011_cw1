@@ -31,7 +31,7 @@ public class NetworkMap {
     public static void addNode(String nodeName, String nodeAddress) {
         if(!map.containsKey(nodeName)) {
             map.put(nodeName, new NodeNameAndAddress(nodeName, nodeAddress));
-            System.out.println("Node added to map");
+            System.out.println("Node added to map" + nodeName +  "at" + nodeAddress );
         }
     }
 

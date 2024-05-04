@@ -73,8 +73,8 @@ public class FullNode implements FullNodeInterface {
     }
 
     public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
-        sendNotifyRequests(startingNodeName, startingNodeAddress);
-        findNodes(startingNodeName, startingNodeAddress);
+       sendNotifyRequests(startingNodeName, startingNodeAddress);
+       findNodes(startingNodeName, startingNodeAddress);
 
         List<NodeNameAndAddress> nodes = new ArrayList<>(NetworkMap.getMap().values());
         for (NodeNameAndAddress nodeNameAndAddress : nodes) {
@@ -82,13 +82,15 @@ public class FullNode implements FullNodeInterface {
         }
         System.out.println("Connected to the network");
 
-        try {
-            Socket acceptedSocket = serverSocket.accept();
-            System.out.println("New connection accepted from " + acceptedSocket.getInetAddress().getHostAddress() + ":" + acceptedSocket.getPort());
-            new Thread(new ClientHandler(acceptedSocket, networkMap, dataStore, nodeName, ipAddress, portNumber)).start();
-        } catch (IOException e) {
-            System.err.println("Error connecting to " + startingNodeAddress);
-            System.err.println(e);
+        while(true) {
+            try {
+                Socket acceptedSocket = serverSocket.accept();
+                System.out.println("New connection accepted from " + acceptedSocket.getInetAddress().getHostAddress() + ":" + acceptedSocket.getPort());
+                new Thread(new ClientHandler(acceptedSocket, networkMap, dataStore, nodeName, ipAddress, portNumber)).start();
+            } catch (IOException e) {
+                System.err.println("Error connecting to " + startingNodeAddress);
+                System.err.println(e);
+            }
         }
     }
 

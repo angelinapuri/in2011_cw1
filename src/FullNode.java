@@ -60,8 +60,9 @@ public class FullNode implements FullNodeInterface {
             NetworkMap.addNode(nodeName, nodeAddress);
             System.out.println("Added self to network map: " + nodeName + " at " + nodeAddress);
 
-            checkIfAlive();
-
+            if(checkIfAlive()){
+                System.out.println("Network Map updated!");
+            }
 
             return true;
 
@@ -170,10 +171,10 @@ public class FullNode implements FullNodeInterface {
 
             System.out.println("Notify request sent to " + startingNodeName + " at " + startingNodeAddress);
 
-            String response2 = reader.readLine();
-            System.out.println(response2);
+            String response = reader.readLine();
+            System.out.println(response);
 
-            if (response2 != null && response2.equals("NOTIFIED")) {
+            if (response != null && response.equals("NOTIFIED")) {
                 writer.write("END: Notified Node");
                 writer.flush();
                 NetworkMap.addNode(startingNodeName, startingNodeAddress);
@@ -185,7 +186,7 @@ public class FullNode implements FullNodeInterface {
         }
     }
 
-    private void checkIfAlive(){
+    private boolean checkIfAlive(){
         Timer timer= new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -212,8 +213,6 @@ public class FullNode implements FullNodeInterface {
                             else{
                                 //System.out.println(nodeToCheckName + " at " + nodeToCheckAddress + " is alive!");
                             }
-                            System.out.println("Network Map updated!");
-
                             socket.close();
                         } catch (IOException ignored) {
                         }
@@ -222,5 +221,6 @@ public class FullNode implements FullNodeInterface {
                 }
             }
         }, 0, 60 * 1000);
+        return true;
     }
 }

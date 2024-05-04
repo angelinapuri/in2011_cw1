@@ -60,7 +60,7 @@ public class ClientHandler implements Runnable {
 
             while (true) {
 
-                if((System.currentTimeMillis() - startTime) < timeoutMillis){
+                if((System.currentTimeMillis() - startTime) > timeoutMillis){
                     throw new TimeoutException("No new messages received");
                 }
 

@@ -44,7 +44,6 @@ public class FullNode implements FullNodeInterface {
 
     public FullNode() {
         networkMap = new NetworkMap();
-        //checkIfAlive();
     }
 
     public boolean listen(String ipAddress, int portNumber) {
@@ -78,6 +77,7 @@ public class FullNode implements FullNodeInterface {
         for (NodeNameAndAddress nodeNameAndAddress : nodes) {
             System.out.println(nodeNameAndAddress);
         }
+        checkIfAlive();
         System.out.println("Connected to the network");
 
         try {
@@ -181,5 +181,43 @@ public class FullNode implements FullNodeInterface {
         } catch (IOException e) {
             System.err.println("Error sending notify request to " + startingNodeName + " at " + startingNodeAddress + ": " + e.getMessage());
         }
+    }
+
+    private void checkIfAlive(){
+        Timer timer= new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                for (NodeNameAndAddress nodeNameAndAddress : NetworkMap.getMap().values()) {
+                    String nodeToCheckName = nodeNameAndAddress.getNodeName();
+                    String nodeToCheckAddress = nodeNameAndAddress.getNodeAddress();
+                    if (!nodeToCheckName.equals(nodeName)) {
+                        start(nodeToCheckName, nodeToCheckAddress);
+
+                        try {
+                            socket = new Socket(nodeToCheckName.split(":")[0], Integer.parseInt(nodeToCheckAddress.split(":")[1]));
+                            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+                            writer.write("ECHO?" + "\n");
+                            writer.flush();
+
+                            String response = reader.readLine();
+                            System.out.println(response);
+                            if (!response.equals("OHCE")) {
+                                NetworkMap.removeNode(nodeToCheckAddress);
+                            }
+                            else{
+                                System.out.println(nodeToCheckName + "at" + nodeToCheckAddress + "is alive!");
+                            }
+                            socket.close();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    }
+                }
+            }
+        }, 0, 60 * 1000);
     }
 }

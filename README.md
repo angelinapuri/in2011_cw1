@@ -49,6 +49,7 @@ java CmdLineGet FullNodeName FullNodeAddress KEY
 ```bash
 java CmdLineFullNode startingNodeName startingNodeAddress your_IPAddress your_portNumber
 ```
+*** (The first message from each node has to be a START message. It needs to contain protocol '1' and the node name must contain a valid email address and a colon.)
 
 ## Current Functionalities
 ### Temporary Node:

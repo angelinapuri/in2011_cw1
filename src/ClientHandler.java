@@ -53,11 +53,12 @@ public class ClientHandler implements Runnable {
             //Send a START message to client
             handleStartRequest(nodeName, requesterNodeAddress);
 
-            long startTime = System.currentTimeMillis();
-            long timeoutMillis = 60000;
-
             //Handle multiple requests from client
             while (true) {
+
+                long startTime = System.currentTimeMillis();
+                long timeoutMillis = 60000;
+
                 String message = reader.readLine();
                 System.out.println(message);
                 String[] messageParts = message.split(" ");

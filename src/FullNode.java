@@ -86,8 +86,6 @@ public class FullNode implements FullNodeInterface {
         while(true) {
             try {
                 Socket acceptedSocket = serverSocket.accept();
-                InetAddress host = InetAddress.getByName(acceptedSocket.getInetAddress().getHostAddress());
-                System.out.println(host);
                 System.out.println("New connection accepted from " + acceptedSocket.getInetAddress().getHostAddress() + ":" + acceptedSocket.getPort());
                 new Thread(new ClientHandler(acceptedSocket, networkMap, dataStore, nodeName, ipAddress, portNumber)).start();
             } catch (IOException e) {
@@ -217,8 +215,9 @@ public class FullNode implements FullNodeInterface {
 
                     }
                 }
+                System.out.println("Network Map updated!");
+                
             }
         }, 0, 60 * 1000);
-        System.out.println("Network Map updated!");
     }
 }

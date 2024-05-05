@@ -7,6 +7,7 @@
 // YOUR_EMAIL_GOES_HERE
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
@@ -85,6 +86,8 @@ public class FullNode implements FullNodeInterface {
         while(true) {
             try {
                 Socket acceptedSocket = serverSocket.accept();
+                InetAddress host = InetAddress.getByName(acceptedSocket.getInetAddress().getHostAddress());
+                System.out.println(host);
                 System.out.println("New connection accepted from " + acceptedSocket.getInetAddress().getHostAddress() + ":" + acceptedSocket.getPort());
                 new Thread(new ClientHandler(acceptedSocket, networkMap, dataStore, nodeName, ipAddress, portNumber)).start();
             } catch (IOException e) {

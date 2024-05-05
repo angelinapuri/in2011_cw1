@@ -39,11 +39,11 @@ javac *.java
 4. To run the temporary node:
 a. For store method 
 ```bash
-java CmdLineStore FUllNodeName FullNodeAddress KEY VALUE
+java CmdLineStore FullNodeName FullNodeAddress KEY VALUE
 ```
 b. For get method
 ```bash
-java CmdLineGet FUllNodeName FullNodeAddress KEY
+java CmdLineGet FullNodeName FullNodeAddress KEY
 ```
 5. To run the full node:
 ```bash

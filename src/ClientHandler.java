@@ -24,8 +24,7 @@ public class ClientHandler implements Runnable {
     private final String nodeName;
     private final String ipAddress;
     private final int portNumber;
-    private final String requesterNodeName;
-    private final String requesterNodeAddress;
+    private String requesterNodeName;
 
     public ClientHandler(Socket clientSocket, NetworkMap networkMap, DataStore dataStore, String nodeName, String ipAddress,int portNumber) {
         this.clientSocket = clientSocket;
@@ -34,8 +33,6 @@ public class ClientHandler implements Runnable {
         this.nodeName = nodeName;
         this.ipAddress = ipAddress;
         this.portNumber = portNumber;
-        this.requesterNodeName = null;
-        this.requesterNodeAddress = null;
 
         try {
             this.writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
@@ -116,6 +113,8 @@ public class ClientHandler implements Runnable {
             String[] startMessageParts = startMessage.split(" ");
 
             String requesterNodeName = startMessageParts[2];
+            this.requesterNodeName = requesterNodeName;
+
 
             if(!startMessageParts[0].equals("START")) {
                 throw new Exception("Start messages must have three parts");

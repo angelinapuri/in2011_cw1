@@ -57,9 +57,10 @@ public class ClientHandler implements Runnable {
             while (true) {
                 long startTime = System.currentTimeMillis();
                 long timeoutMillis = 60000;
-                
+
                 if((System.currentTimeMillis() - startTime) > timeoutMillis){
-                    throw new TimeoutException("No new messages received");
+                    System.out.println("No new messages received from: " + requesterNodeAddress);
+                    break;
                 }
                 String message = reader.readLine();
                 System.out.println(message);

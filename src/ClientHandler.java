@@ -53,6 +53,9 @@ public class ClientHandler implements Runnable {
             //Send a START message to client
             handleStartRequest(nodeName, requesterNodeAddress);
 
+            long startTime = System.currentTimeMillis();
+            long timeoutMillis = 60000;
+
             //Handle multiple requests from client
             while (true) {
                 String message = reader.readLine();
@@ -60,14 +63,6 @@ public class ClientHandler implements Runnable {
                 String[] messageParts = message.split(" ");
                 if (messageParts.length == 0) {
                     writer.write("Invalid message format");
-                    writer.flush();
-                    continue;
-                }
-                long startTime = System.currentTimeMillis();
-                long timeoutMillis = 60000;
-
-                if((System.currentTimeMillis() - startTime) > timeoutMillis){
-                    writer.write("No new messages received from: " + requesterNodeAddress);
                     writer.flush();
                     continue;
                 }
@@ -84,7 +79,11 @@ public class ClientHandler implements Runnable {
                     handleGetRequest(reader, messageParts[1]);
                 } else if (request.startsWith("END")) {
                     handleEndRequest(requesterNodeName, requesterNodeAddress);
-                }else {
+                } else if((System.currentTimeMillis() - startTime) > timeoutMillis){
+                    writer.write("No new messages received from: " + requesterNodeAddress);
+                    writer.flush();
+                    break;
+                } else {
                     writer.write("END: Unknown command");
                     writer.flush();
                     break;

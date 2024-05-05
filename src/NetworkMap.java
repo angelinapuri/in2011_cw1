@@ -5,7 +5,6 @@ public class NetworkMap {
     private static Map<String, NodeNameAndAddress> map = new LinkedHashMap<>();
 
     public static void addNode(String nodeName, String nodeAddress) {
-        //Null names are excluded as they are temporary nodes
         if(!map.containsKey(nodeName) && !map.containsValue(new NodeNameAndAddress(nodeName, nodeAddress)) && nodeName != null) {
             map.put(nodeName, new NodeNameAndAddress(nodeName, nodeAddress));
             System.out.println("Node added to map " + nodeName +  " at " + nodeAddress );
@@ -13,7 +12,6 @@ public class NetworkMap {
     }
 
     public static void removeNode(String nodeName, String nodeAddress) {
-        //Null names are excluded as they are temporary nodes
         if(nodeName != null && map.containsKey(nodeName) && !map.containsValue(new NodeNameAndAddress(nodeName, nodeAddress))) {
             map.remove(nodeName);
             System.out.println("Node removed from map: " + nodeName + " at " + nodeAddress);

@@ -154,9 +154,9 @@ public class ClientHandler implements Runnable {
     //Handle NEAREST? request from client
     public void handleNearestRequest(String hashID, NetworkMap networkMap, String requesterNodeName, String requesterNodeAddress)  {
         try {
-            if(!hashID.matches("^[0-9a-zA-Z]{64}$")) {
-                throw new Exception("A hashID must have 64 hex digits.");
-            }
+//            if(!hashID.matches("^[0-9a-zA-Z]{64}$")) {
+//                throw new Exception("A hashID must have 64 hex digits.");
+//            }
             String nearestNodes = NetworkMap.getNearestNodes(hashID);
             assert nearestNodes != null;
             writer.write(nearestNodes);

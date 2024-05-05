@@ -2,9 +2,9 @@
 // Coursework 2023/2024
 //
 // Submission by
-// Angelina Puri
-// 220053946
-// angelina.puri@city.ac.uk
+// Name: Angelina Puri
+// Student ID: 220053946
+//// Email: angelina.puri@city.ac.uk
 
 import java.io.*;
 import java.net.Socket;
@@ -52,6 +52,9 @@ public class TemporaryNode implements TemporaryNodeInterface {
 
     public boolean store(String key, String value) {
         try {
+            System.out.println(nearest(key)); //Print the list of nodes nearest to the key (Even if the response is SUCCESS,
+                                              // the node may not be the closest one to the key's HashID.
+                                              // So the node has to send PUT? requests to each of the nearest nodes.
             //Send a PUT? request
             String[] keyLines = key.split("\n");
             String[] valueLines = value.split("\n");
@@ -65,7 +68,6 @@ public class TemporaryNode implements TemporaryNodeInterface {
             }
             // Return false if the store failed
             else if (response.equals("FAILED")) {
-                System.out.println(nearest(key)); //Print the list of nodes nearest to the key
                 return false;
             }
         }
@@ -108,7 +110,7 @@ public class TemporaryNode implements TemporaryNodeInterface {
                 }
                 else {
                     // Value not found
-                    System.out.println(nearest(key));
+                    System.out.println(nearest(key)); //Print the list of nodes nearest to the key
                     return response;
                 }
         } catch (Exception e) {

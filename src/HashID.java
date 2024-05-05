@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
 public class HashID {
+
 		public static String computeHashID(String line) throws Exception {
 			if (line.endsWith("\n")) {
 				// What this does and how it works is covered in a later lecture
@@ -22,10 +23,10 @@ public class HashID {
 			}
 		}
 
+		// Convert bytes to hexadecimal strings
 		private static String bytesToHex(byte[] hash) {
 			StringBuilder hexString = new StringBuilder(2 * hash.length);
 			for (byte b : hash) {
-				// Convert the strings to hexadecimal strings
 				String hex = Integer.toHexString(0xff & b);
 				if (hex.length() == 1) {
 					hexString.append('0');
@@ -40,7 +41,6 @@ public class HashID {
 
 			String bin1 = hexToBin(H1);
 			String bin2 = hexToBin(H2);
-
 			// Count the number of matching leading bits
 			for (int i = 0; i < bin1.length(); i++) {
 				if (bin1.charAt(i) == bin2.charAt(i)) {
@@ -53,10 +53,10 @@ public class HashID {
 			return distance;
 		}
 
+		// Convert the hexadecimal strings to binary strings
 		private static String hexToBin(String hexString) {
 			StringBuilder binString = new StringBuilder();
 			for (char c : hexString.toCharArray()) {
-				// Convert the hexadecimal strings to binary strings
 				String bin = Integer.toBinaryString(Integer.parseInt(String.valueOf(c), 16));
 				bin = "0000".substring(bin.length()) + bin;
 				binString.append(bin);

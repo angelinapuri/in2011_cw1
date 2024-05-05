@@ -1,9 +1,10 @@
 import java.util.*;
 
 public class NetworkMap {
-    private static final int MAX_NODES_PER_DISTANCE = 3;
+    private static final int MAX_NODES_PER_DISTANCE = 3; //A node can only store a maximum of 3 nodes at each distance
     private static Map<String, NodeNameAndAddress> map = new LinkedHashMap<>();
 
+    //Add a new node to the map
     public static void addNode(String nodeName, String nodeAddress) {
         if(!map.containsKey(nodeName) && !map.containsValue(new NodeNameAndAddress(nodeName, nodeAddress)) && nodeName != null) {
             map.put(nodeName, new NodeNameAndAddress(nodeName, nodeAddress));
@@ -11,6 +12,7 @@ public class NetworkMap {
         }
     }
 
+    //Remove a node from the map
     public static void removeNode(String nodeName, String nodeAddress) {
         if(nodeName != null && map.containsKey(nodeName) && !map.containsValue(new NodeNameAndAddress(nodeName, nodeAddress))) {
             map.remove(nodeName);
@@ -18,10 +20,12 @@ public class NetworkMap {
         }
     }
 
+    //Getter method for the network map
     public static Map<String, NodeNameAndAddress> getMap() {
         return map;
     }
 
+    //Return the nearestNodes, given a HashID
     public static String getNearestNodes(String hashID) {
         try {
             Map<Integer, List<NodeNameAndAddress>> distances = new TreeMap<>();

@@ -2,9 +2,9 @@
 // Coursework 2023/2024
 //
 // Submission by
-// YOUR_NAME_GOES_HERE
-// YOUR_STUDENT_ID_NUMBER_GOES_HERE
-// YOUR_EMAIL_GOES_HERE
+// Name: Angelina Puri
+// Student ID: 220053946
+// Email: angelina.puri@city.ac.uk
 
 import java.io.*;
 import java.net.InetAddress;
@@ -47,23 +47,24 @@ public class FullNode implements FullNodeInterface {
         networkMap = new NetworkMap();
     }
 
+    //Listen to incoming connections on given IP address and port number
     public boolean listen(String ipAddress, int portNumber) {
         try {
             this.ipAddress = ipAddress;
             this.portNumber = portNumber;
-
+            //Create a server socket to listen to incoming connections
             serverSocket = new ServerSocket(portNumber);
             System.out.println("Listening for incoming connections on " + ipAddress + ":" + portNumber);
 
             String nodeAddress = ipAddress + ":" + portNumber;
-
+            //Add self to the network map
             NetworkMap.addNode(nodeName, nodeAddress);
             System.out.println("Added self to network map: " + nodeName + " at " + nodeAddress);
 
+            //Check availability of nodes
             checkIfAlive();
 
             return true;
-
         } catch (IOException e) {
             System.err.println("Exception listening for incoming connections");
             e.printStackTrace();
@@ -72,21 +73,19 @@ public class FullNode implements FullNodeInterface {
     }
 
     public void handleIncomingConnections(String startingNodeName, String startingNodeAddress) {
+        //Find and add nodes from the map
        sendNotifyRequests(startingNodeName, startingNodeAddress);
        findNodes(startingNodeName, startingNodeAddress);
 
-//     Print out the network map
-//        List<NodeNameAndAddress> nodes = new ArrayList<>(NetworkMap.getMap().values());
-//        for (NodeNameAndAddress nodeNameAndAddress : nodes) {
-//            System.out.println(nodeNameAndAddress);
-//        }
-
         System.out.println("Connected to the network");
 
+        //Handle multiple inbound connections
         while(true) {
             try {
+                //Accept a new connection
                 Socket acceptedSocket = serverSocket.accept();
                 System.out.println("New connection accepted from " + acceptedSocket.getInetAddress().getHostAddress() + ":" + acceptedSocket.getPort());
+                //Handle each connection in a new thread
                 new Thread(new ClientHandler(acceptedSocket, networkMap, dataStore, nodeName, ipAddress, portNumber)).start();
             } catch (IOException e) {
                 System.err.println("Error connecting to " + startingNodeAddress);
@@ -95,15 +94,13 @@ public class FullNode implements FullNodeInterface {
         }
     }
 
+    //Send a START message to the given node
     public void start(String startingNodeName, String startingNodeAddress) {
         try {
-
             //Connect to the starting node
             socket = new Socket(startingNodeAddress.split(":")[0], parseInt(startingNodeAddress.split(":")[1]));
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-            String response = reader.readLine();
 
             writer.write("START 1 " + nodeName + "\n");
             writer.flush();
@@ -113,6 +110,7 @@ public class FullNode implements FullNodeInterface {
         }
     }
 
+    //Find the nodes already present in the network map
     private void findNodes(String bootstrapNodeName, String bootstrapNodeAddress){
         try {
             socket = new Socket(bootstrapNodeAddress.split(":")[0], Integer.parseInt(bootstrapNodeAddress.split(":")[1]));
@@ -121,9 +119,9 @@ public class FullNode implements FullNodeInterface {
 
             start(bootstrapNodeName, bootstrapNodeAddress);
 
+            //Iterate through characters to find the nearest nodes
             for(char c = 'a' ; c <= 'z' ; c++){
                 writer.write("NEAREST? " + HashID.computeHashID(c + "\n") + "\n");
-                //System.out.println("NEAREST? " + HashID.computeHashID(c + "\n") + "\n");
                 writer.flush();
 
                 String response = reader.readLine();
@@ -156,6 +154,7 @@ public class FullNode implements FullNodeInterface {
         }
     }
 
+    //Send NOTIFY? request to the given node and add it to the network map
     private void sendNotifyRequests(String startingNodeName, String startingNodeAddress) {
         try {
             socket = new Socket(startingNodeAddress.split(":")[0], Integer.parseInt(startingNodeAddress.split(":")[1]));
@@ -173,6 +172,7 @@ public class FullNode implements FullNodeInterface {
             if (response != null && response.equals("NOTIFIED")) {
                 writer.write("END: Notified Node");
                 writer.flush();
+                //Add the node to the network if correct response is received
                 NetworkMap.addNode(startingNodeName, startingNodeAddress);
             }
 
@@ -182,6 +182,7 @@ public class FullNode implements FullNodeInterface {
         }
     }
 
+    //Check availability of nodes in the network by sending an ECHO? request and updating the map every 60 seconds
     private void checkIfAlive(){
         Timer timer= new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -216,7 +217,7 @@ public class FullNode implements FullNodeInterface {
                     }
                 }
                 System.out.println("Network Map updated!");
-                
+
             }
         }, 0, 60 * 1000);
     }

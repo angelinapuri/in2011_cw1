@@ -5,8 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DataStore {
 
     private static final DataStore INSTANCE = new DataStore();
-
-    private final Map<String, String> keyValueMap = new ConcurrentHashMap<>();
+    private final Map<String, String> keyValueMap = new ConcurrentHashMap<>(); //Using concurrent Hash Map to store data in a thread-safe manner
 
     private DataStore() {
     }

@@ -34,6 +34,7 @@ public class NetworkMap {
             for (NodeNameAndAddress node : map.values()) {
                 String nodeName = node.getNodeName();
                 String nodeAddress = node.getNodeAddress();
+                System.out.println(hashID);
                 String nodeHashID = HashID.computeHashID(nodeName + "\n");
                 int distance = HashID.computeDistance(hashID, nodeHashID);
 

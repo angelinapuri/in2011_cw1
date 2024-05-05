@@ -157,6 +157,8 @@ public class ClientHandler implements Runnable {
 //            if(!hashID.matches("^[0-9a-zA-Z]{64}$")) {
 //                throw new Exception("A hashID must have 64 hex digits.");
 //            }
+            System.out.println(hashID);
+
             String nearestNodes = NetworkMap.getNearestNodes(hashID);
             assert nearestNodes != null;
             writer.write(nearestNodes);

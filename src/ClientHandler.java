@@ -79,7 +79,7 @@ public class ClientHandler implements Runnable {
                 } else if (request.equals("GET?")) {
                     handleGetRequest(reader, messageParts[1]);
                 } else if (request.startsWith("END")) {
-                    handleEndRequest(requesterNodeName, requesterNodeAddress);
+                    handleEndRequest(messageParts[1], requesterNodeName, requesterNodeAddress);
                 } else if((System.currentTimeMillis() - startTime) > timeoutMillis){
                     writer.write("No new messages received from: " + requesterNodeAddress);
                     writer.flush();
@@ -296,9 +296,22 @@ public class ClientHandler implements Runnable {
     }
 
     //Handle END request from client
-    private void handleEndRequest(String requesterNodeName, String requesterNodeAddress) throws IOException {
-        //Remove client node to the map
-        NetworkMap.removeNode(requesterNodeName, requesterNodeAddress);
-        clientSocket.close();
+    private void handleEndRequest(String endReason, String requesterNodeName, String requesterNodeAddress) throws IOException {
+        try {
+            if (endReason == null) {
+                throw new Exception("END messages must have two parts");
+            }
+            //Remove client node to the map
+            NetworkMap.removeNode(requesterNodeName, requesterNodeAddress);
+            clientSocket.close();
+        } catch (Exception e) {
+            try {
+                writer.write("END java.lang.Exception: " + e.getMessage() + "\n");
+                writer.flush();
+                clientSocket.close();
+            } catch (IOException ioException) {
+                System.err.println("Error handling client connection: " + ioException.getMessage());
+            }
+        }
     }
 }

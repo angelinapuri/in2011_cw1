@@ -83,10 +83,14 @@ public class ClientHandler implements Runnable {
                 } else if((System.currentTimeMillis() - startTime) > timeoutMillis){
                     writer.write("No new messages received from: " + requesterNodeAddress);
                     writer.flush();
+                    //Remove client node to the map
+                    NetworkMap.removeNode(requesterNodeName, requesterNodeAddress);
                     break;
                 } else {
                     writer.write("END: Unknown command");
                     writer.flush();
+                    //Remove client node to the map
+                    NetworkMap.removeNode(requesterNodeName, requesterNodeAddress);
                     break;
                 }
             }

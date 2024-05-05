@@ -298,7 +298,7 @@ public class ClientHandler implements Runnable {
     //Handle END request from client
     private void handleEndRequest(String endReason, String requesterNodeName, String requesterNodeAddress) throws IOException {
         try {
-            if (endReason == null) {
+            if (endReason.isEmpty() || endReason.isBlank()) {
                 throw new Exception("END messages must have two parts");
             }
             //Remove client node to the map

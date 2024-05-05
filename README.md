@@ -62,5 +62,6 @@ java CmdLineFullNode startingNodeName startingNodeAddress your_IPAddress your_po
 * Connects to the 2D#4 network using the name and address of the starting node
 * Handles multiple inbound connections
 * Responds to START, ECHO?, PUT?, GET?, NEAREST?, NOTIFY? and END correctly. It ends the connection if a node sends an unknown command or does not send a request within 60 seconds.
+* Effectively handles errors
 * Implements passive mapping by adding and removing full nodes that it has interacted with.
 * Implements active mapping by finding nodes in the network using the starting node(and NEAREST? requests), sending them NOTIFY? requests and adding them to the network map. It also sends an ECHO? request every 60 seconds to check availability of nodes in the network and updates the map(by removing the unresponsive nodes).

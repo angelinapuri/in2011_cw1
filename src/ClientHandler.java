@@ -55,19 +55,19 @@ public class ClientHandler implements Runnable {
 
             //Handle multiple requests from client
             while (true) {
-                long startTime = System.currentTimeMillis();
-                long timeoutMillis = 60000;
-
-                if((System.currentTimeMillis() - startTime) > timeoutMillis){
-                    writer.write("No new messages received from: " + requesterNodeAddress);
-                    writer.flush();
-                    continue;
-                }
                 String message = reader.readLine();
                 System.out.println(message);
                 String[] messageParts = message.split(" ");
                 if (messageParts.length == 0) {
                     writer.write("Invalid message format");
+                    writer.flush();
+                    continue;
+                }
+                long startTime = System.currentTimeMillis();
+                long timeoutMillis = 60000;
+
+                if((System.currentTimeMillis() - startTime) > timeoutMillis){
+                    writer.write("No new messages received from: " + requesterNodeAddress);
                     writer.flush();
                     continue;
                 }

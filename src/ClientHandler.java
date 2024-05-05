@@ -46,9 +46,6 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
 
-        long startTime = System.currentTimeMillis();
-        long timeoutMillis = 60000;
-
         try {
             String nodeAddress = ipAddress + ":" + portNumber;
             String requesterNodeAddress = clientSocket.getInetAddress().getHostAddress() + ":" + clientSocket.getPort();
@@ -58,6 +55,9 @@ public class ClientHandler implements Runnable {
 
             //Handle multiple requests from client
             while (true) {
+                long startTime = System.currentTimeMillis();
+                long timeoutMillis = 60000;
+                
                 if((System.currentTimeMillis() - startTime) > timeoutMillis){
                     throw new TimeoutException("No new messages received");
                 }

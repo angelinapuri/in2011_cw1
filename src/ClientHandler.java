@@ -53,14 +53,14 @@ public class ClientHandler implements Runnable {
             String nodeAddress = ipAddress + ":" + portNumber;
             String requesterNodeAddress = clientSocket.getInetAddress().getHostAddress() + ":" + clientSocket.getPort();
 
+            //Send a START message to client
             handleStartRequest(nodeName, requesterNodeAddress);
 
+            //Handle multiple requests from client
             while (true) {
-
                 if((System.currentTimeMillis() - startTime) > timeoutMillis){
                     throw new TimeoutException("No new messages received");
                 }
-
                 String message = reader.readLine();
                 System.out.println(message);
                 String[] messageParts = message.split(" ");
@@ -88,7 +88,6 @@ public class ClientHandler implements Runnable {
                     break;
                 }
             }
-
         } catch (TimeoutException e) {
             System.out.println("Timeout error: " + e.getMessage());
         }
@@ -103,6 +102,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    //Handle START request from client
     private void handleStartRequest(String nodeName, String requesterNodeAddress) {
         try {
             writer.write("START 1 " + nodeName + "\n");
@@ -131,6 +131,7 @@ public class ClientHandler implements Runnable {
             else if(!requesterNodeName.contains(":")) {
                 throw new Exception("Node names must contain a colon");
             }
+            //Add client node to the map
             NetworkMap.addNode(requesterNodeName, requesterNodeAddress);
         }
         catch(Exception e) {
@@ -144,7 +145,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-
+    //Handle NEAREST? request from client
     public void handleNearestRequest(String hashID, NetworkMap networkMap, String requesterNodeName, String requesterNodeAddress)  {
         try {
             if(hashID.length() != 64) {
@@ -159,6 +160,7 @@ public class ClientHandler implements Runnable {
             try {
                 writer.write("END java.lang.Exception: " + e.getMessage() + "\n");
                 writer.flush();
+                //Remove client node to the map
                 NetworkMap.removeNode(requesterNodeName, requesterNodeAddress);
                 clientSocket.close();
             } catch (IOException ioException) {
@@ -167,6 +169,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    //Handle NOTIFY? request from client
     private void handleNotifyRequest(BufferedReader reader, String requesterNodeName, String requesterNodeAddress) {
         try{
             String notifierNodeName= reader.readLine();
@@ -181,7 +184,7 @@ public class ClientHandler implements Runnable {
             if(!notifierNodeAddress.contains(":")) {
                 throw new Exception("Address must contain :");
             }
-
+            //Add client node to the map
             NetworkMap.addNode(notifierNodeName, notifierNodeAddress);
 
             writer.write("NOTIFIED" + "\n");
@@ -192,6 +195,7 @@ public class ClientHandler implements Runnable {
             try {
                 writer.write("END java.lang.Exception: " + e.getMessage() + "\n");
                 writer.flush();
+                //Remove client node to the map
                 NetworkMap.removeNode(requesterNodeName, requesterNodeAddress);
                 clientSocket.close();
             } catch (IOException ioException) {
@@ -200,11 +204,13 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    //Handle ECHO? request from client
     private void handleEchoRequest() throws IOException {
         writer.write("OHCE" + "\n");
         writer.flush();
     }
 
+    //Handle PUT? request from client
     private void handlePutRequest(BufferedReader reader, String keyLine, String valueLine, String nodeName, String nodeAddress) throws Exception {
 
         StringBuilder keyBuilder = new StringBuilder();
@@ -254,6 +260,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    //Handle GET? request from client
     private void handleGetRequest(BufferedReader reader, String keyLine) throws IOException {
 
         StringBuilder keyBuilder = new StringBuilder();
@@ -281,7 +288,9 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    //Handle END request from client
     private void handleEndRequest(String requesterNodeName, String requesterNodeAddress) throws IOException {
+        //Remove client node to the map
         NetworkMap.removeNode(requesterNodeName, requesterNodeAddress);
         clientSocket.close();
     }
